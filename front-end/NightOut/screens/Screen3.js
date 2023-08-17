@@ -11,7 +11,7 @@ const Screen3 = () => {
   }));
 
   const handleItemPress = (item) => {
-	navigation.navigate('Screen4');
+	  navigation.navigate('Screen4');
   };
   
   const renderItem = ({ item }) => (
