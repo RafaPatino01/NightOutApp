@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enviar Solicitud POST</title>
+</head>
+<body>
+    <h1>Enviar Solicitud POST</h1>
+    
+    <!-- Input para la Imagen del Mapa -->
+    <label for="imagenMapa">Imagen del Mapa:</label>
+    <input type="file" id="imagenMapa" accept="image/*" multiple>
+    
+    <!-- Input para las Imágenes -->
+    <label for="imagenes">Imágenes:</label>
+    <input type="file" id="imagenes" accept="image/*" multiple>
+
+    <!-- Botón para activar la función de envío POST -->
+    <button onclick="enviarPOST()">Enviar POST</button>
+
+    <script>
+        function enviarPOST() {
+            // Obtener el elemento de input de la Imagen del Mapa
+            const inputImagenMapa = document.getElementById('imagenMapa');
+            
+            // Obtener el elemento de input de Imágenes
+            const inputImagenes = document.getElementById('imagenes');
+
+            // Obtener los archivos seleccionados para la Imagen del Mapa
+            const archivosImagenMapa = inputImagenMapa.files;
+
+            // Obtener los archivos seleccionados para las Imágenes
+            const archivosImagenes = inputImagenes.files;
+
+            // Crear un objeto FormData para enviar los archivos y datos
+            const formData = new FormData();
+            
+            // Agregar la Imagen del Mapa al FormData
+            for (let i = 0; i < archivosImagenMapa.length; i++) {
+                formData.append('imagenMapa', archivosImagenMapa[i]);
+            }
+
+            // Agregar las Imágenes al FormData
+            for (let i = 0; i < archivosImagenes.length; i++) {
+                formData.append('imagenes', archivosImagenes[i]);
+            }
+
+            // Datos hard-coded
+            formData.append('nombre', 'Nombre de ejemplo');
+            formData.append('ubicacion', 'Ubicación de ejemplo');
+            formData.append('tipo', 'Tipo de ejemplo');
+
+            // Realizar la solicitud POST utilizando fetch
+            fetch('http://localhost:3000/add_establecimiento', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Respuesta del servidor:', data);
+                // Aquí puedes realizar cualquier acción adicional con la respuesta del servidor
+            })
+            .catch(error => {
+                console.error('Error al enviar la solicitud POST:', error);
+                // Manejar errores aquí
+            });
+        }
+    </script>
+</body>
+</html>
