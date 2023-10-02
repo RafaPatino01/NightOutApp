@@ -5,21 +5,6 @@ import axios from 'axios';
 const Screen1 = () => {
     const [data, setData] = useState({});
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const fetchData = async () => {
-        try {
-            const response = await axios.get('http://192.168.100.94:3000/example');
-            setData(response.data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
-
-    console.log('Data:', data); // Debug: Check the value of data
-
     return (
         <ScrollView contentContainerStyle={styles.container}>
             

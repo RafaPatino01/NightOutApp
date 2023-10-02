@@ -32,7 +32,7 @@ pool.on('error', (err, client) => {
 
 // Add this event listener to print a message when a connection is established
 pool.on('connect', () => {
-  console.log('Connected to the PostgreSQL database');
+  console.log('Connected to the PostgreSQL');
 });
 
 app.get('/', (req, res) => {
@@ -52,6 +52,37 @@ app.get('/get_establecimientos', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+app.get('/login', async (req, res) => {
+  try {
+    // Conecta a la base de datos
+    const client = await pool.connect();
+
+    // Obtén los valores de correo_electronico y contrasena desde los parámetros de la solicitud
+    const { correo_electronico, contrasena } = req.query;
+
+    // Ejecuta una consulta SQL para obtener el usuario que coincide con el correo_electronico y contrasena
+    const query = 'SELECT * FROM usuarios WHERE correo_electronico = $1 AND contrasena = $2';
+    const result = await client.query(query, [correo_electronico, contrasena]);
+
+    // Libera la conexión
+    client.release();
+
+    // Verifica si se encontraron resultados en la consulta
+    if (result.rows.length === 0) {
+      // No se encontraron coincidencias, respondemos con "NOT OK"
+      res.status(400).json({ res: "NOT OK" });
+    } else {
+      // Se encontraron coincidencias, respondemos con "OK" y los datos del usuario
+      res.json({ res: "OK", user: result.rows[0] });
+    }
+
+  } catch (error) {
+    console.error('Error al obtener usuarios:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
 
 // Ruta para obtener todos los usuarios
 app.get('/get_usuarios', async (req, res) => {
@@ -305,9 +336,7 @@ app.post('/add_resena', async (req, res) => {
   }
 });
 
-
-
-// RUNNING THE SERVER
-app.listen(port, () => {
-  console.log(`NightOut backend running on port ${port}`);
+app.listen(3000, '0.0.0.0', () => {
+  console.log(`NightOut backend running on port 3000`);
 });
+
