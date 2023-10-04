@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 const Screen3 = () => {
   const navigation = useNavigation();
 
-  const data = Array.from({ length: 20 }, (_, index) => ({
+  const data = Array.from({ length: 5 }, (_, index) => ({
     id: `${index + 1}`,
     title: `Item ${index + 1}`,
   }));

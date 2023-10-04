@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, TextInput, Image, ImageBackground } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { handleLogin } from '../functions/functions'; // Import the handleLogin function
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const Login = () => {
   const navigation = useNavigation();
@@ -9,15 +10,66 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  // Save session when the user logs in
+  const saveSession = async (userToken) => {
+    try {
+      await AsyncStorage.setItem('userToken', userToken);
+      console.log('Session saved successfully.');
+    } catch (error) {
+      console.error('Error saving session:', error);
+    }
+  };
+
+  // Retrieve session when needed (e.g., when the app starts)
+  const retrieveSession = async () => {
+    try {
+      const userToken = await AsyncStorage.getItem('userToken');
+      if (userToken !== null) {
+        // User is logged in, you can proceed accordingly
+        console.log('User is logged in with token:', userToken);
+      } else {
+        // User is not logged in, take appropriate action
+        console.log('User is not logged in.');
+      }
+    } catch (error) {
+      console.error('Error retrieving session:', error);
+    }
+  };
+
   const handleLoginPress = () => {
     // Call the imported handleLogin function
-    handleLogin(email, password, navigation);
+    if(handleLogin(email, password)){
+      // You can add your navigation logic here
+      navigation.navigate('Home');
+      saveSession(email)
+    };
   };
 
   const handleRegister = () => {
     // Call the imported handleLogin function
     navigation.navigate('Register');
   };
+
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        // Check if the user token exists in AsyncStorage
+        const userToken = await AsyncStorage.getItem('userToken');
+
+        if (userToken) {
+          // User is logged in, navigate to the Home page
+          navigation.navigate('Home');
+        } 
+        
+      } catch (error) {
+        console.error('Error checking session:', error);
+      }
+    };
+
+    // Call the checkSession function when the component mounts
+    checkSession();
+  }, [navigation]);
 
   return (
     <ImageBackground

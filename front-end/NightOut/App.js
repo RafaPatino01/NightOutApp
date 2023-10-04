@@ -61,7 +61,11 @@ function App() {
           <Stack.Screen
             name="Home"
             component={Home}
-            options={{ headerShown: false }}
+            options={{
+              headerShown: false,
+              gestureEnabled: false, // Disable the back gesture
+              gestureDirection: 'horizontal', // Optional, specify the gesture direction
+            }}
           />
 
           <Stack.Screen name="Screen4" component={Screen4} />
