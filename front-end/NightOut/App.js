@@ -9,6 +9,9 @@ import Screen1 from './screens/Screen1';
 import Screen2 from './screens/Screen2';
 import Screen3 from './screens/Screen3';
 import Screen4 from './screens/Screen4';
+import Screen5 from './screens/Screen5';
+
+import DetalleEstablecimiento from './screens/DetalleEstablecimiento';
 import Login from './screens/Login';
 import Register from './screens/Register';
 
@@ -21,22 +24,47 @@ function Home() {
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
           let iconName;
+          let iconSize = 30; // Cambia el tamaño del ícono aquí
+          let iconPadding = 5; // Add padding to the top of the icon here
 
-          if (route.name === 'Screen1') {
+          if (route.name === 'Screen5') {
+            iconName = 'card-search';
+          } else if (route.name === 'Screen1') {
             iconName = 'home';
           } else if (route.name === 'Screen2') {
-            iconName = 'account';
+            iconName = 'calendar-check'; 
           } else if (route.name === 'Screen3') {
-            iconName = 'cog'; // Ícono de configuración
+            iconName = 'account-circle'; 
           }
           
-          return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+          return (
+            <MaterialCommunityIcons
+              name={iconName}
+              size={iconSize}
+              color={color}
+              style={{ paddingTop: iconPadding }} // Add padding to the top of the icon
+            />
+          )
+        },
+        tabBarLabel: '', // Esto quita el texto debajo del ícono
+        tabBarActiveTintColor: '#5271FF', // Color del ícono activo
+        tabBarInactiveTintColor: 'gray', // Color del ícono inactivo
+        tabBarLabelStyle: {
+          fontSize: 12, // Tamaño de la etiqueta (texto debajo del ícono)
+          fontWeight: 'bold', // Peso de la etiqueta (opcional)
+        },
+        tabBarStyle: {
+          backgroundColor: 'white', // Color de fondo de la barra
         },
       })}
     >
-      <Tab.Screen name="Screen1" component={Screen1} />
+      
+      <Tab.Screen options={{ headerShown: false }} name="Screen1" component={Screen1} />
       <Tab.Screen name="Screen2" component={Screen2} />
+      <Tab.Screen name="Screen5" component={Screen5} />
       <Tab.Screen name="Screen3" component={Screen3} />
+      
+
     </Tab.Navigator>
   );
 }
@@ -69,7 +97,13 @@ function App() {
           />
 
           <Stack.Screen name="Screen4" component={Screen4} />
-          
+
+          <Stack.Screen 
+            options={{ headerShown: true }} 
+            name="DetalleEstablecimiento" 
+            component={DetalleEstablecimiento} 
+          />
+
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>
