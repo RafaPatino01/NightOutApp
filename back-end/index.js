@@ -6,6 +6,9 @@ const { Pool } = require('pg');
 const multer = require('multer');
 const crypto = require('crypto');
 
+const fs = require('fs'); // Add this line to import the 'fs' module
+const path = require('path'); // Import the 'path' module
+
 // Middleware para manejar la carga de archivos usando Multer
 const storage = multer.memoryStorage(); // Almacena el archivo cargado en la memoria
 const upload = multer({ storage: storage });
@@ -326,14 +329,15 @@ app.post('/add_establecimiento', upload.fields([{ name: 'images', maxCount: 10 }
     // Define an array to store the image paths
     const imagePaths = [];
 
-    // Loop through the uploaded images, convert them to PNG, and save them
+    // Loop through the uploaded images, compress them, and save them
     for (let i = 0; i < images.length; i++) {
       const image = images[i];
       const imageName = `${Date.now()}_${i}.png`; // Create a unique name for each image
       const imagePath = `${saveDirectory}/${imageName}`; // Construct the image path
 
+      // Use Sharp to compress the image (adjust settings as needed)
       await sharp(image.buffer)
-        .toFormat('png') // Convert to PNG format
+        .jpeg({ quality: 80 }) // Adjust quality as needed (e.g., 80 for JPEG)
         .toFile(imagePath);
 
       // Add the image path to the array
@@ -347,13 +351,17 @@ app.post('/add_establecimiento', upload.fields([{ name: 'images', maxCount: 10 }
       const image = mapaImage[i];
       const imageName = `${Date.now()}_${i}.png`; 
       const imagePath = `${saveDirectory}/${imageName}`; 
+
+      // Use Sharp to compress the map image (adjust settings as needed)
       await sharp(image.buffer)
-        .toFormat('png') 
+        .jpeg({ quality: 80 }) // Adjust quality as needed (e.g., 80 for JPEG)
         .toFile(imagePath);
+
+      // Add the map image path to the array
       imagePaths2.push(imagePath);
     }
     
-    // Insert the image paths into your database
+    // Insert the compressed image paths into your database
     const queryString = `
       INSERT INTO public.establecimientos (
         nombre, ubicacion, capacidad_total, capacidad_actual, num_mesas, imagen_mapa, capacidades_mesa,
@@ -383,6 +391,7 @@ app.post('/add_establecimiento', upload.fields([{ name: 'images', maxCount: 10 }
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 
 // SERVE IMAGES FROM UPLOADS -----------------------------------------------------------
