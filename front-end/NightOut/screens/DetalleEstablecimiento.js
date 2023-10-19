@@ -30,14 +30,12 @@ const DetalleEstablecimiento = ({ route }) => {
       headerStyle: customHeaderStyle,
       headerTitleStyle: customTitleStyle,
       headerBackTitle: '', // Set the back button title to an empty string
+      headerTintColor: '#5271FF',
       headerBackTitleVisible: false,
       headerRight: () => (
         <TouchableOpacity
           style={styles.instagramButton}
           onPress={() => {
-            // Navigate to the Instagram page when the button is pressed
-            // Replace 'YOUR_INSTAGRAM_URL' with the actual Instagram URL
-            // or username of the establishment
             const instagramUrl = receivedData.redes_sociales;
             Linking.openURL(instagramUrl);
           }}
@@ -127,11 +125,39 @@ const DetalleEstablecimiento = ({ route }) => {
           <Text style={styles.textNormal}>{receivedData.tipo_de_pago}</Text>
         </View>
       </ScrollView>
+
+      <TouchableOpacity
+        style={styles.floatingButton}
+        onPress={() => {
+          console.log("RESERVAR PRESSED")
+          navigation.navigate("Reservar", { data: receivedData })
+        }}
+      >
+        <Text style={styles.buttonText}>RESERVAR</Text>
+      </TouchableOpacity>
+
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  // Add styles for the floating button
+  floatingButton: {
+    position: 'absolute',
+    bottom: 0, // Place it at the bottom
+    alignSelf: 'center', 
+    backgroundColor: '#5271FF',
+    borderRadius: 25, 
+    width: 280,
+    height: 60, 
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+  },
   screen: {
     flex: 1,
     backgroundColor: "#070808",

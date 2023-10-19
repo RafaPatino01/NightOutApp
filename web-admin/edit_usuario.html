@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Night Out</title>
+    <!-- Add Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">
+            <img src="logo.png" alt="Your Logo" height="30" class="d-inline-block align-top">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Dashboard</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="usuarios.html">Usuarios</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="establecimientos.html">Establecimientos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="logout-button">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    
+    <div class="container mt-5">
+        <h1>Editar Usuario</h1>
+    
+        <div class="form-group">
+            <label for="nombre" class="texto1">Nombre:</label>
+            <input type="text" class="form-control" id="nombre" placeholder="Nombre">
+        </div>
+    
+        <div class="form-group">
+            <label for="apellido" class="texto1">Apellido:</label>
+            <input type="text" class="form-control" id="apellido" placeholder="Apellido">
+        </div>
+    
+        <div class="form-group">
+            <label class="texto1">Género:</label>
+            <div class="generoButtons">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="genero" id="generoH" value="H">
+                    <label class="form-check-label" for="generoH">Hombre</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="genero" id="generoM" value="M">
+                    <label class="form-check-label" for="generoM">Mujer</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="genero" id="generoX" value="X">
+                    <label class="form-check-label" for="generoX">No binario</label>
+                </div>
+            </div>
+        </div>
+    
+        <div class="form-group">
+            <label for="email" class="texto1">Email:</label>
+            <input type="email" class="form-control" id="email" placeholder="Email">
+        </div>
+    
+        <div class="form-group">
+            <label for="numTelefono" class="texto1">Número de Teléfono:</label>
+            <input type="tel" class="form-control" id="numTelefono" placeholder="Número de Teléfono">
+        </div>
+
+        <div class="form-group">
+            <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="toggleSwitch">
+                <label class="custom-control-label" for="toggleSwitch">Admin</label>
+            </div>
+        </div>
+
+        <div class="row mt-3 mb-5 justify-content-center">
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-lg btn-primary w-100" id="guardar-datos-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-floppy2-fill" viewBox="0 0 16 16">
+                        <path d="M12 2h-2v3h2V2Z"/>
+                        <path d="M1.5 0A1.5 1.5 0 0 0 0 1.5v13A1.5 1.5 0 0 0 1.5 16h13a1.5 1.5 0 0 0 1.5-1.5V2.914a1.5 1.5 0 0 0-.44-1.06L14.147 .439A1.5 1.5 0 0 0 13.086 0H1.5ZM4 6a1 1 0 0 1-1-1V1h10v4a1 1 0 0 1-1 1H4ZM3 9h10a1 1 0 0 1 1 1v5H2v-5a1 1 0 0 1 1-1Z"/>
+                    </svg>
+                    <br>Guardar Datos
+                </button>                
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script src="functionsLogin.js"></script>
+    <script src="editar.js"></script>
+</body>
+</html>

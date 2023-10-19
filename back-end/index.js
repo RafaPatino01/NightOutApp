@@ -59,13 +59,13 @@ app.get('/get_establecimientos', async (req, res) => {
 });
 
 // Create a GET request to fetch an "establecimiento" by its "nombre"
-app.get('/get_establecimiento/:nombre', async (req, res) => {
-  const { nombre } = req.params;
+app.get('/get_establecimiento/:id', async (req, res) => {
+  const { id } = req.params;
 
   try {
     const client = await pool.connect();
-    const query = 'SELECT * FROM establecimientos WHERE nombre = $1';
-    const result = await client.query(query, [nombre]);
+    const query = 'SELECT * FROM establecimientos WHERE id = $1';
+    const result = await client.query(query, [id]);
 
     if (result.rows.length === 0) {
       // If no "establecimiento" with the provided "nombre" is found, return a 404 Not Found status
@@ -120,19 +120,25 @@ app.get('/login', async (req, res) => {
 
 
 
-// Ruta para obtener todos los usuarios
+// Ruta para obtener usuarios por correo electrónico (si se proporciona)
 app.get('/get_usuarios', async (req, res) => {
   try {
-    // Conecta a la base de datos
     const client = await pool.connect();
 
-    // Ejecuta una consulta SQL para obtener todos los usuarios
-    const result = await client.query('SELECT * FROM usuarios');
+    // Obtener el valor del parámetro "correo_electronico" de la consulta
+    const correoElectronico = req.query.correo_electronico;
 
-    // Libera la conexión
+    let queryString = 'SELECT * FROM usuarios';
+
+    // Verificar si se proporcionó el parámetro "correo_electronico"
+    if (correoElectronico) {
+      queryString += ' WHERE correo_electronico = $1';
+    }
+
+    const result = await client.query(queryString, [correoElectronico]);
+
     client.release();
 
-    // Envía la lista de usuarios como respuesta
     res.json(result.rows);
   } catch (error) {
     console.error('Error al obtener usuarios:', error);
@@ -140,24 +146,180 @@ app.get('/get_usuarios', async (req, res) => {
   }
 });
 
-// Ruta para obtener todos las reservas
-app.get('/get_reservas', async (req, res) => {
+
+// Ruta para obtener usuarios por correo electrónico (si se proporciona)
+app.get('/get_all_usuarios', async (req, res) => {
   try {
-    // Conecta a la base de datos
     const client = await pool.connect();
 
-    // Ejecuta una consulta SQL para obtener todos los usuarios
-    const result = await client.query('SELECT * FROM reservas');
+    let queryString = 'SELECT * FROM usuarios';
 
-    // Libera la conexión
+    const result = await client.query(queryString);
+
     client.release();
 
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error al obtener usuarios:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+
+
+app.put('/update_usuario/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const userData = req.body; // Assuming you send user data in the request body
+
+    const client = await pool.connect();
+    const fieldUpdates = [];
+    const queryValues = [];
+
+    // Construct the SQL UPDATE statement based on the provided user data
+    let queryIndex = 1; // Start with the first parameter index
+
+    // Check if each field is included in the request body and add it to the update statement
+    if (userData.nombre !== undefined) {
+      fieldUpdates.push(`nombre = $${queryIndex}`);
+      queryValues.push(userData.nombre);
+      queryIndex++;
+    }
+
+    if (userData.apellido !== undefined) {
+      fieldUpdates.push(`apellido = $${queryIndex}`);
+      queryValues.push(userData.apellido);
+      queryIndex++;
+    }
+
+    if (userData.genero !== undefined) {
+      fieldUpdates.push(`genero = $${queryIndex}`);
+      queryValues.push(userData.genero);
+      queryIndex++;
+    }
+
+    if (userData.fecha_nacimiento !== undefined) {
+      fieldUpdates.push(`fecha_nacimiento = $${queryIndex}`);
+      queryValues.push(userData.fecha_nacimiento);
+      queryIndex++;
+    }
+
+    if (userData.correo_electronico !== undefined) {
+      fieldUpdates.push(`correo_electronico = $${queryIndex}`);
+      queryValues.push(userData.correo_electronico);
+      queryIndex++;
+    }
+
+    if (userData.redes_sociales !== undefined) {
+      fieldUpdates.push(`redes_sociales = $${queryIndex}`);
+      queryValues.push(userData.redes_sociales);
+      queryIndex++;
+    }
+
+    if (userData.contrasena !== undefined) {
+      fieldUpdates.push(`contrasena = $${queryIndex}`);
+      queryValues.push(userData.contrasena);
+      queryIndex++;
+    }
+
+    if (userData.reservas_activas !== undefined) {
+      fieldUpdates.push(`reservas_activas = $${queryIndex}`);
+      queryValues.push(userData.reservas_activas);
+      queryIndex++;
+    }
+
+    if (userData.reservas_previas !== undefined) {
+      fieldUpdates.push(`reservas_previas = $${queryIndex}`);
+      queryValues.push(userData.reservas_previas);
+      queryIndex++;
+    }
+
+    if (userData.num_telefono !== undefined) {
+      fieldUpdates.push(`num_telefono = $${queryIndex}`);
+      queryValues.push(userData.num_telefono);
+      queryIndex++;
+    }
+
+    if (userData.admin !== undefined) {
+      fieldUpdates.push(`"admin" = $${queryIndex}`);
+      queryValues.push(userData.admin);
+      queryIndex++;
+    }
+
+    // Create the final query string
+    const queryString = `
+      UPDATE public.usuarios 
+      SET 
+        ${fieldUpdates.join(', ')}
+      WHERE id = $${queryIndex}
+    `;
+
+    queryValues.push(userId);
+
+    // Execute the SQL statement with the provided data
+    const result = await client.query(queryString, queryValues);
+
+    client.release();
+
+    res.json({ message: 'User data updated successfully' });
+  } catch (error) {
+    console.error('Error updating user data:', error);
+    res.status(500).json({ error: 'Error updating user data' });
+  }
+});
+
+app.delete('/delete_usuario/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const client = await pool.connect();
+
+    // Construct the SQL DELETE statement
+    const queryString = 'DELETE FROM public.usuarios WHERE id = $1';
+
+    // Execute the SQL statement with the provided user ID
+    const result = await client.query(queryString, [userId]);
+
+    client.release();
+
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({ error: 'Error deleting user' });
+  }
+});
+
+
+// Ruta para obtener reservas por establecimiento_id o usuario_id
+app.get('/get_reservas', async (req, res) => {
+  try {
+    const client = await pool.connect();
+
+    // Obtener el valor del parámetro "establecimiento_id" o "usuario_id" de la consulta
+    const establecimientoId = req.query.establecimiento_id;
+    const usuarioId = req.query.usuario_id;
+
+    let queryString = 'SELECT * FROM reservas';
+
+    // Verificar si se proporcionó el parámetro "establecimiento_id"
+    if (establecimientoId) {
+      queryString += ` WHERE establecimiento_id = $1`;
+    }
+    // Verificar si se proporcionó el parámetro "usuario_id"
+    else if (usuarioId) {
+      queryString += ` WHERE usuario_id = $1`;
+    }
+
+    const result = await client.query(queryString, [establecimientoId || usuarioId]);
+
+    client.release();
     res.json(result.rows);
   } catch (error) {
     console.error('Error al obtener reservas:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
+
 
 // Ruta para obtener todos las resenas
 app.get('/get_resenas', async (req, res) => {
@@ -293,6 +455,56 @@ app.post('/add_resena', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+app.post('/add_reserva', async (req, res) => {
+  const {
+    fecha_hora,
+    usuario_id,
+    establecimiento_id,
+    numero_personas,
+    confirmado,
+    asistencia,
+    tipo_mesa
+  } = req.body;
+
+  try {
+    const client = await pool.connect();
+
+    const queryString = `
+      INSERT INTO public.reservas (
+        fecha_hora,
+        usuario_id,
+        establecimiento_id,
+        numero_personas,
+        confirmado,
+        asistencia,
+        tipo_de_mesa
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+    `;
+
+    const values = [
+      fecha_hora,
+      usuario_id,
+      establecimiento_id,
+      numero_personas,
+      confirmado,
+      asistencia,
+      tipo_mesa
+    ];
+
+    await client.query(queryString, values);
+    client.release();
+    console.log('Reserva inserted successfully');
+
+    res.status(201).json({ message: 'Reserva inserted successfully' });
+  } catch (error) {
+    console.error('Error inserting Reserva into PostgreSQL:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 
 // ADD ESTABLECIMIENTO ---------------------------------------------------------------------------------------

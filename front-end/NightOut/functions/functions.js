@@ -77,3 +77,15 @@ export const fetchEstablecimientos = async () => {
     throw error; // Re-throw the error to handle it where the function is called
   }
 };
+
+// Define a function to fetch the data
+export const fetchReservasByUserId = async (usuarioId) => {
+  try {
+    const response = await axios.get(`http://${ip}:3000/get_reservas/?usuario_id=${usuarioId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    throw error; // Re-throw the error to handle it where the function is called
+  }
+};
+

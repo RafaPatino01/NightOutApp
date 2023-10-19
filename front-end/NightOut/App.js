@@ -14,6 +14,7 @@ import Screen5 from './screens/Screen5';
 import DetalleEstablecimiento from './screens/DetalleEstablecimiento';
 import Login from './screens/Login';
 import Register from './screens/Register';
+import Reservar from './screens/Reservar';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -31,7 +32,7 @@ function Home() {
             iconName = 'card-search';
           } else if (route.name === 'Screen1') {
             iconName = 'home';
-          } else if (route.name === 'Screen2') {
+          } else if (route.name === 'Mis Reservas') {
             iconName = 'calendar-check'; 
           } else if (route.name === 'Screen3') {
             iconName = 'account-circle'; 
@@ -60,7 +61,9 @@ function Home() {
     >
       
       <Tab.Screen options={{ headerShown: false }} name="Screen1" component={Screen1} />
-      <Tab.Screen name="Screen2" component={Screen2} />
+      <Tab.Screen name="Mis Reservas" 
+      options={{ headerShown: true }} 
+      component={Screen2} />
       <Tab.Screen name="Screen5" component={Screen5} />
       <Tab.Screen name="Screen3" component={Screen3} />
       
@@ -102,6 +105,12 @@ function App() {
             options={{ headerShown: true }} 
             name="DetalleEstablecimiento" 
             component={DetalleEstablecimiento} 
+          />
+
+          <Stack.Screen 
+            options={{ headerShown: true }} 
+            name="Reservar" 
+            component={Reservar} 
           />
 
         </Stack.Navigator>

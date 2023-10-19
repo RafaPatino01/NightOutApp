@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Night Out Admin</title>
+    <!-- Add Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <br><br>
+                <img src="logo.png" class="w-50">
+                <br><br>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" placeholder="Enter your username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Enter your password">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Bootstrap JS and jQuery if needed -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Function to check if the user is already logged in
+        const checkLoggedIn = () => {
+            // Check if the "NightOut_login" cookie is set
+            const cookies = document.cookie.split('; ');
+            for (const cookie of cookies) {
+                const [name, value] = cookie.split('=');
+                if (name === "NightOut_login" && value === "true") {
+                    // User is logged in, redirect to another page
+                    window.location.href = 'index.html';
+                    return;
+                }
+            }
+        };
+
+        // Call the checkLoggedIn function when the page loads
+        window.addEventListener('load', checkLoggedIn);
+        
+        const ip = '192.168.1.70';
+    
+        const handleLogin = async (email, password) => {
+            try {
+                // Construct the URL with parameters
+                const apiUrl = `http://${ip}:3000/login?correo_electronico=${email}&contrasena=${password}`;
+    
+                // Perform the GET request
+                const response = await fetch(apiUrl);
+    
+                // Check if the response is successful (status code 200)
+                if (response.status === 200) {
+                    // Parse the response as JSON
+                    const data = await response.json();
+    
+                    // Check if the response contains "res" equal to "OK" to determine if login was successful
+                    if (data.res === "OK") {
+                        // Successful login, log the user data
+                        console.log('Login Result:', data.user.admin);
+                        
+                        if(data.user.admin > 0){
+                            // Set a cookie to indicate the user is logged in
+                            const expirationTime = new Date();
+                            expirationTime.setTime(expirationTime.getTime() + 3 * 60 * 60 * 1000); // 3 hours in milliseconds
+
+                            // Create the cookie with the "expires" attribute set to the expiration time
+                            document.cookie = `NightOut_login=true; expires=${expirationTime.toUTCString()}; path=/`;     
+
+                            // Redirect to another page
+                            window.location.href = 'index.html';
+                        }
+                        else {
+                            alert("Usuario no administrador.")
+                        }
+                        
+                    } else {
+                        // Login failed, show an alert to the user
+                        console.error('Login failed. Server response:', data.res);
+                        alert('Login failed. Please check your credentials.');
+                    }
+                } else {
+                    // Handle non-200 status codes (e.g., server error)
+                    console.error('Login failed. Status code:', response.status);
+                    alert('Login failed. Please try again later.');
+                }
+            } catch (error) {
+                console.error('Login failed:', error);
+                alert('Login failed. Please try again later.');
+            }
+        };
+    
+        // Attach a form submit event handler
+        document.getElementById('login-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            handleLogin(username, password);
+        });
+    </script>
+</body>
+</html>
