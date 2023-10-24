@@ -84,6 +84,186 @@ app.get('/get_establecimiento/:id', async (req, res) => {
 });
 
 
+app.delete('/delete_establecimiento/:id', async (req, res) => {
+  try {
+    const establecimientoId = req.params.id;
+
+    const client = await pool.connect();
+
+    // Construct the SQL DELETE statement
+    const queryString = 'DELETE FROM public.establecimientos WHERE id = $1';
+
+    // Execute the SQL statement with the provided user ID
+    const result = await client.query(queryString, [establecimientoId]);
+
+    client.release();
+
+    res.json({ message: 'Establecimiento deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting establecimiento:', error);
+    res.status(500).json({ error: 'Error deleting establecimientoId' });
+  }
+});
+
+
+
+app.put('/update_establecimiento/:id', async (req, res) => {
+  try {
+    const establecimientoId = req.params.id;
+    const establecimientoData = req.body; // Assuming you send establecimiento data in the request body
+
+    const client = await pool.connect();
+    const fieldUpdates = [];
+    const queryValues = [];
+
+    // Construct the SQL UPDATE statement based on the provided establecimiento data
+    let queryIndex = 1; // Start with the first parameter index
+
+    // Check if each field is included in the request body and add it to the update statement
+    if (establecimientoData.nombre !== undefined) {
+      fieldUpdates.push(`nombre = $${queryIndex}`);
+      queryValues.push(establecimientoData.nombre);
+      queryIndex++;
+    }
+
+    if (establecimientoData.ubicacion !== undefined) {
+      fieldUpdates.push(`ubicacion = $${queryIndex}`);
+      queryValues.push(establecimientoData.ubicacion);
+      queryIndex++;
+    }
+
+    if (establecimientoData.capacidad_total !== undefined) {
+      fieldUpdates.push(`capacidad_total = $${queryIndex}`);
+      queryValues.push(establecimientoData.capacidad_total);
+      queryIndex++;
+    }
+
+    if (establecimientoData.capacidad_actual !== undefined) {
+      fieldUpdates.push(`capacidad_actual = $${queryIndex}`);
+      queryValues.push(establecimientoData.capacidad_actual);
+      queryIndex++;
+    }
+
+    if (establecimientoData.num_mesas !== undefined) {
+      fieldUpdates.push(`num_mesas = $${queryIndex}`);
+      queryValues.push(establecimientoData.num_mesas);
+      queryIndex++;
+    }
+
+    if (establecimientoData.imagen_mapa !== undefined) {
+      fieldUpdates.push(`imagen_mapa = $${queryIndex}`);
+      queryValues.push(establecimientoData.imagen_mapa);
+      queryIndex++;
+    }
+
+    if (establecimientoData.capacidades_mesa !== undefined) {
+      fieldUpdates.push(`capacidades_mesa = $${queryIndex}`);
+      queryValues.push(establecimientoData.capacidades_mesa);
+      queryIndex++;
+    }
+
+    if (establecimientoData.email !== undefined) {
+      fieldUpdates.push(`email = $${queryIndex}`);
+      queryValues.push(establecimientoData.email);
+      queryIndex++;
+    }
+
+    if (establecimientoData.contrasena !== undefined) {
+      fieldUpdates.push(`contrasena = $${queryIndex}`);
+      queryValues.push(establecimientoData.contrasena);
+      queryIndex++;
+    }
+
+    if (establecimientoData.tipo !== undefined) {
+      fieldUpdates.push(`tipo = $${queryIndex}`);
+      queryValues.push(establecimientoData.tipo);
+      queryIndex++;
+    }
+
+    if (establecimientoData.descripcion !== undefined) {
+      fieldUpdates.push(`descripcion = $${queryIndex}`);
+      queryValues.push(establecimientoData.descripcion);
+      queryIndex++;
+    }
+
+    if (establecimientoData.horario !== undefined) {
+      fieldUpdates.push(`horario = $${queryIndex}`);
+      queryValues.push(establecimientoData.horario);
+      queryIndex++;
+    }
+
+    if (establecimientoData.restricciones !== undefined) {
+      fieldUpdates.push(`restricciones = $${queryIndex}`);
+      queryValues.push(establecimientoData.restricciones);
+      queryIndex++;
+    }
+
+    if (establecimientoData.tipo_de_pago !== undefined) {
+      fieldUpdates.push(`tipo_de_pago = $${queryIndex}`);
+      queryValues.push(establecimientoData.tipo_de_pago);
+      queryIndex++;
+    }
+
+    if (establecimientoData.precios !== undefined) {
+      fieldUpdates.push(`precios = $${queryIndex}`);
+      queryValues.push(establecimientoData.precios);
+      queryIndex++;
+    }
+
+    if (establecimientoData.resenas_calificacion !== undefined) {
+      fieldUpdates.push(`resenas_calificacion = $${queryIndex}`);
+      queryValues.push(establecimientoData.resenas_calificacion);
+      queryIndex++;
+    }
+
+    if (establecimientoData.redes_sociales !== undefined) {
+      fieldUpdates.push(`redes_sociales = $${queryIndex}`);
+      queryValues.push(establecimientoData.redes_sociales);
+      queryIndex++;
+    }
+
+    if (establecimientoData.link_google_maps !== undefined) {
+      fieldUpdates.push(`link_google_maps = $${queryIndex}`);
+      queryValues.push(establecimientoData.link_google_maps);
+      queryIndex++;
+    }
+
+    if (establecimientoData.ubicacion_general !== undefined) {
+      fieldUpdates.push(`ubicacion_general = $${queryIndex}`);
+      queryValues.push(establecimientoData.ubicacion_general);
+      queryIndex++;
+    }
+
+    if (establecimientoData.images !== undefined) {
+      fieldUpdates.push(`images = $${queryIndex}`);
+      queryValues.push(establecimientoData.images);
+      queryIndex++;
+    }
+
+    // Create the final query string
+    const queryString = `
+      UPDATE public.establecimientos
+      SET 
+        ${fieldUpdates.join(', ')}
+      WHERE id = $${queryIndex}
+    `;
+
+    queryValues.push(establecimientoId);
+
+    // Execute the SQL statement with the provided data
+    const result = await client.query(queryString, queryValues);
+
+    client.release();
+
+    res.json({ message: 'Establecimiento data updated successfully' });
+  } catch (error) {
+    console.error('Error updating establecimiento data:', error);
+    res.status(500).json({ error: 'Error updating establecimiento data' });
+  }
+});
+
+
+
 
 app.get('/login', async (req, res) => {
   try {
@@ -164,8 +344,6 @@ app.get('/get_all_usuarios', async (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
-
-
 
 app.put('/update_usuario/:id', async (req, res) => {
   try {

@@ -20,7 +20,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="index.html">Dashboard</a>
                 </li>
-                <li class="nav-item ">
+                <li class="nav-item">
                     <a class="nav-link" href="usuarios.html">Usuarios</a>
                 </li>
                 <li class="nav-item active">
@@ -33,10 +33,53 @@
         </div>
     </nav>
     
-    <div class="container mt-5">
+    <div class="container mt-5" id="container">
         <!-- Content of your admin page goes here -->
         <h1>Establecimientos</h1>
+        <div class="row mt-3 mb-3 justify-content-center">
+            <div class="col-md-6">
+                <a class="btn btn-primary w-100" href="crear_establecimiento.html">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                    </svg> Añadir establecimiento
+                </a>                
+            </div>
+            <div class="col-md-6"></div>
+        </div>
+        <div class="row py-3">
+            <div class="col-6">
+                <input class="form-control" type="text" placeholder="Filtrar por nombre" id="filtrar">
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-3 border bg-light py-2"><p class="lead">Nombre</p></div>
+            <div class="col-3 border bg-light py-2"><p class="lead">Email</p></div>
+            <div class="col-3 border bg-light py-2"><p class="lead">Tipo</p></div>
+            <div class="col-3 border bg-light py-2"><p class="lead">Acción</p></div>
+        </div>
+
     </div>
+
+    <!-- Modal for deleting a user -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteUserModalLabel">Eliminar establecimiento</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar este establecimiento?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteButton">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
     <!-- Add Bootstrap JS and jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -44,5 +87,35 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script src="functionsLogin.js"></script>
+    <script src="getEstablecimientos.js"></script>
+
+    <script>
+        setTimeout(function() {
+            document.getElementById('filtrar').addEventListener('input', function () {
+                const filtro = this.value.toLowerCase();
+                const establecimientos = document.querySelectorAll('.filtro_base');
+        
+                establecimientos.forEach(function (establecimiento) {
+                    const textoEstablecimiento = establecimiento.textContent.toLowerCase();
+                    const fila = establecimiento.closest('.row');
+        
+                    if (textoEstablecimiento.includes(filtro)) {
+                        fila.style.display = '';
+                    } else {
+                        fila.style.display = 'none';
+                    }
+                });
+            });
+        }, 3000);
+
+        let establecimientoId = "";
+
+        document.getElementById('confirmDeleteButton').addEventListener('click', function () {
+            console.log("ELIMINAR: " + establecimientoId);
+            deleteEstablecimiento(establecimientoId);
+            location.reload(true);
+        });
+    </script>
+
 </body>
 </html>

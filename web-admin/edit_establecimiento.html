@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Night Out</title>
+    <!-- Add Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<style>
+/* Style for the image container */
+.image-container {
+    display: flex; /* Use flexbox */
+    flex-wrap: nowrap; /* Prevent wrapping to the next row */
+    overflow-x: auto; /* Add horizontal scrollbar if needed */
+    margin-bottom: 40px;
+}
+
+/* Style for the image wrapper */
+.image-wrapper {
+    position: relative; /* Required for absolute positioning of the X */
+    margin-right: 10px; /* Add some spacing between images */
+    cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+.image-wrapper img {
+    width: 150px;
+    height: 150px;
+}
+
+/* Style for the red X */
+.image-wrapper .red-x {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 24px;
+    color: red;
+    display: none; /* Initially hide the X */
+}
+
+
+</style>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">
+            <img src="logo.png" alt="Your Logo" height="30" class="d-inline-block align-top">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="usuarios.html">Usuarios</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="establecimientos.html">Establecimientos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="logout-button">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    
+    <div class="container mt-5">
+        <h1>Editar Establecimiento</h1>
+        
+        <div class="bg-light p-5">
+            <h3>Datos del acceso:</h3>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            
+        </div>
+          
+        <hr>
+
+        <div class="bg-light p-5">
+            <h3>Información escencial:</h3>
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre del establecimiento</label>
+              <input type="text" class="form-control" id="nombre" name="nombre" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="descripcion" class="form-label">Descripción</label>
+              <textarea class="form-control" id="descripcion" name="descripcion" rows="4" required></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label for="horario" class="form-label">Horario</label>
+              <input type="text" class="form-control" id="horario" name="horario" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="tipo" class="form-label">Tipo de Establecimiento</label>
+              <select class="form-select" id="tipo" name="tipo" required>
+                <option value="Antro">Antro</option>
+                <option value="Bar">Bar</option>
+                <option value="Restaurante">Restaurante</option>
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <label for="num_mesas" class="form-label">Número de Mesas</label>
+              <input type="number" class="form-control" id="num_mesas" name="num_mesas" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="capacidades_mesa" class="form-label">Capacidades de cada mesa (separado por coma)</label>
+              <input type="number" class="form-control" id="capacidades_mesa" name="capacidades_mesa" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="capacidad_total" class="form-label">Capacidad Total</label>
+              <input type="number" class="form-control" id="capacidad_total" name="capacidad_total" required>
+            </div>
+
+        </div>
+
+        <div class="bg-light p-5">
+            <div class="mb-3">
+                <div class="mb-3">
+                    <label for="images" class="form-label">Imágenes establecimiento (máximo 10)</label>
+                    <!-- Input for uploading images -->
+                    <input type="file" class="form-control" id="images" name="images" multiple accept="image/*" required>
+                </div>
+                
+                <!-- Container to display images -->
+                <div id="image-container" class="image-container mt-3"></div>
+        
+                <div class="mb-3">
+                    <label for="imagen_mapa" class="form-label">Mapa</label>
+                    <input type="file" class="form-control" id="imagen_mapa" name="imagen_mapa" accept="image/*" required>
+                </div>
+        
+                <!-- Container to display mapa -->
+                <div id="image-container2" class="image-container mt-3"></div>
+            </div>
+        </div>
+
+        <hr>
+    
+        <div class="bg-light p-5">
+            <h3>Datos ubicación:</h3>
+            <div class="mb-3">
+            <label for="ubicacion" class="form-label">Ubicación (dirección exacta)</label>
+            <input type="text" class="form-control" id="ubicacion" name="ubicacion" required>
+            </div>
+            <div class="mb-3">
+            <label for="ubicacion_general" class="form-label">Ubicación en la ciudad (colonia etc...)</label>
+            <input type="text" class="form-control" id="ubicacion_general" name="ubicacion_general" required>
+            </div>
+            <div class="mb-3">
+            <label for="link_google_maps" class="form-label">Enlace de Google Maps</label>
+            <input type="text" class="form-control" id="link_google_maps" name="link_google_maps" required>
+            </div>
+        </div>
+
+        <hr>
+    
+        <div class="bg-light p-5">
+            <h3>Información adicional:</h3>
+            <div class="mb-3">
+            <label for="restricciones" class="form-label">Restricciones</label>
+            <input type="text" class="form-control" id="restricciones" name="restricciones" required>
+            </div>
+            <div class="mb-3">
+            <label for="tipo_de_pago" class="form-label">Tipo de Pago</label>
+            <select class="form-select" id="tipo_de_pago" name="tipo_de_pago" required>
+                <option value="Efectivo">Solo Efectivo</option>
+                <option value="Tarjeta">Solo Tarjeta</option>
+                <option value="Ambos">Efectivo y Tarjeta</option>
+            </select>
+            </div>
+            <div class="mb-3">
+            <label for="precios" class="form-label">Precios</label>
+            <select class="form-select" id="precios" name="precios" required>
+                <option value="$">$</option>
+                <option value="$$">$$</option>
+                <option value="$$$">$$$</option>
+                <option value="$$$$">$$$$</option>
+            </select>
+            </div>
+            <div class="mb-3">
+            <label for="redes_sociales" class="form-label">Link Instagram</label>
+            <input type="text" class="form-control" id="redes_sociales" name="redes_sociales" required>
+            </div>
+        </div>
+          
+        <div class="row mt-3 mb-5 justify-content-center">
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-lg btn-primary w-100" id="guardar-datos-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-floppy2-fill" viewBox="0 0 16 16">
+                        <path d="M12 2h-2v3h2V2Z"/>
+                        <path d="M1.5 0A1.5 1.5 0 0 0 0 1.5v13A1.5 1.5 0 0 0 1.5 16h13a1.5 1.5 0 0 0 1.5-1.5V2.914a1.5 1.5 0 0 0-.44-1.06L14.147 .439A1.5 1.5 0 0 0 13.086 0H1.5ZM4 6a1 1 0 0 1-1-1V1h10v4a1 1 0 0 1-1 1H4ZM3 9h10a1 1 0 0 1 1 1v5H2v-5a1 1 0 0 1 1-1Z"/>
+                    </svg>
+                    <br>Guardar Datos
+                </button>                
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Add Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script src="functionsLogin.js"></script>
+    <script src="editar.js"></script>
+
+    <script>
+        // Function to render images from imageUrls variable
+        function renderImages() {
+        
+            // Get the image container element
+            const imageContainer = document.getElementById('image-container');
+            const imageContainer2 = document.getElementById('image-container2');
+
+            // Clear any existing images in the container
+            imageContainer.innerHTML = '';
+            imageContainer2.innerHTML = '';
+
+            if(mapaUrl != ""){
+                const mapa_fullImageUrl = `http://192.168.1.72:3000${mapaUrl.substring(1)}`;
+                // Create a container for the image with the 'image-wrapper' class
+                const mapa_imageWrapper = document.createElement('div');
+                mapa_imageWrapper.className = 'image-wrapper';
+
+                // Create the image element
+                const mapa_imgElement = document.createElement('img');
+                mapa_imgElement.src = mapa_fullImageUrl;
+                mapa_imgElement.alt = 'Image';
+
+                // Create the red X element
+                const mapa_redX = document.createElement('span');
+                mapa_redX.classList.add('red-x');
+                mapa_redX.textContent = '❌'; // Unicode character for a red X
+                mapa_redX.style.display = 'none'; // Initially hide the X
+
+                // Append the image element to the container
+                mapa_imageWrapper.appendChild(mapa_imgElement);
+
+                // Append the red X element to the container
+                mapa_imageWrapper.appendChild(mapa_redX);
+
+                // Add hover effect to show the red X
+                mapa_imageWrapper.addEventListener('mouseenter', () => {
+                    mapa_redX.style.display = 'block';
+                });
+
+                mapa_imageWrapper.addEventListener('mouseleave', () => {
+                    mapa_redX.style.display = 'none';
+                });
+
+                // Add click event to print the image source
+                mapa_imageWrapper.addEventListener('click', () => {
+                    console.log(mapa_fullImageUrl);
+                    mapaUrl = "";
+                    renderImages()
+                });
+
+                // Append the container to the image container
+                imageContainer2.appendChild(mapa_imageWrapper);
+
+
+            }
+            
+            // Loop through the image URLs and create image elements with full URLs
+            for (const imageUrl of imageUrls) {
+                // Remove the dot at the beginning of the URL and create a full URL
+                const fullImageUrl = `http://192.168.1.72:3000${imageUrl.substring(1)}`;
+
+                // Create a container for the image with the 'image-wrapper' class
+                const imageWrapper = document.createElement('div');
+                imageWrapper.className = 'image-wrapper';
+
+                // Create the image element
+                const imgElement = document.createElement('img');
+                imgElement.src = fullImageUrl;
+                imgElement.alt = 'Image';
+
+                // Create the red X element
+                const redX = document.createElement('span');
+                redX.classList.add('red-x');
+                redX.textContent = '❌'; // Unicode character for a red X
+                redX.style.display = 'none'; // Initially hide the X
+
+                // Append the image element to the container
+                imageWrapper.appendChild(imgElement);
+
+                // Append the red X element to the container
+                imageWrapper.appendChild(redX);
+
+                // Add hover effect to show the red X
+                imageWrapper.addEventListener('mouseenter', () => {
+                    redX.style.display = 'block';
+                });
+
+                imageWrapper.addEventListener('mouseleave', () => {
+                    redX.style.display = 'none';
+                });
+
+                // Add click event to print the image source
+                imageWrapper.addEventListener('click', () => {
+
+                    console.log("previous array: " + imageUrls)
+
+
+                    for(let i = 0; i<imageUrls.length; i++) {
+                        if(fullImageUrl.includes(imageUrls[i].replace(/\./, ""))){
+                            imageUrls.splice(i, 1);
+                        }
+                    }
+
+                    console.log("updated array: " + imageUrls)
+
+                    renderImages()
+
+                });
+
+                // Append the container to the image container
+                imageContainer.appendChild(imageWrapper);
+            }
+        }
+    </script>
+</body>
+</html>

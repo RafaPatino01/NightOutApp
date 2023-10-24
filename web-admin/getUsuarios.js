@@ -54,7 +54,7 @@ function remove(pId){
 // Function to delete a user by ID
 function deleteUser(userId) {
     // Send a DELETE request to delete the user
-    fetch(`http://192.168.1.70:3000/delete_usuario/${userId}`, {
+    fetch(`http://192.168.1.72:3000/delete_usuario/${userId}`, {
         method: 'DELETE',
     })
         .then(response => {
