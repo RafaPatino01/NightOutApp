@@ -570,7 +570,7 @@ app.get('/get_reservas_by_id/:id', async (req, res) => {
     const { id } = req.params;
 
     // Query para buscar la reserva con el id dado
-    const queryString = 'SELECT * FROM reservas WHERE establecimiento_id = $1 AND fecha_hora > CURRENT_TIMESTAMP';
+    const queryString = 'SELECT * FROM reservas WHERE establecimiento_id = $1 AND fecha_hora > CURRENT_TIMESTAMP AND confirmado = 0;';
 
     const result = await client.query(queryString, [id]);
 
@@ -587,6 +587,98 @@ app.get('/get_reservas_by_id/:id', async (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
+
+
+// Ruta para obtener una reserva por su id
+app.get('/get_reservas_by_id2/:id', async (req, res) => {
+  try {
+    const client = await pool.connect();
+
+    // Obtener el valor del parámetro "id" de la ruta
+    const { id } = req.params;
+
+    // Query para buscar la reserva con el id dado
+    const queryString = 'SELECT * FROM reservas WHERE establecimiento_id = $1 AND fecha_hora > CURRENT_TIMESTAMP AND confirmado = 1 AND asistencia = 0;';
+
+    const result = await client.query(queryString, [id]);
+
+    client.release();
+
+    if (result.rows.length === 0) {
+      res.status(404).json({ error: 'Reserva not found' });
+    } else {
+      res.json(result.rows);
+    }
+
+  } catch (error) {
+    console.error('Error al obtener reserva:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+app.get('/asistencia_reserva/:id', async (req, res) => {
+  try {
+    const reservaId = req.params.id;
+
+    const client = await pool.connect();
+
+    // Construct the SQL UPDATE statement
+    const queryString = 'UPDATE public.reservas SET asistencia = 1 WHERE id = $1';
+
+    // Execute the SQL statement with the provided reserva ID
+    const result = await client.query(queryString, [reservaId]);
+
+    client.release();
+
+    res.json({ message: 'Reserva updated successfully' });
+  } catch (error) {
+    console.error('Error updating reserva:', error);
+    res.status(500).json({ error: 'Error updating reserva' });
+  }
+});
+
+app.get('/confirmar_reserva/:id', async (req, res) => {
+  try {
+    const reservaId = req.params.id;
+
+    const client = await pool.connect();
+
+    // Construct the SQL UPDATE statement
+    const queryString = 'UPDATE public.reservas SET confirmado = 1 WHERE id = $1';
+
+    // Execute the SQL statement with the provided reserva ID
+    const result = await client.query(queryString, [reservaId]);
+
+    client.release();
+
+    res.json({ message: 'Reserva updated successfully' });
+  } catch (error) {
+    console.error('Error updating reserva:', error);
+    res.status(500).json({ error: 'Error updating reserva' });
+  }
+});
+
+app.get('/cancelar_reserva/:id', async (req, res) => {
+  try {
+    const reservaId = req.params.id;
+
+    const client = await pool.connect();
+
+    // Construct the SQL UPDATE statement
+    const queryString = 'UPDATE public.reservas SET confirmado = 0 WHERE id = $1';
+
+    // Execute the SQL statement with the provided reserva ID
+    const result = await client.query(queryString, [reservaId]);
+
+    client.release();
+
+    res.json({ message: 'Reserva updated successfully' });
+  } catch (error) {
+    console.error('Error updating reserva:', error);
+    res.status(500).json({ error: 'Error updating reserva' });
+  }
+});
+
 
 
 // Ruta para obtener todos las resenas

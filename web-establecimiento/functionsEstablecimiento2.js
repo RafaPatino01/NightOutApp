@@ -1,6 +1,5 @@
 let currentReservaId = "";
 
-
 // Function to get the value of a specific cookie by its name
 const getCookie = (name) => {
     const cookies = document.cookie.split('; ');
@@ -42,67 +41,7 @@ if (id) {
   console.error("NightOut_Establecimiento cookie not found or id is missing");
 }
 
-
 function getReservas(pId){
-    const url = `http://192.168.100.11:3000/get_reservas_by_id/${pId}`;
-
-    fetch(url)
-    .then(response => {
-        if (response.ok) {
-        return response.json();
-        } else {
-        return response.json().then(errorData => {
-            throw new Error(errorData.error);
-        });
-        }
-    })
-    .then(reservas => {
-        console.log('Received reservas:', reservas);
-
-
-        
-
-        document.getElementById("reservas_pendientes").innerHTML = "";
-
-        reservas.forEach(reserva => {
-            getUsuario(reserva.usuario_id)
-            .then(usuario => {
-                document.getElementById("reservas_pendientes").innerHTML += `
-                <div class="container2 mt-3 px-4">
-                    <div class="row bg-dark p-3 rounded">
-                        <div class="col-9">
-                            <p class="m-0 text-bold">${usuario.nombre} ${usuario.apellido}</p>
-                            <hr>
-                            <p class="py-0 m-0">${reserva.tipo_de_mesa}</p>
-                            ${generateDateTimeHTML(reserva.fecha_hora)}
-                        </div>
-
-                        <div class="col-3 text-center bg-success d-flex align-items-center rounded" onclick="confirmarReserva(${reserva.id})">
-                        <p class="w-100 text-center text-white text-truncate">
-
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
-                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-                        </svg>
-                        </p>
-                        </div>
-                        
-                    </div>
-                </div>
-                `;
-            })
-            
-        });
-
-
-    })
-    .catch(error => {
-        console.error('Error fetching reservas:', error);
-    });
-
-}
-
-
-function getReservas2(pId){
     const url = `http://192.168.100.11:3000/get_reservas_by_id2/${pId}`;
 
     fetch(url)
