@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Establecimiento Night Out</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body class="bg-black text-white" data-bs-theme="dark">
+    <div class="full-screen p-3">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <br><br>
+                <img src="logo.png" class="w-50">
+                <br><br>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" placeholder="Enter your username">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Enter your password">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log("Hello, World!");
+        
+        // Function to check if the user is already logged in
+        const checkLoggedIn = () => {
+            // Check if the "NightOut_EstablecimientoLogin" cookie is set
+            const cookies = document.cookie.split('; ');
+            for (const cookie of cookies) {
+                const [name, value] = cookie.split('=');
+                if (name === "NightOut_EstablecimientoLogin" && value === "true") {
+                    // User is logged in, redirect to another page
+
+                    for (const cookie2 of cookies) {
+                        const [name2, value2] = cookie2.split('=');
+                        if (name2 === "NightOut_Establecimiento") {
+                            // User is logged in, redirect to another page
+                            const parsedValue2 = JSON.parse(value2);
+                            window.location.href = 'index.html?id=' + parsedValue2;
+                            return;
+                        }
+                    }
+
+                }
+            }
+        };
+
+        // Call the checkLoggedIn function when the page loads
+        window.addEventListener('load', checkLoggedIn);
+        
+        const ip = '192.168.100.11';
+    
+        const handleLogin = async (email, password) => {
+            try {
+                // Construct the URL with parameters
+                const apiUrl = `http://${ip}:3000/login_establecimiento?correo_electronico=${email}&contrasena=${password}`;
+    
+                // Perform the GET request
+                const response = await fetch(apiUrl);
+    
+                // Check if the response is successful (status code 200)
+                if (response.status === 200) {
+                    // Parse the response as JSON
+                    const data = await response.json();
+    
+                    // Check if the response contains "res" equal to "OK" to determine if login was successful
+                    if (data.res === "OK") {                        
+                        // Set a cookie to indicate the user is logged in
+                        const expirationTime = new Date();
+                        expirationTime.setTime(expirationTime.getTime() + 3 * 60 * 60 * 1000); // 3 hours in milliseconds
+
+                        // Create the cookie with the "expires" attribute set to the expiration time
+                        document.cookie = `NightOut_EstablecimientoLogin=true; expires=${expirationTime.toUTCString()}; path=/`;     
+                        document.cookie = `NightOut_Establecimiento=${data.user.id}; expires=${expirationTime.toUTCString()}; path=/`;
+
+                        // Redirect to another page
+                        window.location.href = 'index.html?id='+data.user.id;
+                        
+                    } else {
+                        // Login failed, show an alert to the user
+                        console.error('Login failed. Server response:', data.res);
+                        alert('Login failed. Please check your credentials.');
+                    }
+                } else {
+                    // Handle non-200 status codes (e.g., server error)
+                    console.error('Login failed. Status code:', response.status);
+                    alert('Login failed. Please try again later.');
+                }
+            } catch (error) {
+                console.error('Login failed:', error);
+                alert('Login failed. Please try again later.');
+            }
+        };
+    
+        // Attach a form submit event handler
+        document.getElementById('login-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            handleLogin(username, password);
+        });
+    </script>
+</body>
+</html>

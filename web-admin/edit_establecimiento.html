@@ -228,7 +228,7 @@
             imageContainer2.innerHTML = '';
 
             if(mapaUrl != ""){
-                const mapa_fullImageUrl = `http://192.168.1.72:3000${mapaUrl.substring(1)}`;
+                const mapa_fullImageUrl = `http://192.168.100.11:3000${mapaUrl.substring(1)}`;
                 // Create a container for the image with the 'image-wrapper' class
                 const mapa_imageWrapper = document.createElement('div');
                 mapa_imageWrapper.className = 'image-wrapper';
@@ -275,7 +275,7 @@
             // Loop through the image URLs and create image elements with full URLs
             for (const imageUrl of imageUrls) {
                 // Remove the dot at the beginning of the URL and create a full URL
-                const fullImageUrl = `http://192.168.1.72:3000${imageUrl.substring(1)}`;
+                const fullImageUrl = `http://192.168.100.11:3000${imageUrl.substring(1)}`;
 
                 // Create a container for the image with the 'image-wrapper' class
                 const imageWrapper = document.createElement('div');

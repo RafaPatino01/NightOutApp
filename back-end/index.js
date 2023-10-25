@@ -1,34 +1,32 @@
 const express = require('express');
 const cors = require('cors');
 const sharp = require('sharp');
+const https = require('https');  
 
 const { Pool } = require('pg');
 const multer = require('multer');
 const crypto = require('crypto');
 
-const fs = require('fs'); // Add this line to import the 'fs' module
-const path = require('path'); // Import the 'path' module
+const fs = require('fs');
+const path = require('path');
 
-// Middleware para manejar la carga de archivos usando Multer
-const storage = multer.memoryStorage(); // Almacena el archivo cargado en la memoria
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 const app = express();
 
-app.use(express.json()); // Parse JSON request bodies
+app.use(express.json());
 
-// Enable CORS middleware
-app.use(cors());  
+app.use(cors());
 
 const port = 3000;
 
-// Create a PostgreSQL database connection pool
 const pool = new Pool({
   user: 'root',
-  host: '142.93.116.94', // Replace with your database host
+  host: '142.93.116.94',
   database: 'night_out_db',
   password: 'asdb4klgh5B#c',
-  port: 5432, // Replace with your database port
+  port: 5432,
 });
 
 pool.on('error', (err, client) => {
@@ -58,7 +56,7 @@ app.get('/get_establecimientos', async (req, res) => {
   }
 });
 
-// Create a GET request to fetch an "establecimiento" by its "nombre"
+// Create a GET request to fetch an "establecimiento" by its id
 app.get('/get_establecimiento/:id', async (req, res) => {
   const { id } = req.params;
 
@@ -68,7 +66,7 @@ app.get('/get_establecimiento/:id', async (req, res) => {
     const result = await client.query(query, [id]);
 
     if (result.rows.length === 0) {
-      // If no "establecimiento" with the provided "nombre" is found, return a 404 Not Found status
+      // If no "establecimiento" with the provided id is found, return a 404 Not Found status
       res.status(404).json({ error: 'Establecimiento not found' });
     } else {
       // If found, return the "establecimiento" as JSON
@@ -299,6 +297,39 @@ app.get('/login', async (req, res) => {
 });
 
 
+app.get('/login_establecimiento', async (req, res) => {
+  try {
+    // Connect to the database
+    const client = await pool.connect();
+
+    // Get the values of correo_electronico and contrasena from the request parameters
+    const { correo_electronico, contrasena } = req.query;
+
+    const sha256 = crypto.createHash('sha256');
+    const hashedPassword = sha256.update(contrasena).digest('hex');
+    
+    // Use parameterized queries to safely pass values to the SQL query
+    const query = 'SELECT * FROM establecimientos WHERE email = $1 AND contrasena = $2';
+    const result = await client.query(query, [correo_electronico, hashedPassword]);
+
+    // Release the connection
+    client.release();
+
+    // Check if there are results in the query
+    if (result.rows.length === 0) {
+      // No matches found, respond with "NOT OK"
+      res.status(400).json({ res: "NOT OK" });
+    } else {
+      // Matches found, respond with "OK" and the user data
+      res.json({ res: "OK", user: result.rows[0] });
+    }
+
+  } catch (error) {
+    console.error('Error retrieving users:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 // Ruta para obtener usuarios por correo electrónico (si se proporciona)
 app.get('/get_usuarios', async (req, res) => {
@@ -325,6 +356,36 @@ app.get('/get_usuarios', async (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
+
+// Ruta para obtener un usuario por su id
+app.get('/get_usuario_by_id/:id', async (req, res) => {
+  try {
+    const client = await pool.connect();
+
+    // Obtener el valor del parámetro "id" de la ruta
+    const { id } = req.params;
+
+    // Query para buscar el usuario con el id dado
+    const queryString = 'SELECT * FROM usuarios WHERE id = $1';
+
+    const result = await client.query(queryString, [id]);
+
+    client.release();
+
+    if (result.rows.length === 0) {
+      // If no "usuario" with the provided id is found, return a 404 Not Found status
+      res.status(404).json({ error: 'Usuario not found' });
+    } else {
+      // If found, return the "usuario" as JSON
+      res.json(result.rows[0]);
+    }
+
+  } catch (error) {
+    console.error('Error al obtener usuario:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
 
 
 // Ruta para obtener usuarios por correo electrónico (si se proporciona)
@@ -440,6 +501,8 @@ app.put('/update_usuario/:id', async (req, res) => {
     client.release();
 
     res.json({ message: 'User data updated successfully' });
+    console.log("UPDATED USER")
+
   } catch (error) {
     console.error('Error updating user data:', error);
     res.status(500).json({ error: 'Error updating user data' });
@@ -494,6 +557,33 @@ app.get('/get_reservas', async (req, res) => {
     res.json(result.rows);
   } catch (error) {
     console.error('Error al obtener reservas:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+// Ruta para obtener una reserva por su id
+app.get('/get_reservas_by_id/:id', async (req, res) => {
+  try {
+    const client = await pool.connect();
+
+    // Obtener el valor del parámetro "id" de la ruta
+    const { id } = req.params;
+
+    // Query para buscar la reserva con el id dado
+    const queryString = 'SELECT * FROM reservas WHERE establecimiento_id = $1 AND fecha_hora > CURRENT_TIMESTAMP';
+
+    const result = await client.query(queryString, [id]);
+
+    client.release();
+
+    if (result.rows.length === 0) {
+      res.status(404).json({ error: 'Reserva not found' });
+    } else {
+      res.json(result.rows);
+    }
+
+  } catch (error) {
+    console.error('Error al obtener reserva:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });

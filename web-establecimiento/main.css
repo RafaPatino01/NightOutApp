@@ -1,0 +1,75 @@
+.bg-black {
+    background-color: #070808;
+}
+
+.text-bold {
+    font-weight: 500;
+    font-size: 18px !important;
+}
+
+.round {
+    border-radius: 25px;
+}
+
+.full-screen {
+    height: 1vh !important;
+}
+
+.color-red {
+    background-color: rgba(157, 40, 40, 0.294) !important;
+    padding: 10px;
+}
+ /* Custom CSS */
+/* Navbar */
+
+.modal-body {
+    position: relative;
+    overflow: hidden;
+}
+
+#cameraFeed {
+max-width: 100%; /* Limit video width to 100% of the modal body */
+object-fit: cover; /* To maintain the video aspect ratio */
+}
+
+.navbar {
+    background-color: rgba(7, 8, 8, 0.972);
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: #fff;
+}
+
+.navbar-dark .navbar-toggler-icon {
+    background-color: #fff;
+}
+
+/* Container */
+.container {
+    color: #fff;
+    background-color: #141717;
+}
+
+/* Container */
+.container2 {
+    color: #fff;
+}
+
+/* Other Bootstrap primary elements */
+.btn-primary {
+    background-color: #5271FF;
+    border-color: #5271FF;
+}
+
+.btn-primary:hover {
+    background-color: #4061cc;
+    border-color: #4061cc;
+}
+
+.text-primary {
+    color: #5271FF;
+}
+
+.bg-primary {
+    background-color: #5271FF;
+}

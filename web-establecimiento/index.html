@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Establecimiento Night Out</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="main.css">
+</head>
+<body class="bg-black">
+
+    <nav class="navbar navbar-expand-lg navbar-dark px-4 fixed-top">
+        <a class="navbar-brand" href="#">
+            <img src="logo.png" alt="Your Logo" height="30" class="d-inline-block align-top">
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+              </svg>
+        </button>
+        
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="index.html">Reservas solicitadas</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="index.html">Reservas confirmadas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link color-red" href="#" id="logout-button">Cerrar sesión</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <br>
+    <h1 class="text-white ms-3 mt-5">Portal de establecimiento</h1>
+    
+
+    <div class="container2 mt-3 px-4">
+        <div class="row bg-dark p-3 rounded">
+            <hr>
+            <p class="text-bold" id="usuario"></p>
+        </div>
+    </div>
+
+    <h2 class="text-white ms-3 mt-4">Reservas pendientes</h2>
+
+    <div class="w-100 px-0 pb-5" id="reservas_pendientes">
+        <!--
+        <div class="container2 mt-3 px-4">
+            <div class="row bg-dark p-3 rounded">
+                <div class="col-8">
+                    <p class="m-0 text-bold">Rafael Patiño Goji</p>
+                    <hr>
+                    <p class="py-0 m-0">Mesa para 6</p>
+                    <p class="py-0 m-0">09/10/2023</p>
+                    <p class="py-0 m-0">9:00pm</p>
+                </div>
+                <div class="col-4 text-center bg-primary d-flex align-items-center rounded">
+                    <p class="w-100 text-center text-white">Aceptar</p>
+                </div>
+            </div>
+        </div>
+        -->
+    </div>
+    
+
+    <!-- !!!! MODAL !!!! -->
+    <div class="modal bg-dark" id="myModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+    
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title">QR Code Reader</h4>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+    
+            <!-- Modal body -->
+            <div class="modal-body d-flex justify-content-center align-items-center">
+                <video id="cameraFeed" autoplay playsinline muted></video>
+            </div>
+              
+    
+            <!-- Modal footer -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+    
+          </div>
+        </div>
+    </div>
+
+    <!-- Add Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="functionsEstablecimiento.js"></script>
+    <script src="functionsLogin.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="qr.js"></script>
+
+</body>
+</html>
