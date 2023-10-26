@@ -54,7 +54,7 @@ function remove(pId){
 // Function to delete a user by ID
 function deleteUser(userId) {
     // Send a DELETE request to delete the user
-    fetch(`http://192.168.100.11:3000/delete_usuario/${userId}`, {
+    fetch(`https://nightout.com.mx/api/delete_usuario/${userId}`, {
         method: 'DELETE',
     })
         .then(response => {

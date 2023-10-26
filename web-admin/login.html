@@ -51,12 +51,11 @@
         // Call the checkLoggedIn function when the page loads
         window.addEventListener('load', checkLoggedIn);
         
-        const ip = '192.168.100.11';
     
         const handleLogin = async (email, password) => {
             try {
                 // Construct the URL with parameters
-                const apiUrl = `http://${ip}:3000/login?correo_electronico=${email}&contrasena=${password}`;
+                const apiUrl = `https://nightout.com.mx/api/login?correo_electronico=${email}&contrasena=${password}`;
     
                 // Perform the GET request
                 const response = await fetch(apiUrl);

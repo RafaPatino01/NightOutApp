@@ -10,7 +10,7 @@ if (currentUrl.includes("edit_usuario")) {
 
     if (pId) {
         // Construct the URL with the ID as a query parameter
-        const apiUrl = `http://192.168.100.11:3000/get_usuarios/?correo_electronico=${pId.toLowerCase()}`;
+        const apiUrl = `https://nightout.com.mx/api/get_usuarios/?correo_electronico=${pId.toLowerCase()}`;
 
         // Make a GET request
         fetch(apiUrl)
@@ -62,7 +62,7 @@ const pId = urlParams.get('id');
 
 if (pId) {
     // Construct the URL with the ID as a query parameter
-    const apiUrl = `http://192.168.100.11:3000/get_establecimiento/${pId}`;
+    const apiUrl = `https://nightout.com.mx/api/get_establecimiento/${pId}`;
 
     // Make a GET request
     fetch(apiUrl)
@@ -107,7 +107,7 @@ if (pId) {
             imageContainer.innerHTML = '';
             imageContainer2.innerHTML = '';
 
-            const mapa_fullImageUrl = `http://192.168.100.11:3000${mapaUrl.substring(1)}`;
+            const mapa_fullImageUrl = `https://nightout.com.mx/api${mapaUrl.substring(1)}`;
             // Create a container for the image with the 'image-wrapper' class
             const mapa_imageWrapper = document.createElement('div');
             mapa_imageWrapper.className = 'image-wrapper';
@@ -152,7 +152,7 @@ if (pId) {
             // Loop through the image URLs and create image elements with full URLs
             for (const imageUrl of imageUrls) {
                 // Remove the dot at the beginning of the URL and create a full URL
-                const fullImageUrl = `http://192.168.100.11:3000${imageUrl.substring(1)}`;
+                const fullImageUrl = `https://nightout.com.mx/api${imageUrl.substring(1)}`;
 
                 // Create a container for the image with the 'image-wrapper' class
                 const imageWrapper = document.createElement('div');
@@ -241,7 +241,7 @@ function updateUser(userId) {
     };
 
     // Send a PUT request to update the user data
-    fetch(`http://192.168.100.11:3000/update_usuario/${userId}`, {
+    fetch(`https://nightout.com.mx/api/update_usuario/${userId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -290,7 +290,7 @@ function updateEstablecimiento(establecimientoId) {
     };
 
     // Send a PUT request to update the establecimiento data
-    fetch(`http://192.168.100.11:3000/update_establecimiento/${establecimientoId}`, {
+    fetch(`https://nightout.com.mx/api/update_establecimiento/${establecimientoId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'

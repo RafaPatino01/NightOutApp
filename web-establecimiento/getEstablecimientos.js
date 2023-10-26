@@ -1,5 +1,5 @@
 // Hacer una solicitud GET a la URL
-fetch("http://192.168.100.11:3000/get_establecimientos")
+fetch("https://nightout.com.mx/api/get_establecimientos")
   .then(response => {
     // Verificar si la respuesta es exitosa (código de estado 200)
     if (response.status === 200) {
@@ -54,7 +54,7 @@ function remove(pId){
 function deleteEstablecimiento(establecimientoId) {
     // Send a DELETE request to delete the user
 
-    fetch(`http://192.168.100.11:3000/delete_establecimiento/${establecimientoId}`, {
+    fetch(`https://nightout.com.mx/api/delete_establecimiento/${establecimientoId}`, {
         method: 'DELETE',
     })
     .then(response => {

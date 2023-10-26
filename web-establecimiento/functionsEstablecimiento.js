@@ -16,7 +16,7 @@ const getCookie = (name) => {
 // Get id
 const id = getCookie("NightOut_Establecimiento");
 if (id) {
-  const url = `http://192.168.100.11:3000/get_establecimiento/${id}`;
+  const url = `https://nightout.com.mx/api/get_establecimiento/${id}`;
   fetch(url)
     .then(response => {
       if (response.ok) {
@@ -44,7 +44,7 @@ if (id) {
 
 
 function getReservas(pId){
-    const url = `http://192.168.100.11:3000/get_reservas_by_id/${pId}`;
+    const url = `https://nightout.com.mx/api/get_reservas_by_id/${pId}`;
 
     fetch(url)
     .then(response => {
@@ -103,7 +103,7 @@ function getReservas(pId){
 
 
 function getReservas2(pId){
-    const url = `http://192.168.100.11:3000/get_reservas_by_id2/${pId}`;
+    const url = `https://nightout.com.mx/api/get_reservas_by_id2/${pId}`;
 
     fetch(url)
     .then(response => {
@@ -184,7 +184,7 @@ function getReservas2(pId){
 
 function getUsuario(pId) {
     // Build the URL for the GET request
-    const url = `http://192.168.100.11:3000/get_usuario_by_id/${pId}`;
+    const url = `https://nightout.com.mx/api/get_usuario_by_id/${pId}`;
 
     // Execute the fetch request and return a Promise
     return fetch(url)
@@ -240,7 +240,7 @@ function leerQr(reserva_id) {
 
 async function confirmarReserva(reserva_id) {
     try {
-        const url = `http://192.168.100.11:3000/confirmar_reserva/${reserva_id}`;
+        const url = `https://nightout.com.mx/api/confirmar_reserva/${reserva_id}`;
 
         const response = await fetch(url);
         const data = await response.json();
@@ -260,7 +260,7 @@ async function confirmarReserva(reserva_id) {
 
 async function cancelarReserva(reserva_id) {
     try {
-        const url = `http://192.168.100.11:3000/cancelar_reserva/${reserva_id}`;
+        const url = `https://nightout.com.mx/api/cancelar_reserva/${reserva_id}`;
 
         const response = await fetch(url);
         const data = await response.json();

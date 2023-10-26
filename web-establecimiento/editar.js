@@ -10,7 +10,7 @@ if (currentUrl.includes("edit_usuario")) {
 
     if (pId) {
         // Construct the URL with the ID as a query parameter
-        const apiUrl = `http://192.168.100.11:3000/get_usuarios/?correo_electronico=${pId.toLowerCase()}`;
+        const apiUrl = `https://nightout.com.mx/api/get_usuarios/?correo_electronico=${pId.toLowerCase()}`;
 
         // Make a GET request
         fetch(apiUrl)
@@ -62,7 +62,7 @@ const pId = urlParams.get('id');
 
 if (pId) {
     // Construct the URL with the ID as a query parameter
-    const apiUrl = `http://192.168.100.11:3000/get_establecimiento/${pId}`;
+    const apiUrl = `https://nightout.com.mx/api/get_establecimiento/${pId}`;
 
     // Make a GET request
     fetch(apiUrl)
@@ -241,7 +241,7 @@ function updateUser(userId) {
     };
 
     // Send a PUT request to update the user data
-    fetch(`http://192.168.100.11:3000/update_usuario/${userId}`, {
+    fetch(`https://nightout.com.mx/api/update_usuario/${userId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -290,7 +290,7 @@ function updateEstablecimiento(establecimientoId) {
     };
 
     // Send a PUT request to update the establecimiento data
-    fetch(`http://192.168.100.11:3000/update_establecimiento/${establecimientoId}`, {
+    fetch(`https://nightout.com.mx/api/update_establecimiento/${establecimientoId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'

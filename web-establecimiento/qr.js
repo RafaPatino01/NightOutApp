@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function() {
             
                   // Inline updateReserva function using fetch API
                   try {
-                    const url = `http://192.168.100.11:3000/asistencia_reserva/${currentReservaId}`;
+                    const url = `https://nightout.com.mx/api/asistencia_reserva/${currentReservaId}`;
             
                     const response = await fetch(url);
                     const data = await response.json();
