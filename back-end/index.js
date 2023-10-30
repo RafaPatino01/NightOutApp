@@ -260,9 +260,6 @@ app.put('/update_establecimiento/:id', async (req, res) => {
   }
 });
 
-
-
-
 app.get('/login', async (req, res) => {
   try {
     // Connect to the database
@@ -548,7 +545,7 @@ app.get('/get_reservas', async (req, res) => {
     }
     // Verificar si se proporcionó el parámetro "usuario_id"
     else if (usuarioId) {
-      queryString += ` WHERE usuario_id = $1`;
+      queryString += ` WHERE usuario_id = $1 AND fecha_hora > CURRENT_TIMESTAMP`;
     }
 
     const result = await client.query(queryString, [establecimientoId || usuarioId]);

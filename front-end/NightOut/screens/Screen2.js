@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, Image, RefreshControl } from 'react-native';
 import { fetchReservasByUserId, fetchEstablecimientos } from '../functions/functions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
@@ -8,7 +8,22 @@ const Screen2 = () => {
   const [reservas, setReservas] = useState([]); // Estado para almacenar las reservas
   const [establecimientos, setEstablecimientos] = useState([]); // Estado para almacenar los establecimientos
   const [establecimientosDict, setEstablecimientosDict] = useState({}); // Estado para almacenar los establecimientos
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedItemId, setSelectedItemId] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
+  const openModalWithItem = (itemId) => {
+    setSelectedItemId(itemId);
+    setModalVisible(true);
+  };
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
+  }, []);
+  
+  
   // Define a function to get the user ID by userToken
   const getUserIdByUserToken = async (userToken) => {
     try {
@@ -30,16 +45,26 @@ const Screen2 = () => {
   const sortReservas = (data) => {
     const sortedReservas = [...data];
     sortedReservas.sort((a, b) => {
+      // Coloca las reservas con asistencia = 1 al final
+      if (a.asistencia === 1 && b.asistencia !== 1) {
+        return 1;
+      }
+      if (b.asistencia === 1 && a.asistencia !== 1) {
+        return -1;
+      }
+      // Compara por el campo 'confirmado'
       if (a.confirmado > b.confirmado) {
         return -1;
       }
       if (a.confirmado < b.confirmado) {
         return 1;
       }
+      // Compara por la fecha si todo lo demás es igual
       return new Date(b.fecha_hora) - new Date(a.fecha_hora);
     });
     return sortedReservas;
   };
+  
 
   const fetchData = async () => {
     try {
@@ -107,17 +132,32 @@ const Screen2 = () => {
     const formattedMonth = meses[month];
 
     return `${formattedDay} de ${formattedMonth}`;
-}
+  } 
+
+
+  const getBackgroundColor = (item) => {
+    if (item.confirmado === 1 && item.asistencia === 1) {
+      return { backgroundColor: '#3db362' };
+    }
+    if (item.confirmado === 0 && item.asistencia === 0) {
+      return { backgroundColor: 'gray' };
+    }
+    return null;
+  };
 
   const handleItemPress = (item) => {
-    console.log("aaaaa" + item.fecha_hora)
+    if (item.confirmado !== 0 && item.asistencia !== 1) { // Check if the reservation is confirmed
+      openModalWithItem(item.id);
+    } else {
+      console.log("Reservation is not yet confirmed."); // You can also display a warning message to the user here
+    }
   };
 
   const reservaView = ({ item }) => (
     <TouchableOpacity onPress={() => handleItemPress(item)} style={styles.reservaContainer}>
       <View style={[
         styles.reservaItem,
-        item.confirmado === 0 ? { backgroundColor: 'gray' } : null // Cambia el fondo si no está confirmada
+        getBackgroundColor(item) // Cambia el fondo 
       ]}>
         <View style={styles.row}>
           <Text style={styles.text}>
@@ -128,6 +168,7 @@ const Screen2 = () => {
         <View style={styles.row}>
           <Text style={styles.text_invisible}>
             {item.confirmado === 0 ? "(Por confirmar)" : ""}
+            {item.asistencia === 1 ? "(Has asistido)" : ""}
           </Text>
           <Text style={styles.text}>
             {formatToDayMonthYear(item.fecha_hora)}
@@ -141,14 +182,46 @@ const Screen2 = () => {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        style={styles.flatlist}
-        data={reservas}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={reservaView}
-      />
+      <Modal
+  animationType="fade"
+  transparent={true}
+  visible={modalVisible}
+  onRequestClose={() => {
+    setModalVisible(!modalVisible);
+  }}
+>
+  <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.5)" }}>
+    <View style={{ padding: 20, backgroundColor: "white", borderRadius: 10, width: '80%', height: '40%', flexDirection: 'column', justifyContent: 'space-between' }}>
+      <View>
+        {/*<Text>Reserva ID: {selectedItemId}</Text>*/ }
+        <Image source={{ uri: 'http://192.168.100.11:3000/uploads/reservas_qr/qr_'+selectedItemId+'.png' } } style={{ width: "100%", height:220, resizeMode: "contain" }} />
+      </View>
+      <TouchableOpacity onPress={() => setModalVisible(false)} style={{ backgroundColor: '#5271FF', padding: 10, alignItems: 'center' }}>
+        <Text style={{ color: 'white' }}>Close</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+</Modal>
+
+
+
+
+<FlatList
+  style={styles.flatlist}
+  data={reservas}
+  keyExtractor={(item) => item.id.toString()}
+  renderItem={reservaView}
+  refreshControl={
+    <RefreshControl
+      refreshing={refreshing}
+      onRefresh={onRefresh}
+    />
+  }
+/>
+
     </View>
   );
+  
 };
 const styles = StyleSheet.create({
   container: {
