@@ -42,6 +42,42 @@ app.get('/', (req, res) => {
   res.send('Hello World! This is Night Out Backend');
 });
 
+app.get('/search_establecimientos', async (req, res) => {
+  try {
+    const client = await pool.connect();
+
+    // Obtener las variables de consulta de la solicitud
+    const { price, searchQuery, selectedLocation, selectedType } = req.query;
+
+    // Construir la consulta SQL con filtrado
+    let sqlQuery = 'SELECT * FROM establecimientos WHERE 1 = 1'; // La condición inicial es siempre verdadera
+
+    // Agregar condiciones de filtrado según las variables proporcionadas
+    if (price) {
+      sqlQuery += ` AND precios = '${price}'`;
+    }
+    if (searchQuery) {
+      sqlQuery += ` OR nombre ILIKE '%${searchQuery}%'`; // Filtrar por nombre que contenga la búsqueda
+    }
+    if (selectedLocation) {
+      sqlQuery += ` AND ubicacion_general = '${selectedLocation}'`;
+    }
+    if (selectedType) {
+      sqlQuery += ` AND tipo = '${selectedType}'`;
+    }
+
+    const result = await client.query(sqlQuery);
+    const items = result.rows;
+
+    client.release();
+    res.json(items);
+  } catch (error) {
+    console.error('Error fetching items from PostgreSQL:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
 // Create a GET request to fetch data from the PostgreSQL database
 app.get('/get_establecimientos', async (req, res) => {
   try {

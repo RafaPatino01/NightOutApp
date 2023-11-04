@@ -15,6 +15,7 @@ import DetalleEstablecimiento from './screens/DetalleEstablecimiento';
 import Login from './screens/Login';
 import Register from './screens/Register';
 import Reservar from './screens/Reservar';
+import ResultadosBusqueda from './screens/ResultadosBusqueda';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -28,7 +29,7 @@ function Home() {
           let iconSize = 30; // Cambia el tamaño del ícono aquí
           let iconPadding = 5; // Add padding to the top of the icon here
 
-          if (route.name === 'Screen5') {
+          if (route.name === 'Búsqueda') {
             iconName = 'card-search';
           } else if (route.name === 'Screen1') {
             iconName = 'home';
@@ -64,7 +65,7 @@ function Home() {
       <Tab.Screen name="Mis Reservas" 
       options={{ headerShown: true }} 
       component={Screen2} />
-      <Tab.Screen name="Screen5" component={Screen5} />
+      <Tab.Screen name="Búsqueda" component={Screen5} />
       <Tab.Screen name="Screen3" component={Screen3} />
       
 
@@ -107,6 +108,11 @@ function App() {
             component={DetalleEstablecimiento} 
           />
 
+          <Stack.Screen 
+            options={{ headerShown: true }} 
+            name="Resultados" 
+            component={ResultadosBusqueda} 
+          />
           <Stack.Screen 
             options={{ headerShown: true }} 
             name="Reservar" 

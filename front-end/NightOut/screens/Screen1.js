@@ -7,13 +7,15 @@ const Screen1 = () => {
   const navigation = useNavigation();
 
   const [establecimientos, setEstablecimientos] = useState([]);
+  const [filteredEstablecimientos, setFilteredEstablecimientos] = useState([]);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [activeFilter, setActiveFilter] = useState('Todos'); // New state for active filter
 
   useEffect(() => {
-    // Call the fetchEstablecimientos function when the component mounts
     fetchEstablecimientos()
       .then((data) => {
         setEstablecimientos(data);
+        setFilteredEstablecimientos(data); // Set the filtered list to all items initially
       })
       .catch((error) => {
         console.error('Error in component:', error);
@@ -66,34 +68,58 @@ const Screen1 = () => {
   );
 
 
-  return (
-    
-    <View style={styles.container}>
-        <StatusBar
-            style={styles.statusBar}
-            animated={true}
-            barStyle="dark-content"
-        />
-        
-        <View style={styles.quickFilters}>
-            
-            <TouchableOpacity style={styles.filter}><Text style={styles.filterText}>ANTROS</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.filter}><Text style={styles.filterText}>RESTAURANTES</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.filter}><Text style={styles.filterText}>BARES</Text></TouchableOpacity>
-            
-        </View>
+  const applyFilter = (tipo) => {
+    setActiveFilter(tipo);
+    if (tipo === 'Todos') {
+      setFilteredEstablecimientos(establecimientos);
+    } else {
+      const filteredData = establecimientos.filter(item => item.tipo === tipo);
+      setFilteredEstablecimientos(filteredData);
+    }
+  };
 
-        <FlatList
-            style={styles.flatlist}
-            data={establecimientos}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={establecimientoView}
-        />
+  const getFilterStyle = (tipo) => ({
+    ...styles.filter,
+    backgroundColor: activeFilter === tipo ? '#E3E3E380' : 'transparent', // Highlight if active
+  });
+  
+  return (
+    <View style={styles.container}>
+      <StatusBar
+          style={styles.statusBar}
+          animated={true}
+          barStyle="dark-content"
+      />
+      
+      <View style={styles.quickFilters}>
+        {/* Apply getFilterStyle to each filter button */}
+        <TouchableOpacity style={getFilterStyle('Antro')} onPress={() => applyFilter('Antro')}>
+          <Text style={styles.filterText}>ANTROS</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={getFilterStyle('Restaurante')} onPress={() => applyFilter('Restaurante')}>
+          <Text style={styles.filterText}>RESTAURANTES</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={getFilterStyle('Bar')} onPress={() => applyFilter('Bar')}>
+          <Text style={styles.filterText}>BARES</Text>
+        </TouchableOpacity>
+      </View>
+
+      <FlatList
+          style={styles.flatlist}
+          data={filteredEstablecimientos} // Use filteredEstablecimientos instead of establecimientos
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={establecimientoView}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  filter: {
+    width: "33%",
+    padding: 10, // Add some padding to make the buttons look nicer
+    // Add other styling as needed for non-active buttons
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
