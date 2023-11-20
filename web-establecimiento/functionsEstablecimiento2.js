@@ -139,34 +139,18 @@ function getUsuario(pId) {
 }
 
 function generateDateTimeHTML(dateTimeString) {
-    // Parse the input string into a JavaScript Date object
-    const dateTime = new Date(dateTimeString);
 
-    // Function to format the date in the "DD/MM/YYYY" format
-    function formatDate(date) {
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    }
+    console.log(String(dateTimeString))
 
-    // Function to format the time in the "h:mmam/pm" format
-    function formatTime(date) {
-        const hours = date.getHours();
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        const ampm = hours >= 12 ? 'pm' : 'am';
-        const formattedHours = hours % 12 || 12;
-        return `${formattedHours}:${minutes}${ampm}`;
-    }
-
-    // Format the date and time
-    const formattedDate = formatDate(dateTime);
-    const formattedTime = formatTime(dateTime);
+    let year = dateTimeString.substring(0, 4);
+    let month = dateTimeString.substring(5, 7);
+    let day = dateTimeString.substring(8, 10);
+    let hour = dateTimeString.substring(11, 16);
 
     // Generate the HTML string
     const htmlString = `
-        <p class="py-0 m-0">${formattedDate}</p>
-        <p class="py-0 m-0">${formattedTime}</p>
+        <p class="py-0 m-0">${day}/${month}/${year}</p>
+        <p class="py-0 m-0">${hour}</p>
     `;
 
     return htmlString;
