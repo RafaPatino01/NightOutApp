@@ -91,7 +91,7 @@ const Reservar = ({ route }) => {
       try {
         const userToken = await AsyncStorage.getItem('userToken');
         if (userToken) {
-          const apiUrl = `http://192.168.100.11:3000/get_usuarios/?correo_electronico=${userToken.toLowerCase()}`;
+          const apiUrl = `http://192.168.1.77:3000/get_usuarios/?correo_electronico=${userToken.toLowerCase()}`;
     
           // Realizar la consulta GET para obtener el ID del usuario
           const response = await fetch(apiUrl);
@@ -114,7 +114,7 @@ const Reservar = ({ route }) => {
             };
     
             // Realizar la solicitud POST para agregar la reserva
-            const postUrl = 'http://192.168.100.11:3000/add_reserva';
+            const postUrl = 'http://192.168.1.77:3000/add_reserva';
             const postResponse = await fetch(postUrl, {
               method: 'POST',
               headers: {

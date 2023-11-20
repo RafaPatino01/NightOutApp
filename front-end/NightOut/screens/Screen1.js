@@ -46,7 +46,7 @@ const Screen1 = () => {
     <TouchableOpacity onPress={() => handleItemPress(item)}>
       <View style={styles.establecimientoContainer}>
         <Image
-          source={{ uri: 'http://192.168.100.11:3000' + item.images[0].substring(1) }}
+          source={{ uri: 'http://192.168.1.77:3000' + item.images[0].substring(1) }}
           style={styles.image}
           onLoad={handleImageLoad} // Call the function when the image is loaded
         />

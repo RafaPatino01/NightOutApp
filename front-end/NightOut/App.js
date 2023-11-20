@@ -35,7 +35,7 @@ function Home() {
             iconName = 'home';
           } else if (route.name === 'Mis Reservas') {
             iconName = 'calendar-check'; 
-          } else if (route.name === 'Screen3') {
+          } else if (route.name === 'Perfil de usuario') {
             iconName = 'account-circle'; 
           }
           
@@ -66,7 +66,7 @@ function Home() {
       options={{ headerShown: true }} 
       component={Screen2} />
       <Tab.Screen name="Búsqueda" component={Screen5} />
-      <Tab.Screen name="Screen3" component={Screen3} />
+      <Tab.Screen name="Perfil de usuario" component={Screen3} />
       
 
     </Tab.Navigator>

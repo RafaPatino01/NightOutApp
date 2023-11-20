@@ -46,7 +46,7 @@ const DetalleEstablecimiento = ({ route }) => {
     });
 
     const updatedData = receivedData.images.map((element) => ({
-      image: { uri: 'http://192.168.100.11:3000' + element.slice(1) },
+      image: { uri: 'http://192.168.1.77:3000' + element.slice(1) },
     }));
 
     setData(updatedData);

@@ -200,24 +200,26 @@ function getUsuario(pId) {
 }
 
 function generateDateTimeHTML(dateTimeString) {
-    // Parse the input string into a JavaScript Date object
+    // Parse the input string into a JavaScript Date object as UTC
     const dateTime = new Date(dateTimeString);
 
     // Function to format the date in the "DD/MM/YYYY" format
     function formatDate(date) {
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const year = date.getFullYear();
+        const day = String(date.getUTCDate()).padStart(2, '0');
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+        const year = date.getUTCFullYear();
         return `${day}/${month}/${year}`;
     }
 
-    // Function to format the time in the "h:mmam/pm" format
+    // Function to format the time in the "h:00pm/am" format
     function formatTime(date) {
-        const hours = date.getHours();
-        const minutes = String(date.getMinutes()).padStart(2, '0');
+        let hours = date.getUTCHours();
+        const minutes = String(date.getUTCMinutes()).padStart(2, '0');
         const ampm = hours >= 12 ? 'pm' : 'am';
-        const formattedHours = hours % 12 || 12;
-        return `${formattedHours}:${minutes}${ampm}`;
+
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        return `${hours}:${minutes}${ampm}`;
     }
 
     // Format the date and time

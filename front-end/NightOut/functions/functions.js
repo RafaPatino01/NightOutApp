@@ -1,5 +1,5 @@
 import axios from 'axios';
-const ip = '192.168.100.11';
+const ip = '192.168.1.77';
 
 export const handleLogin = async (email, password) => {
 

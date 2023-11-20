@@ -27,7 +27,7 @@ const Screen2 = () => {
   // Define a function to get the user ID by userToken
   const getUserIdByUserToken = async (userToken) => {
     try {
-      const apiUrl = `http://192.168.100.11:3000/get_usuarios/?correo_electronico=${userToken.toLowerCase()}`;
+      const apiUrl = `http://192.168.1.77:3000/get_usuarios/?correo_electronico=${userToken.toLowerCase()}`;
       const response = await fetch(apiUrl);
       if (response.status === 200) {
         const userData = await response.json();
@@ -194,7 +194,7 @@ const Screen2 = () => {
     <View style={{ padding: 20, backgroundColor: "white", borderRadius: 10, width: '80%', height: '40%', flexDirection: 'column', justifyContent: 'space-between' }}>
       <View>
         {/*<Text>Reserva ID: {selectedItemId}</Text>*/ }
-        <Image source={{ uri: 'http://192.168.100.11:3000/uploads/reservas_qr/qr_'+selectedItemId+'.png' } } style={{ width: "100%", height:220, resizeMode: "contain" }} />
+        <Image source={{ uri: 'http://192.168.1.77:3000/uploads/reservas_qr/qr_'+selectedItemId+'.png' } } style={{ width: "100%", height:220, resizeMode: "contain" }} />
       </View>
       <TouchableOpacity onPress={() => setModalVisible(false)} style={{ backgroundColor: '#5271FF', padding: 10, alignItems: 'center' }}>
         <Text style={{ color: 'white' }}>Close</Text>
