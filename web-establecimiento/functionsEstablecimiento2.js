@@ -69,14 +69,14 @@ function getReservas(pId){
                 
                 <div class="container2 mt-3 px-4">
                     <div class="row bg-dark p-3 rounded">
-                        <div class="col-8">
+                        <div class="col-6">
                             <p class="m-0 text-bold">${usuario.nombre} ${usuario.apellido}</p>
                             <hr>
                             <p class="py-0 m-0">${reserva.tipo_de_mesa}</p>
                             ${generateDateTimeHTML(reserva.fecha_hora)}
                         </div>
 
-                        <div class="col-4 p-0 m-0">
+                        <div class="col-6 p-0 m-0">
                             <div class="row p-0 m-0 w-100 h-100">
                                 <div class="col-1 p-0 m-0"></div>
 

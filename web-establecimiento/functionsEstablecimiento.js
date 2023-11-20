@@ -70,14 +70,14 @@ function getReservas(pId){
                 document.getElementById("reservas_pendientes").innerHTML += `
                 <div class="container2 mt-3 px-4">
                     <div class="row bg-dark p-3 rounded">
-                        <div class="col-9">
+                        <div class="col-7">
                             <p class="m-0 text-bold">${usuario.nombre} ${usuario.apellido}</p>
                             <hr>
                             <p class="py-0 m-0">${reserva.tipo_de_mesa}</p>
                             ${generateDateTimeHTML(reserva.fecha_hora)}
                         </div>
 
-                        <div class="col-3 text-center bg-success d-flex align-items-center rounded" onclick="confirmarReserva(${reserva.id})">
+                        <div class="col-5 text-center bg-success d-flex align-items-center rounded" onclick="confirmarReserva(${reserva.id})">
                         <p class="w-100 text-center text-white text-truncate">
 
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
@@ -200,36 +200,18 @@ function getUsuario(pId) {
 }
 
 function generateDateTimeHTML(dateTimeString) {
-    // Parse the input string into a JavaScript Date object as UTC
-    const dateTime = new Date(dateTimeString);
 
-    // Function to format the date in the "DD/MM/YYYY" format
-    function formatDate(date) {
-        const day = String(date.getUTCDate()).padStart(2, '0');
-        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-        const year = date.getUTCFullYear();
-        return `${day}/${month}/${year}`;
-    }
+    console.log(String(dateTimeString))
 
-    // Function to format the time in the "h:00pm/am" format
-    function formatTime(date) {
-        let hours = date.getUTCHours();
-        const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-        const ampm = hours >= 12 ? 'pm' : 'am';
-
-        hours = hours % 12;
-        hours = hours ? hours : 12; // the hour '0' should be '12'
-        return `${hours}:${minutes}${ampm}`;
-    }
-
-    // Format the date and time
-    const formattedDate = formatDate(dateTime);
-    const formattedTime = formatTime(dateTime);
+    let year = dateTimeString.substring(0, 4);
+    let month = dateTimeString.substring(5, 7);
+    let day = dateTimeString.substring(8, 10);
+    let hour = dateTimeString.substring(11, 16);
 
     // Generate the HTML string
     const htmlString = `
-        <p class="py-0 m-0">${formattedDate}</p>
-        <p class="py-0 m-0">${formattedTime}</p>
+        <p class="py-0 m-0">${day}/${month}/${year}</p>
+        <p class="py-0 m-0">${hour}</p>
     `;
 
     return htmlString;
