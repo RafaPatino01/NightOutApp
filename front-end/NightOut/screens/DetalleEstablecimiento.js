@@ -46,9 +46,9 @@ const DetalleEstablecimiento = ({ route }) => {
         </TouchableOpacity>
       ),
     });
-
+    
     const updatedData = receivedData.images.map((element) => ({
-      image: { uri: 'http://192.168.100.11:3000' + element.slice(1) },
+      image: { uri: 'https://nightout.com.mx/api' + element.slice(1) },
     }));
 
     setData(updatedData);

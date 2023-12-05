@@ -1,11 +1,66 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  FlatList,
+  TouchableOpacity
+} from 'react-native';
+import { fetchUserById } from '../functions/functions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Screen3 = () => {
-  // User data defined in JSON format
-  const nombre = "Rafael Patiño Goji";
-  const correo = "rafapatino01@outlook.com";
-  const tel = "2282544356";
+  const [userData, setUserData] = useState(null);
+
+  const opciones = [
+    { key: 'aviso', text: 'Aviso de privacidad' },
+    { key: 'faq', text: 'FAQ' },
+    { key: 'cerrar', text: 'Cerrar sesión' },
+  ];
+
+  const onOptionPress = () => {
+    console.log("presionado")
+  };
+
+  const getUserIdByUserToken = async (userToken) => {
+    try {
+      const apiUrl = `https://nightout.com.mx/api/get_usuarios/?correo_electronico=${userToken.toLowerCase()}`;
+      const response = await fetch(apiUrl);
+      if (response.status === 200) {
+        const userData = await response.json();
+        const userId = userData[0].id;
+        return userId;
+      } else {
+        throw new Error(`Error en la solicitud: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error al obtener el ID del usuario:', error);
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userToken = await AsyncStorage.getItem('userToken');
+        if (userToken) {
+          const usuarioId = await getUserIdByUserToken(userToken); // Await the result
+          const data = await fetchUserById(usuarioId);
+          setUserData((data));
+          console.log(data)
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  if (!userData) {
+    return <Text>Loading...</Text>; // Display a loading message or spinner
+  }
 
   return (
     <View style={styles.container}>
@@ -14,17 +69,30 @@ const Screen3 = () => {
           <Image source={require('../assets/user_icon.png')} style={styles.icon} />
         </View>
         <View style={styles.userDataContainer}>
-            <View style={styles.item}>
-              <Text style= {styles.boldValue} >{nombre}</Text>
-            </View>
-            <View style={styles.item}>
-              <Text style= {styles.normalValue} >{correo}</Text>
-            </View>
-            <View style={styles.item}>
-              <Text style= {styles.normalValue} >{tel}</Text>
-            </View>
+          <View style={styles.item}>
+            <Text style= {styles.boldValue}>{userData.nombre}</Text>
+          </View>
+          <View style={styles.item}>
+            <Text style= {styles.normalValue}>{userData.correo_electronico}</Text>
+          </View>
+          <View style={styles.item}>
+            <Text style= {styles.normalValue}>{userData.num_telefono}</Text>
+          </View>
         </View>
       </View>
+      {/* Lista de opciones */}
+      <FlatList
+        data={opciones}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.optionItem}
+            onPress={() => onOptionPress(item.key)}
+          >
+            <Text style={styles.optionText}>{item.text}</Text>
+          </TouchableOpacity>
+        )}
+        keyExtractor={item => item.key}
+      />
     </View>
   );
 };
@@ -33,6 +101,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFF',
+  },
+  optionItem: {
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    width: '100%', // Ocupa el 100% del ancho
+  },
+  optionText: {
+    fontSize: 18,
   },
   infoContainer: {
     flexDirection: 'row',

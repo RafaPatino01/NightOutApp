@@ -1,11 +1,11 @@
 import axios from 'axios';
-const ip = '192.168.100.11';
+const ip = 'nightout.com.mx/api';
 
 export const handleLogin = async (email, password) => {
 
   try {
     // Construct the URL with parameters
-    const apiUrl = `http://${ip}:3000/login?correo_electronico=${email}&contrasena=${password}`;
+    const apiUrl = `https://${ip}/login?correo_electronico=${email}&contrasena=${password}`;
 
     // Perform the GET request
     const response = await fetch(apiUrl);
@@ -41,7 +41,7 @@ export const handleLogin = async (email, password) => {
 
 export const registerUser = async (userData) => {
   try {
-    const apiUrl = `http://${ip}:3000/add_usuario`;
+    const apiUrl = `https://${ip}/add_usuario`;
 
     const response = await axios.post(apiUrl, userData);
 
@@ -70,7 +70,7 @@ export const registerUser = async (userData) => {
 // Define a function to fetch the data
 export const fetchEstablecimientos = async () => {
   try {
-    const response = await axios.get(`http://${ip}:3000/get_establecimientos`);
+    const response = await axios.get(`https://${ip}/get_establecimientos`);
     return response.data;
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -81,7 +81,7 @@ export const fetchEstablecimientos = async () => {
 // Define a function to fetch the data
 export const fetchReservasByUserId = async (usuarioId) => {
   try {
-    const response = await axios.get(`http://${ip}:3000/get_reservas/?usuario_id=${usuarioId}`);
+    const response = await axios.get(`https://${ip}/get_reservas/?usuario_id=${usuarioId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -89,3 +89,12 @@ export const fetchReservasByUserId = async (usuarioId) => {
   }
 };
 
+export const fetchUserById = async (usuarioId) => {
+  try {
+    const response = await axios.get(`https://${ip}/get_usuario_by_id/${usuarioId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    throw error;
+  }
+};
