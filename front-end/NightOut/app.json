@@ -16,16 +16,28 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.NightOut"
+      "bundleIdentifier": "com.anonymous.NightOut",
+      "runtimeVersion": "1.0.0"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "runtimeVersion": {
+        "policy": "appVersion"
       }
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b02177bc-1fb2-4387-b19e-2baf27338d63"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/b02177bc-1fb2-4387-b19e-2baf27338d63"
     }
   }
 }
