@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, Image, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, SectionList, TouchableOpacity, Modal, Image, RefreshControl } from 'react-native';
 import { fetchReservasByUserId, fetchEstablecimientos } from '../functions/functions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
@@ -27,7 +27,7 @@ const Screen2 = () => {
   // Define a function to get the user ID by userToken
   const getUserIdByUserToken = async (userToken) => {
     try {
-      const apiUrl = `http://192.168.1.77:3000/get_usuarios/?correo_electronico=${userToken.toLowerCase()}`;
+      const apiUrl = `http://192.168.100.11:3000/get_usuarios/?correo_electronico=${userToken.toLowerCase()}`;
       const response = await fetch(apiUrl);
       if (response.status === 200) {
         const userData = await response.json();
@@ -74,11 +74,32 @@ const Screen2 = () => {
         console.log('UserID:', userId);
         const reservasData = await fetchReservasByUserId(userId);
         console.log('Reservas:', reservasData);
+        
         // Carga los establecimientos al mismo tiempo
+        const establecimientosData = await fetchEstablecimientos();
+        setEstablecimientos(establecimientosData); // Actualiza el estado con los establecimientos obtenidos
+    
+        let tempEstablecimientosDict = {};
+        establecimientosData.forEach((element) => {
+          tempEstablecimientosDict[element.id] = element;
+        });
+        setEstablecimientosDict(tempEstablecimientosDict);
+        console.log('Establecimientos cargados con éxito.');
+  
+        // Ordena las reservas
         const sortedReservas = sortReservas(reservasData);
-        setReservas(sortedReservas);
-
-        loadEstablecimientos()
+  
+        // Agrupar reservas por establecimiento
+        const reservasAgrupadas = sortedReservas.reduce((acc, reserva) => {
+          const estId = reserva.establecimiento_id;
+          if (!acc[estId]) {
+            acc[estId] = [];
+          }
+          acc[estId].push(reserva);
+          return acc;
+        }, {});
+  
+        setReservas(reservasAgrupadas);
       } else {
         console.log('userToken no encontrado');
       }
@@ -86,7 +107,7 @@ const Screen2 = () => {
       console.error('Error al obtener el ID del usuario o las reservas:', error);
     }
   };
-
+  
 
   // Define una función para cargar los datos de los establecimientos
   const loadEstablecimientos = async () => {
@@ -134,7 +155,6 @@ const Screen2 = () => {
     return `${formattedDay} de ${formattedMonth}`;
   } 
 
-
   const getBackgroundColor = (item) => {
     if (item.confirmado === 1 && item.asistencia === 1) {
       return { backgroundColor: '#3db362' };
@@ -153,32 +173,43 @@ const Screen2 = () => {
     }
   };
 
-  const reservaView = ({ item }) => (
-    <TouchableOpacity onPress={() => handleItemPress(item)} style={styles.reservaContainer}>
-      <View style={[
-        styles.reservaItem,
-        getBackgroundColor(item) // Cambia el fondo 
-      ]}>
-        <View style={styles.row}>
-          <Text style={styles.text}>
-            {establecimientosDict[item.establecimiento_id] ? establecimientosDict[item.establecimiento_id]["nombre"] : ""}
-          </Text>
-          <Text style={styles.textSmall}>{item.tipo_de_mesa}</Text>
+  
+
+  const reservaView = ({ item }) => {
+  return (
+    <View>
+      <TouchableOpacity 
+        onPress={() => handleItemPress(item)} 
+        style={styles.reservaContainer}
+      >
+        <View style={[
+          styles.reservaItem,
+          getBackgroundColor(item) // Cambia el fondo según el estado de la reserva
+        ]}>
+          <View style={styles.row}>
+            <Text style={styles.text}>
+              {establecimientosDict[item.establecimiento_id] 
+               ? establecimientosDict[item.establecimiento_id]["nombre"] 
+               : ""}
+            </Text>
+            <Text style={styles.textSmall}>{item.tipo_de_mesa}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={styles.text_invisible}>
+              {item.confirmado === 0 ? "(Por confirmar)" : ""}
+              {item.asistencia === 1 ? "(Has asistido)" : ""}
+            </Text>
+            <Text style={styles.text}>
+              {formatToDayMonthYear(item.fecha_hora)}
+            </Text>
+          </View>
         </View>
-        <View style={styles.row}>
-          <Text style={styles.text_invisible}>
-            {item.confirmado === 0 ? "(Por confirmar)" : ""}
-            {item.asistencia === 1 ? "(Has asistido)" : ""}
-          </Text>
-          <Text style={styles.text}>
-            {formatToDayMonthYear(item.fecha_hora)}
-          </Text>
-        </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+      {/* Agregar una línea horizontal después de cada reserva */}
+      <View style={styles.separatorLine}></View>
+    </View>
   );
-  
-  
+};
 
   return (
     <View style={styles.container}>
@@ -193,8 +224,8 @@ const Screen2 = () => {
   <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.5)" }}>
     <View style={{ padding: 20, backgroundColor: "white", borderRadius: 10, width: '80%', height: '40%', flexDirection: 'column', justifyContent: 'space-between' }}>
       <View>
-        {/*<Text>Reserva ID: {selectedItemId}</Text>*/ }
-        <Image source={{ uri: 'http://192.168.1.77:3000/uploads/reservas_qr/qr_'+selectedItemId+'.png' } } style={{ width: "100%", height:220, resizeMode: "contain" }} />
+        <Text style={{ textAlign: "center" }}>Muestra el QR en el establecimiento</Text> 
+        <Image source={{ uri: 'http://192.168.100.11:3000/uploads/reservas_qr/qr_'+selectedItemId+'.png' } } style={{ width: "100%", height:220, resizeMode: "contain" }} />
       </View>
       <TouchableOpacity onPress={() => setModalVisible(false)} style={{ backgroundColor: '#5271FF', padding: 10, alignItems: 'center' }}>
         <Text style={{ color: 'white' }}>Close</Text>
@@ -203,26 +234,22 @@ const Screen2 = () => {
   </View>
 </Modal>
 
-
-
-
-<FlatList
-  style={styles.flatlist}
-  data={reservas}
-  keyExtractor={(item) => item.id.toString()}
-  renderItem={reservaView}
-  refreshControl={
-    <RefreshControl
-      refreshing={refreshing}
-      onRefresh={onRefresh}
+    <SectionList
+      sections={Object.keys(reservas).map(key => ({
+        title: establecimientosDict[key] ? establecimientosDict[key].nombre : "",
+        data: reservas[key],
+      }))}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={reservaView}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      style={styles.flatlist}
     />
-  }
-/>
 
     </View>
   );
   
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -261,9 +288,22 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   row: {
-    flexDirection: 'row', // Arrange children in a row
-    justifyContent: 'space-between', // Align items along the row's main axis (horizontal in this case)
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
+  separatorLine: {
+    borderBottomColor: 'grey',
+    borderBottomWidth: 0,
+    marginVertical: 0,
+  },
+  sectionHeader: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    backgroundColor: "#fff",
+    padding: 10,
+  },
+  
+  // Añade más estilos según sea necesario
 });
 
 export default Screen2;

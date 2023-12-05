@@ -7,6 +7,8 @@ import instagramIcon from '../assets/instagram_logo.png';
 const DetalleEstablecimiento = ({ route }) => {
   const [data, setData] = useState([]);
   const navigation = useNavigation();
+  const [activeIndex, setActiveIndex] = useState(0);
+
 
   // Access the passed data using route.params
   const receivedData = route.params?.data;
@@ -46,7 +48,7 @@ const DetalleEstablecimiento = ({ route }) => {
     });
 
     const updatedData = receivedData.images.map((element) => ({
-      image: { uri: 'http://192.168.1.77:3000' + element.slice(1) },
+      image: { uri: 'http://192.168.100.11:3000' + element.slice(1) },
     }));
 
     setData(updatedData);
@@ -70,6 +72,23 @@ const DetalleEstablecimiento = ({ route }) => {
     return <Text style={styles.starText}>{stars}</Text>;
   };
 
+  const Pagination = ({ activeIndex, totalItems }) => {
+    return (
+      <View style={styles.paginationContainer}>
+        {Array.from({ length: totalItems }).map((_, index) => (
+          <View
+            key={index}
+            style={[
+              styles.paginationDot,
+              activeIndex === index ? styles.activeDot : styles.inactiveDot,
+            ]}
+          />
+        ))}
+      </View>
+    );
+  };
+
+  
   return (
     <View style={styles.screen}>
       <StatusBar
@@ -84,7 +103,11 @@ const DetalleEstablecimiento = ({ route }) => {
           renderItem={renderItem}
           sliderWidth={400}
           itemWidth={400}
+          onSnapToItem={(index) => setActiveIndex(index)}
         />
+
+        <Pagination activeIndex={activeIndex} totalItems={data.length} />
+
       
         <View style={styles.row}>
           <Text style={styles.text}>📍{receivedData.ubicacion_general}</Text>
@@ -141,6 +164,25 @@ const DetalleEstablecimiento = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
+  paginationContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 10,
+  },
+  paginationDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginHorizontal: 4,
+  },
+  activeDot: {
+    backgroundColor: '#FFFFFF',
+  },
+  inactiveDot: {
+    backgroundColor: '#777777',
+  },
+  
   // Add styles for the floating button
   floatingButton: {
     position: 'absolute',

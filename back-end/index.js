@@ -573,18 +573,24 @@ app.get('/get_reservas', async (req, res) => {
     const establecimientoId = req.query.establecimiento_id;
     const usuarioId = req.query.usuario_id;
 
-    let queryString = 'SELECT * FROM reservas';
+    let queryString = 'SELECT * FROM reservas WHERE';
+    const queryParams = [];
 
     // Verificar si se proporcionó el parámetro "establecimiento_id"
     if (establecimientoId) {
-      queryString += ` WHERE establecimiento_id = $1`;
+      queryString += ` establecimiento_id = $1 AND`;
+      queryParams.push(establecimientoId);
     }
     // Verificar si se proporcionó el parámetro "usuario_id"
     else if (usuarioId) {
-      queryString += ` WHERE usuario_id = $1 AND fecha_hora > CURRENT_TIMESTAMP`;
+      queryString += ` usuario_id = $1 AND`;
+      queryParams.push(usuarioId);
     }
 
-    const result = await client.query(queryString, [establecimientoId || usuarioId]);
+    // Añadir la condición de rango de fecha
+    queryString += ` fecha_hora BETWEEN CURRENT_DATE - INTERVAL '1 month' AND CURRENT_DATE + INTERVAL '1 month'`;
+
+    const result = await client.query(queryString, queryParams);
 
     client.release();
     res.json(result.rows);
@@ -593,6 +599,7 @@ app.get('/get_reservas', async (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
+
 
 // Ruta para obtener una reserva por su id
 app.get('/get_reservas_by_id/:id', async (req, res) => {

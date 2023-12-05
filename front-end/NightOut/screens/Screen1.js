@@ -46,7 +46,7 @@ const Screen1 = () => {
     <TouchableOpacity onPress={() => handleItemPress(item)}>
       <View style={styles.establecimientoContainer}>
         <Image
-          source={{ uri: 'http://192.168.1.77:3000' + item.images[0].substring(1) }}
+          source={{ uri: 'http://192.168.100.11:3000' + item.images[0].substring(1) }}
           style={styles.image}
           onLoad={handleImageLoad} // Call the function when the image is loaded
         />
@@ -69,19 +69,33 @@ const Screen1 = () => {
 
 
   const applyFilter = (tipo) => {
-    setActiveFilter(tipo);
-    if (tipo === 'Todos') {
+    if (activeFilter === tipo) {
+      // Si el filtro seleccionado es el mismo que el filtro activo, resetea el filtro
+      setActiveFilter('Todos');
       setFilteredEstablecimientos(establecimientos);
     } else {
-      const filteredData = establecimientos.filter(item => item.tipo === tipo);
-      setFilteredEstablecimientos(filteredData);
+      // Si no, aplica el filtro como antes
+      setActiveFilter(tipo);
+      if (tipo === 'Todos') {
+        setFilteredEstablecimientos(establecimientos);
+      } else {
+        const filteredData = establecimientos.filter(item => item.tipo === tipo);
+        setFilteredEstablecimientos(filteredData);
+      }
     }
   };
+  
 
   const getFilterStyle = (tipo) => ({
     ...styles.filter,
-    backgroundColor: activeFilter === tipo ? '#E3E3E380' : 'transparent', // Highlight if active
+    backgroundColor: activeFilter === tipo ? 'white' : 'transparent', // Highlight if active
   });
+  
+  const getFilterTextStyle = (tipo) => ({
+    ...styles.filterText,
+    color: activeFilter === tipo ? 'black' : 'white', // Change text color to black if active
+  });
+  
   
   return (
     <View style={styles.container}>
@@ -92,17 +106,17 @@ const Screen1 = () => {
       />
       
       <View style={styles.quickFilters}>
-        {/* Apply getFilterStyle to each filter button */}
         <TouchableOpacity style={getFilterStyle('Antro')} onPress={() => applyFilter('Antro')}>
-          <Text style={styles.filterText}>ANTROS</Text>
+          <Text style={getFilterTextStyle('Antro')}>ANTROS</Text>
         </TouchableOpacity>
         <TouchableOpacity style={getFilterStyle('Restaurante')} onPress={() => applyFilter('Restaurante')}>
-          <Text style={styles.filterText}>RESTAURANTES</Text>
+          <Text style={getFilterTextStyle('Restaurante')}>RESTAURANTES</Text>
         </TouchableOpacity>
         <TouchableOpacity style={getFilterStyle('Bar')} onPress={() => applyFilter('Bar')}>
-          <Text style={styles.filterText}>BARES</Text>
+          <Text style={getFilterTextStyle('Bar')}>BARES</Text>
         </TouchableOpacity>
       </View>
+
 
       <FlatList
           style={styles.flatlist}

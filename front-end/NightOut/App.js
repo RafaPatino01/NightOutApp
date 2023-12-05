@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { createStackNavigator } from '@react-navigation/stack';
+import { LogBox } from 'react-native';
 
 import Screen1 from './screens/Screen1';
 import Screen2 from './screens/Screen2';
@@ -16,6 +17,9 @@ import Login from './screens/Login';
 import Register from './screens/Register';
 import Reservar from './screens/Reservar';
 import ResultadosBusqueda from './screens/ResultadosBusqueda';
+
+// Ignorar todos los mensajes de advertencia
+LogBox.ignoreAllLogs();
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
