@@ -1,5 +1,5 @@
 // Hacer una solicitud GET a la URL
-fetch("http://localhost:3000/get_establecimientos")
+fetch("https://nightout.com.mx/api/get_establecimientos")
   .then(response => {
     // Verificar si la respuesta es exitosa (código de estado 200)
     if (response.status === 200) {
