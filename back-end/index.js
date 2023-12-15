@@ -600,6 +600,39 @@ app.get('/get_reservas', async (req, res) => {
   }
 });
 
+// Ruta para obtener reservas por establecimiento_id o usuario_id
+app.get('/get_all_reservas', async (req, res) => {
+  try {
+    const client = await pool.connect();
+
+    // Obtener el valor del parámetro "establecimiento_id" o "usuario_id" de la consulta
+    const establecimientoId = req.query.establecimiento_id;
+    const usuarioId = req.query.usuario_id;
+
+    let queryString = 'SELECT * FROM reservas WHERE';
+    const queryParams = [];
+
+    // Verificar si se proporcionó el parámetro "establecimiento_id"
+    if (establecimientoId) {
+      queryString += ` establecimiento_id = $1 AND`;
+      queryParams.push(establecimientoId);
+    }
+    // Verificar si se proporcionó el parámetro "usuario_id"
+    else if (usuarioId) {
+      queryString += ` usuario_id = $1 AND`;
+      queryParams.push(usuarioId);
+    }
+
+    const result = await client.query(queryString, queryParams);
+
+    client.release();
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error al obtener reservas:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
 
 // Ruta para obtener una reserva por su id
 app.get('/get_reservas_by_id/:id', async (req, res) => {

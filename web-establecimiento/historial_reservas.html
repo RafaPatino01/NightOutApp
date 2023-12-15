@@ -26,7 +26,7 @@
         
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item active">
+                <li class="nav-item">
                     <a class="nav-link" href="index.html">Reservas solicitadas</a>
                 </li>
                 <li class="nav-item">
@@ -35,7 +35,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="agregar_reserva.html">Agregar reserva</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item active">
                     <a class="nav-link" href="historial_reservas.html">Historial reservas</a>
                 </li>
                 <li class="nav-item">
@@ -47,7 +47,6 @@
 
     <br>
     <h1 class="text-white ms-3 mt-5">Portal de establecimiento</h1>
-    
 
     <div class="container2 mt-3 px-4">
         <div class="row bg-dark p-3 rounded">
@@ -55,40 +54,13 @@
             <p class="text-bold" id="usuario"></p>
         </div>
     </div>
+    
+    <h2 class="text-white ms-3 mt-4">Historial Reservas</h2>
 
-    <h2 class="text-white ms-3 mt-4">Reservas pendientes</h2>
-
-    <div class="w-100 px-0 pb-5" id="reservas_pendientes"></div>
     
-    <!-- !!!! MODAL !!!! -->
-    <div class="modal text-white fade" id="myModal" tabindex="-1">
-        <div class="modal-dialog">
-          <div class="modal-content bg-dark">
-    
-            <!-- Modal Header -->
-            <div class="modal-header border-0">
-              <h4 class="modal-title">Leer QR</h4>
-            </div>
-    
-            <!-- Modal body -->
-            <div class="modal-body d-flex justify-content-center align-items-center">
-                <video id="cameraFeed" autoplay playsinline muted></video>
-            </div>
-            
-            <!-- Modal footer -->
-            <div class="modal-footer border-0">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-    
-          </div>
-        </div>
-    </div>
-
     <!-- Add Bootstrap JS and jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-    <script src="qr.js"></script>
-    <script src="functionsEstablecimiento.js"></script>
+    <script src="functionsReservas.js"></script>
     <script src="functionsLogin.js"></script>
 
 </body>
