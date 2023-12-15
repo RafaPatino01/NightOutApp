@@ -28,13 +28,38 @@ if (id) {
       // Handle the received "establecimiento" object
         console.log('Received establecimiento:', establecimiento);
         document.getElementById("usuario").innerHTML += establecimiento.nombre;
-        //obtain reservas of current establecimiento
-        getReservas(establecimiento.id)
+
+        getAllReservas(id);
 
     })
     .catch(error => {
       console.error('Error fetching establecimiento:', error);
     });
+
+    
 } else {
   console.error("NightOut_Establecimiento cookie not found or id is missing");
+}
+
+function getAllReservas(pId){
+    const url = `https://nightout.com.mx/api/get_all_reservas/?establecimiento_id=${pId}`;
+
+    fetch(url)
+    .then(response => {
+        if (response.ok) {
+        return response.json();
+        } else {
+        return response.json().then(errorData => {
+            throw new Error(errorData.error);
+        });
+        }
+    })
+    .then(reservas => {
+        console.log('Received reservas:', reservas);
+
+    })
+    .catch(error => {
+        console.error('Error fetching reservas:', error);
+    });
+
 }

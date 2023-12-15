@@ -607,20 +607,14 @@ app.get('/get_all_reservas', async (req, res) => {
 
     // Obtener el valor del parámetro "establecimiento_id" o "usuario_id" de la consulta
     const establecimientoId = req.query.establecimiento_id;
-    const usuarioId = req.query.usuario_id;
 
     let queryString = 'SELECT * FROM reservas WHERE';
     const queryParams = [];
 
     // Verificar si se proporcionó el parámetro "establecimiento_id"
     if (establecimientoId) {
-      queryString += ` establecimiento_id = $1 AND`;
+      queryString += ` establecimiento_id = $1`;
       queryParams.push(establecimientoId);
-    }
-    // Verificar si se proporcionó el parámetro "usuario_id"
-    else if (usuarioId) {
-      queryString += ` usuario_id = $1 AND`;
-      queryParams.push(usuarioId);
     }
 
     const result = await client.query(queryString, queryParams);
