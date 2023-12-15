@@ -100,7 +100,13 @@ function getAllReservas(pId){
                 getUsuario(reserva.usuario_id)
                 .then(usuario => {
     
-    
+                    let name = "";
+                    if(reserva.nombre == "nombreABC"){
+                        name = usuario.nombre + " " + usuario.apellido;
+                    }
+                    else {
+                        name = reserva.nombre;
+                    }
     
                     document.getElementById("reservas_historial").innerHTML += `
                     
@@ -113,7 +119,7 @@ function getAllReservas(pId){
                                 </svg>
                             </div>
                             <div class="col-lg-2 col-4 d-flex align-items-center border-end">
-                                <p class="m-0 text-bold">${usuario.nombre} ${usuario.apellido}</p>
+                                <p class="m-0 text-bold">${name}</p>
                             </div>
                             <div class="col-lg-2 col-4 ps-3">
                                 <p class="py-0 m-0">${reserva.tipo_de_mesa}</p>
@@ -177,10 +183,23 @@ document.getElementById('reservaForm').addEventListener('submit', function(e) {
     })
     .then(data => {
         console.log('Success:', data);
-        alert('Reserva added successfully!');
+        alert('Reserva se ha agregado correctamente!');
+        // Set the value of the specified elements to empty string
+        document.getElementById('fecha_reserva').value = '';
+        document.getElementById('n_personas_reserva').value = '';
+        document.getElementById('tipo_mesa_reserva').value = '';
+        document.getElementById('nombre_reserva').value = '';
+
     })
     .catch((error) => {
         console.error('Error:', error);
-        alert('Error adding reserva');
+        alert('[Error] al agregar reserva.');
+
+        // Set the value of the specified elements to empty string
+        document.getElementById('fecha_reserva').value = '';
+        document.getElementById('n_personas_reserva').value = '';
+        document.getElementById('tipo_mesa_reserva').value = '';
+        document.getElementById('nombre_reserva').value = '';
+
     });
 });
