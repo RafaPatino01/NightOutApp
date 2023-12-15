@@ -932,6 +932,57 @@ app.post('/add_reserva', async (req, res) => {
   }
 });
 
+app.post('/add_reserva_generica', async (req, res) => {
+  const {
+    fecha_hora,
+    usuario_id,
+    establecimiento_id,
+    numero_personas,
+    confirmado,
+    asistencia,
+    tipo_mesa,
+    nombre
+  } = req.body;
+
+  try {
+    const client = await pool.connect();
+
+    const queryString = `
+      INSERT INTO public.reservas (
+        fecha_hora,
+        usuario_id,
+        establecimiento_id,
+        numero_personas,
+        confirmado,
+        asistencia,
+        tipo_de_mesa,
+        nombre
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    `;
+
+    const values = [
+      fecha_hora,
+      usuario_id,
+      establecimiento_id,
+      numero_personas,
+      confirmado,
+      asistencia,
+      tipo_mesa,
+      nombre
+    ];
+
+    await client.query(queryString, values);
+    client.release();
+    console.log('Reserva inserted successfully');
+
+    res.status(201).json({ message: 'Reserva inserted successfully' });
+  } catch (error) {
+    console.error('Error inserting Reserva into PostgreSQL:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 
 // ADD ESTABLECIMIENTO ---------------------------------------------------------------------------------------

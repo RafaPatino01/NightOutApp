@@ -148,21 +148,21 @@ function filterReservas() {
     });
 }
 
-
 document.getElementById('reservaForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
     const formData = {
-        fecha_hora: document.getElementById('fechaHora').value,
-        usuario_id: document.getElementById('usuarioId').value,
-        establecimiento_id: document.getElementById('establecimientoId').value,
-        numero_personas: document.getElementById('numeroPersonas').value,
-        confirmado: document.getElementById('confirmado').checked,
-        asistencia: document.getElementById('asistencia').checked,
-        tipo_mesa: document.getElementById('tipoMesa').value
+        fecha_hora: document.getElementById('fecha_reserva').value,
+        usuario_id: 999,
+        establecimiento_id: id,
+        numero_personas: document.getElementById('n_personas_reserva').value,
+        confirmado: 0,
+        asistencia: 0,
+        tipo_mesa: document.getElementById('tipo_mesa_reserva').value,
+        nombre: document.getElementById('nombre_reserva').value,
     };
 
-    fetch('https://nightout.com.mx/api/add_reserva', {
+    fetch('https://nightout.com.mx/api/add_reserva_generica', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

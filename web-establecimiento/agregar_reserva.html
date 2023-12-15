@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -57,60 +57,37 @@
 
     <h2 class="text-white ms-3 mt-4">Agregar reserva</h2>
 
-    <style>
-        /* Override Bootstrap styles for input text color */
-        #reservaForm input[type="text"],
-        #reservaForm input[type="number"],
-        #reservaForm input[type="datetime-local"] {
-            color: #000; /* Set the text color to black */
-        }
-    </style>
-
-<form id="reservaForm" class="m-3">
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <label for="fechaHora" class="form-label text-white">Fecha y Hora</label>
-            <input type="datetime-local" id="fechaHora" name="fecha_hora" class="form-control" required>
-        </div>
-        <div class="col-md-6">
-            <label for="usuarioId" class="form-label text-white">Usuario ID</label>
-            <input type="text" id="usuarioId" name="usuario_id" class="form-control" placeholder="Usuario ID" required>
-        </div>
-    </div>
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <label for="establecimientoId" class="form-label text-white">Establecimiento ID</label>
-            <input type="text" id="establecimientoId" name="establecimiento_id" class="form-control" placeholder="Establecimiento ID" required>
-        </div>
-        <div class="col-md-6">
-            <label for="numeroPersonas" class="form-label text-white">Número de Personas</label>
-            <input type="number" id="numeroPersonas" name="numero_personas" class="form-control" placeholder="Número de Personas" required>
-        </div>
-    </div>
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <div class="form-check">
-                <input type="checkbox" id="confirmado" name="confirmado" class="form-check-input">
-                <label for="confirmado" class="form-check-label text-white">Confirmado</label>
+    <form id="reservaForm" class="m-3">
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <label for="usuarioId" class="form-label text-white">Nombre</label>
+                <input type="text" id="nombre_reserva" name="nombre" class="form-control" placeholder="Nombre Reserva" required>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="form-check">
-                <input type="checkbox" id="asistencia" name="asistencia" class="form-check-input">
-                <label for="asistencia" class="form-check-label text-white">Asistencia</label>
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <label for="fechaHora" class="form-label text-white">Fecha y Hora</label>
+                <input type="datetime-local" id="fecha_reserva" name="fecha_hora" class="form-control" required>
             </div>
         </div>
-    </div>
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <label for="tipoMesa" class="form-label text-white">Tipo de Mesa</label>
-            <input type="text" id="tipoMesa" name="tipo_mesa" class="form-control" placeholder="Tipo de Mesa">
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <label for="numeroPersonas" class="form-label text-white">Número de Personas</label>
+                <input type="number" id="n_personas_reserva" name="numero_personas" class="form-control" placeholder="Número de Personas" required>
+            </div>
         </div>
-        <div class="col-md-6">
-            <button type="submit" class="btn btn-primary">Add Reserva</button>
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <label for="tipoMesa" class="form-label text-white">Tipo de Mesa</label>
+                <input type="text" id="tipo_mesa_reserva" name="tipo_mesa" class="form-control" placeholder="Tipo de Mesa">
+            </div>
         </div>
-    </div>
-</form>
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <button type="submit" class="btn btn-primary">Add Reserva</button>
+            </div>
+        </div>
+    </form>
     
 
     
