@@ -162,8 +162,8 @@ document.getElementById('reservaForm').addEventListener('submit', function(e) {
         usuario_id: 999,
         establecimiento_id: id,
         numero_personas: document.getElementById('n_personas_reserva').value,
-        confirmado: 0,
-        asistencia: 0,
+        confirmado: 1,
+        asistencia: 1,
         tipo_mesa: document.getElementById('tipo_mesa_reserva').value,
         nombre: document.getElementById('nombre_reserva').value,
     };
