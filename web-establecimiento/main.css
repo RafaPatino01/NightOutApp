@@ -73,3 +73,7 @@ object-fit: cover; /* To maintain the video aspect ratio */
 .bg-primary {
     background-color: #5271FF;
 }
+
+.bg-custom {
+    background-color: #4d61be;
+}

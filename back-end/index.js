@@ -563,6 +563,27 @@ app.delete('/delete_usuario/:id', async (req, res) => {
   }
 });
 
+app.delete('/delete_reserva/:id', async (req, res) => {
+  try {
+    const reservaId = req.params.id;
+
+    const client = await pool.connect();
+
+    // Construct the SQL DELETE statement
+    const queryString = 'DELETE FROM public.reservas WHERE id = $1';
+
+    // Execute the SQL statement with the provided reservaId
+    const result = await client.query(queryString, [reservaId]);
+
+    client.release();
+
+    res.json({ message: 'Reserva deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting Reserva:', error);
+    res.status(500).json({ error: 'Error deleting Reserva' });
+  }
+});
+
 
 // Ruta para obtener reservas por establecimiento_id o usuario_id
 app.get('/get_reservas', async (req, res) => {

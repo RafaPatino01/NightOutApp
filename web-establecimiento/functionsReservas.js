@@ -101,13 +101,20 @@ function getAllReservas(pId){
                 .then(usuario => {
     
                     let name = "";
+                    let status = "🟡";
+                    if(reserva.asistencia == 1){
+                        status = "✅";
+                    }
+
                     if(reserva.nombre == "nombreABC"){
-                        name = usuario.nombre + " " + usuario.apellido;
+                        name =  `<div class='bg-custom p-2 rounded small'>Reserva App</div><p class='mt-2 text-bold small'>${usuario.nombre + " " + usuario.apellido}</p>`;;
                     }
                     else {
-                        name = reserva.nombre;
+                        name = `<div class='bg-secondary p-2 rounded small'>Reserva Establecimiento</div><p class='mt-2 text-bold small'>${reserva.nombre}</p>`;
                     }
-    
+
+                    
+
                     document.getElementById("reservas_historial").innerHTML += `
                     
                     <div class="container2 mt-3 px-4">
@@ -118,10 +125,11 @@ function getAllReservas(pId){
                                 <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
                                 </svg>
                             </div>
-                            <div class="col-lg-2 col-4 d-flex align-items-center border-end">
-                                <p class="m-0 text-bold">${name}</p>
+                            <div class="col-lg-2 col-5 align-items-center border-end">
+                                ${name}
                             </div>
-                            <div class="col-lg-2 col-4 ps-3">
+                            <div class="col-lg-2 col-5 ps-3">
+                                <p class="py-0 m-0">Asistencia: ${status}</p>
                                 <p class="py-0 m-0">${reserva.tipo_de_mesa}</p>
                                 ${generateDateTimeHTML(reserva.fecha_hora)}
                             </div>
