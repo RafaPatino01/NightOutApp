@@ -59,11 +59,20 @@
     <h2 class="text-white ms-3 mt-4">Historial Reservas</h2>
 
     <div class="m-3 search-container">
-        <input class="form-control mb-3" type="text" id="searchInput" placeholder="Búsqueda por nombre" oninput="filterReservas()">
+        <input class="form-control mb-3" type="text" id="searchInput" placeholder="Búsqueda general (nombre | fecha | tipo mesa)" oninput="filterReservas()">
     </div>
 
     <div id="reservas_historial"></div>
 
+
+    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <!-- Modal content goes here -->
+            </div>
+        </div>
+    </div>
+      
 
     <!-- Add Bootstrap JS and jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

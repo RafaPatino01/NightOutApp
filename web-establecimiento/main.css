@@ -1,3 +1,7 @@
+body {
+    overflow-x: hidden;
+}
+
 .bg-black {
     background-color: #070808;
 }
@@ -76,4 +80,13 @@ object-fit: cover; /* To maintain the video aspect ratio */
 
 .bg-custom {
     background-color: #4d61be;
+}
+
+.container2 {
+    cursor: pointer;
+    transition: transform 0.3s; /* Smooth scale transition on hover */
+}
+
+.container2:hover {
+    transform: scale(1.01); /* Scale the element to 110% of its original size on hover */
 }

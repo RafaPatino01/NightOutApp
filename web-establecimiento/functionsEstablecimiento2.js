@@ -149,7 +149,7 @@ function generateDateTimeHTML(dateTimeString) {
 
     // Generate the HTML string
     const htmlString = `
-        <p class="py-0 m-0">${day}/${month}/${year}</p>
+        <p class="py-0 m-0 searchable">${day}/${month}/${year}</p>
         <p class="py-0 m-0">${hour}</p>
     `;
 

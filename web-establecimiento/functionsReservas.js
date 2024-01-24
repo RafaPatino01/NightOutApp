@@ -52,7 +52,7 @@ function generateDateTimeHTML(dateTimeString) {
 
     // Generate the HTML string
     const htmlString = `
-        <p class="py-0 m-0">${day}/${month}/${year}</p>
+        <p class="py-0 m-0 searchable">${day}/${month}/${year}</p>
         <p class="py-0 m-0">${hour}</p>
     `;
 
@@ -77,88 +77,127 @@ function getUsuario(pId) {
     });
 }
 
-function getAllReservas(pId){
+async function getAllReservas(pId){
     const url = `https://nightout.com.mx/api/get_all_reservas/?establecimiento_id=${pId}`;
 
-    fetch(url)
-    .then(response => {
-        if (response.ok) {
-        return response.json();
-        } else {
-        return response.json().then(errorData => {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            const errorData = await response.json();
             throw new Error(errorData.error);
-        });
         }
-    })
-    .then(reservas => {
+        const reservas = await response.json();
         console.log('Received reservas:', reservas);
 
-        document.getElementById("reservas_historial").innerHTML = "";
+        let htmlContent = "";
+        for (const reserva of reservas) {
+            const usuario = await getUsuario(reserva.usuario_id);
+            htmlContent += createReservaHTML(reserva, usuario);
+        }
 
-        reservas.forEach(reserva => {
-            //if(reserva.asistencia == 0){
-                getUsuario(reserva.usuario_id)
-                .then(usuario => {
-    
-                    let name = "";
-                    let status = "🟡";
-                    if(reserva.asistencia == 1){
-                        status = "✅";
-                    }
+        document.getElementById("reservas_historial").innerHTML = htmlContent;
+        addEventListenersToReservas(reservas);
 
-                    if(reserva.nombre == "nombreABC"){
-                        name =  `<div class='bg-custom p-2 rounded small'>Reserva App</div><p class='mt-2 text-bold small'>${usuario.nombre + " " + usuario.apellido}</p>`;;
-                    }
-                    else {
-                        name = `<div class='bg-secondary p-2 rounded small'>Reserva Establecimiento</div><p class='mt-2 text-bold small'>${reserva.nombre}</p>`;
-                    }
-
-                    
-
-                    document.getElementById("reservas_historial").innerHTML += `
-                    
-                    <div class="container2 mt-3 px-4">
-                        <div class="row bg-dark p-3 rounded">
-                            <div class="col-lg-1 col-2 d-flex justify-content-center align-items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-calendar-minus" viewBox="0 0 16 16">
-                                <path d="M5.5 9.5A.5.5 0 0 1 6 9h4a.5.5 0 0 1 0 1H6a.5.5 0 0 1-.5-.5"/>
-                                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
-                                </svg>
-                            </div>
-                            <div class="col-lg-2 col-5 align-items-center border-end">
-                                ${name}
-                            </div>
-                            <div class="col-lg-2 col-5 ps-3">
-                                <p class="py-0 m-0">Asistencia: ${status}</p>
-                                <p class="py-0 m-0">${reserva.tipo_de_mesa}</p>
-                                ${generateDateTimeHTML(reserva.fecha_hora)}
-                            </div>
-                        </div>
-                    </div>
-                    `;
-                });
-            //}
-
-        });
-
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Error fetching reservas:', error);
-    });
-
+    }
 }
+
+function createReservaHTML(reserva, usuario) {
+    let name = reserva.nombre === "nombreABC"
+        ? `<div class='bg-custom p-2 rounded small searchable'>Reserva App</div><p class='mt-2 text-bold small searchable'>${usuario.nombre} ${usuario.apellido}</p>`
+        : `<div class='bg-secondary p-2 rounded small searchable'>Reserva Establecimiento</div><p class='mt-2 text-bold small searchable'>${reserva.nombre}</p>`;
+
+    let status = reserva.asistencia === 1 ? "✅" : "🟡";
+
+    return `
+        <div class="container2 mt-3 px-4" id="modal_activate${reserva.id}">
+            <div class="row bg-dark p-3 rounded">
+                <div class="col-lg-1 col-2 d-flex justify-content-center align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-calendar-minus" viewBox="0 0 16 16">
+                    <path d="M5.5 9.5A.5.5 0 0 1 6 9h4a.5.5 0 0 1 0 1H6a.5.5 0 0 1-.5-.5"/>
+                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+                    </svg>
+                </div>
+                <div class="col-lg-2 col-5 align-items-center border-end">
+                    ${name}
+                </div>
+                <div class="col-lg-2 col-5 ps-3">
+                    <p class="py-0 m-0">Status: ${status}</p>
+                    <p class="py-0 m-0 searchable">${reserva.tipo_de_mesa}</p>
+                    ${generateDateTimeHTML(reserva.fecha_hora)}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function addEventListenersToReservas(reservas) {
+    reservas.forEach(reserva => {
+        
+        const element = document.getElementById("modal_activate" + reserva.id);
+        element.addEventListener("click", () => {
+            // Load the modal content here (replace with your modal content)
+            const modalContent = `
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">¿Deseas eliminar la reserva?</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ID de Reserva: ${reserva.id}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="deleteReserva(${reserva.id})">Borrar Reserva</button>
+            </div>
+          `;
+      
+          // Set the modal content
+          const modal = document.querySelector("#myModal .modal-content");
+          modal.innerHTML = modalContent;
+      
+          // Open the modal
+          const myModal = new bootstrap.Modal(document.getElementById("myModal"));
+          myModal.show();
+        });
+    });
+}
+
 
 function filterReservas() {
     const searchQuery = document.getElementById('searchInput').value.toLowerCase();
     const reservas = document.querySelectorAll('#reservas_historial .container2');
 
     reservas.forEach(reserva => {
-        const name = reserva.querySelector('.text-bold').textContent.toLowerCase();
-        if (name.includes(searchQuery)) {
-            reserva.style.display = ''; // Show the reserva if the name matches
-        } else {
-            reserva.style.display = 'none'; // Hide the reserva if the name does not match
+        const searchableElements = reserva.querySelectorAll('.searchable');
+        const isMatch = Array.from(searchableElements).some(element => 
+            element.textContent.toLowerCase().includes(searchQuery)
+        );
+
+        reserva.style.display = isMatch ? '' : 'none';
+    });
+}
+
+
+function deleteReserva(pReservaID){
+    console.log("Eliminando: " + String(pReservaID));
+    const url = `https://nightout.com.mx/api/delete_reserva/${pReservaID}`;
+
+    fetch(url, {
+        method: 'DELETE'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Success:', data);
+        location.reload();
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        alert("Ha ocurrido un error");
     });
 }
 
