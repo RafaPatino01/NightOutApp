@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -59,6 +59,10 @@
 
     <h2 class="text-white ms-3 mt-4">Reservas confirmadas</h2>
 
+    <div class="m-3 search-container">
+        <input class="form-control mb-3" type="text" id="searchInput" placeholder="Búsqueda general (nombre | fecha | tipo mesa)" oninput="filterReservas()">
+    </div>
+    
     <div class="w-100 px-0 pb-5" id="reservas_pendientes">
  
     </div>

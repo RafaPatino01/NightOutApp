@@ -59,19 +59,20 @@ function getReservas(pId){
     .then(reservas => {
         console.log('Received reservas:', reservas);
 
-
-        
-
         document.getElementById("reservas_pendientes").innerHTML = "";
 
         reservas.forEach(reserva => {
             getUsuario(reserva.usuario_id)
             .then(usuario => {
+                let name = reserva.nombre === "nombreABC"
+                ? `${usuario.nombre} ${usuario.apellido}`
+                : `${reserva.nombre}`;
+
                 document.getElementById("reservas_pendientes").innerHTML += `
                 <div class="container2 mt-3 px-4">
                     <div class="row bg-dark p-3 rounded">
                         <div class="col-7">
-                            <p class="m-0 text-bold">${usuario.nombre} ${usuario.apellido}</p>
+                            <p class="m-0 text-bold">${name}</p>
                             <hr>
                             <p class="py-0 m-0">${reserva.tipo_de_mesa}</p>
                             ${generateDateTimeHTML(reserva.fecha_hora)}
@@ -126,14 +127,19 @@ function getReservas2(pId){
         reservas.forEach(reserva => {
             getUsuario(reserva.usuario_id)
             .then(usuario => {
+
+                let name = reserva.nombre === "nombreABC"
+                ? `${usuario.nombre} ${usuario.apellido}`
+                : `${reserva.nombre}`;
+
                 document.getElementById("reservas_pendientes").innerHTML += `
                 
                 <div class="container2 mt-3 px-4">
                     <div class="row bg-dark p-3 rounded">
                         <div class="col-8">
-                            <p class="m-0 text-bold">${usuario.nombre} ${usuario.apellido}</p>
+                            <p class="m-0 text-bold searchable">${name}</p>
                             <hr>
-                            <p class="py-0 m-0">${reserva.tipo_de_mesa}</p>
+                            <p class="py-0 m-0 searchable">${reserva.tipo_de_mesa}</p>
                             ${generateDateTimeHTML(reserva.fecha_hora)}
                         </div>
 
@@ -260,4 +266,18 @@ async function cancelarReserva(reserva_id) {
 
     window.location.reload();
     
+}
+
+function filterReservas() {
+    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+    const reservas = document.querySelectorAll('#reservas_pendientes .container2');
+
+    reservas.forEach(reserva => {
+        const searchableElements = reserva.querySelectorAll('.searchable');
+        const isMatch = Array.from(searchableElements).some(element => 
+            element.textContent.toLowerCase().includes(searchQuery)
+        );
+
+        reserva.style.display = isMatch ? '' : 'none';
+    });
 }
