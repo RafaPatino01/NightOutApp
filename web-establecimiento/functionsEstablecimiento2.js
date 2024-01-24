@@ -71,7 +71,7 @@ function getReservas(pId){
             const ayer = new Date(ahoraUTC);
             ayer.setDate(ayer.getDate() - 1);
 
-            if (reservaFechaHora >= ayer) {
+            if (reservaFechaHora >= ahoraUTC) {
 
                 getUsuario(reserva.usuario_id)
                 .then(usuario => {
@@ -136,9 +136,9 @@ function getReservas(pId){
                         </div>
                     </div>
                     `;
-                }
-                else {
-                    document.getElementById("reservas_pendientes").innerHTML += `
+            }
+            else {
+                document.getElementById("reservas_pendientes").innerHTML += `
                 
                 <div class="container2 mt-3 px-4">
                     <div class="row bg-dark p-3 rounded">

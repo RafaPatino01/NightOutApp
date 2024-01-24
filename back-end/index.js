@@ -686,7 +686,7 @@ app.get('/get_reservas_by_id2/:id', async (req, res) => {
     const { id } = req.params;
 
     // Query para buscar la reserva con el id dado
-    const queryString = 'SELECT * FROM reservas WHERE establecimiento_id = $1 AND fecha_hora > CURRENT_TIMESTAMP AND confirmado = 1 AND asistencia = 0;';
+    const queryString = `SELECT *  FROM reservas  WHERE establecimiento_id = $1  AND fecha_hora > (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'America/Mexico_City') AND confirmado = 1  AND asistencia = 0;`;
 
     const result = await client.query(queryString, [id]);
 
