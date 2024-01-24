@@ -61,15 +61,18 @@ function getReservas(pId){
 
         reservas.forEach(reserva => {
 
-            const reservaFechaHora = new Date(reserva.fecha_hora); // Esto es en UTC si reserva.fecha_hora termina en 'Z'
+            const reservaFechaHora = new Date(reserva.fecha_hora); // Asumiendo que reserva.fecha_hora está en UTC
 
             // Obtener la fecha y hora actual en UTC
             const ahora = new Date();
             const ahoraUTC = new Date(ahora.getTime() + ahora.getTimezoneOffset() * 60000);
 
+            // Calcular la fecha de ayer a partir de la fecha actual
+            const ayer = new Date(ahoraUTC);
+            ayer.setDate(ayer.getDate() - 1);
 
-            if (reservaFechaHora >= ahoraUTC) {
-                
+            if (reservaFechaHora >= ayer) {
+
                 getUsuario(reserva.usuario_id)
                 .then(usuario => {
                 let name = reserva.nombre === "nombreABC"
