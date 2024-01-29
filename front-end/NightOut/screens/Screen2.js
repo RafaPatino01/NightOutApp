@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, SectionList, TouchableOpacity, Modal, Image, Re
 import { fetchReservasByUserId, fetchEstablecimientos } from '../functions/functions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
+import SegmentedControlTab from 'react-native-segmented-control-tab';
 
 const Screen2 = () => {
   const [reservas, setReservas] = useState([]); // Estado para almacenar las reservas
@@ -11,6 +12,29 @@ const Screen2 = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedTab, setSelectedTab] = useState(0);
+  
+  const handleTabChange = (index) => {
+    setSelectedTab(index);
+  };
+
+  const getFilteredReservas = () => {
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+  
+    return Object.keys(reservas).map(key => {
+      const filteredData = reservas[key].filter(reserva => {
+        if (selectedTab === 0) {
+          return new Date(reserva.fecha_hora) >= currentDate;
+        } else {
+          return reserva.asistencia === 1;
+        }
+      });
+  
+      return { title: establecimientosDict[key] ? establecimientosDict[key].nombre : "", data: filteredData };
+    }).filter(section => section.data.length > 0); // Filtra secciones sin datos
+  };
+  
 
   const openModalWithItem = (itemId) => {
     setSelectedItemId(itemId);
@@ -78,7 +102,7 @@ const Screen2 = () => {
         // Carga los establecimientos al mismo tiempo
         const establecimientosData = await fetchEstablecimientos();
         setEstablecimientos(establecimientosData); // Actualiza el estado con los establecimientos obtenidos
-    
+  
         let tempEstablecimientosDict = {};
         establecimientosData.forEach((element) => {
           tempEstablecimientosDict[element.id] = element;
@@ -89,8 +113,19 @@ const Screen2 = () => {
         // Ordena las reservas
         const sortedReservas = sortReservas(reservasData);
   
+        // Obtén la fecha actual
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0); // Ignorar la hora y mantener solo la fecha
+  
+        // Filtra las reservas
+        const filteredReservas = sortedReservas.filter(reserva => {
+          const reservaDate = new Date(reserva.fecha_hora);
+          // Incluye reservas donde el usuario ha asistido o las reservas para fechas futuras
+          return reserva.asistencia === 1 || reservaDate >= currentDate;
+        });
+  
         // Agrupar reservas por establecimiento
-        const reservasAgrupadas = sortedReservas.reduce((acc, reserva) => {
+        const reservasAgrupadas = filteredReservas.reduce((acc, reserva) => {
           const estId = reserva.establecimiento_id;
           if (!acc[estId]) {
             acc[estId] = [];
@@ -107,6 +142,7 @@ const Screen2 = () => {
       console.error('Error al obtener el ID del usuario o las reservas:', error);
     }
   };
+  
   
 
   // Define una función para cargar los datos de los establecimientos
@@ -213,38 +249,47 @@ const Screen2 = () => {
 
   return (
     <View style={styles.container}>
-      <Modal
-  animationType="fade"
-  transparent={true}
-  visible={modalVisible}
-  onRequestClose={() => {
-    setModalVisible(!modalVisible);
-  }}
->
-  <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.5)" }}>
-    <View style={{ padding: 20, backgroundColor: "white", borderRadius: 10, width: '80%', height: '40%', flexDirection: 'column', justifyContent: 'space-between' }}>
-      <View>
-        <Text style={{ textAlign: "center" }}>Muestra el QR en el establecimiento</Text> 
-        <Image source={{ uri: 'https://nightout.com.mx/api/uploads/reservas_qr/qr_'+selectedItemId+'.png' } } style={{ width: "100%", height:220, resizeMode: "contain" }} />
-        
-      </View>
-      <TouchableOpacity onPress={() => setModalVisible(false)} style={{ backgroundColor: '#5271FF', padding: 10, alignItems: 'center' }}>
-        <Text style={{ color: 'white' }}>Close</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-</Modal>
+      <SegmentedControlTab
+        values={['Próximas', 'Asistidas']}
+        selectedIndex={selectedTab}
+        onTabPress={handleTabChange}
+        tabsContainerStyle={styles.tabsContainer}
+        tabStyle={styles.tabStyle}
+        activeTabStyle={styles.activeTabStyle}
+        tabTextStyle={styles.tabTextStyle}
+        activeTabTextStyle={styles.activeTabTextStyle}
+      />
 
-    <SectionList
-      sections={Object.keys(reservas).map(key => ({
-        title: establecimientosDict[key] ? establecimientosDict[key].nombre : "",
-        data: reservas[key],
-      }))}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={reservaView}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      style={styles.flatlist}
-    />
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.5)" }}>
+          <View style={{ padding: 20, backgroundColor: "white", borderRadius: 10, width: '80%', height: '40%', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <View>
+              <Text style={{ textAlign: "center" }}>Muestra el QR en el establecimiento</Text> 
+              <Image source={{ uri: 'https://nightout.com.mx/api/uploads/reservas_qr/qr_'+selectedItemId+'.png' } } style={{ width: "100%", height:220, resizeMode: "contain" }} />
+              
+            </View>
+            <TouchableOpacity onPress={() => setModalVisible(false)} style={{ backgroundColor: '#5271FF', padding: 10, alignItems: 'center' }}>
+              <Text style={{ color: 'white' }}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <SectionList
+        sections={getFilteredReservas()}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={reservaView}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        style={styles.flatlist}
+      />
 
     </View>
   );
@@ -252,6 +297,22 @@ const Screen2 = () => {
 };
 
 const styles = StyleSheet.create({
+  tabsContainer: {
+    padding: 10,
+    backgroundColor: 'white',
+  },
+  tabStyle: {
+    borderColor: '#5271FF',
+  },
+  activeTabStyle: {
+    backgroundColor: '#5271FF',
+  },
+  tabTextStyle: {
+    color: '#5271FF',
+  },
+  activeTabTextStyle: {
+    color: '#fff',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',

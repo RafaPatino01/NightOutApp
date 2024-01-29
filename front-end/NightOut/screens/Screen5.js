@@ -1,16 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import Slider from '@react-native-community/slider';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
+import { fetchEstablecimientos } from '../functions/functions';
 
 const Screen5 = ({ route }) => {
   const navigation = useNavigation();
+  const [locations, setLocations] = useState([]);
 
   const [price, setPrice] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
+
+  useEffect(() => {
+    fetchEstablecimientos()
+      .then((data) => {
+        const uniqueLocations = [...new Set(data.map(element => element.ubicacion_general))];
+        setLocations(uniqueLocations);
+      });
+  }, []);
+  
 
   const getPriceLabel = (value) => {
     switch (value) {
@@ -50,6 +61,15 @@ const Screen5 = ({ route }) => {
     console.log(searchData);
     navigation.navigate("Resultados", { data: searchData })
   };
+
+  const chunkArray = (array, size) => {
+    const result = [];
+    for (let i = 0; i < array.length; i += size) {
+      result.push(array.slice(i, i + size));
+    }
+    return result;
+  };
+  
 
   return (
     <View style={styles.container}>
@@ -106,46 +126,27 @@ const Screen5 = ({ route }) => {
       </View>
 
       <Text style={styles.sectionTitle}>Ubicación</Text>
-      <View style={styles.optionsRow}>
+      <View>
+  {chunkArray(locations, 2).map((locationPair, index) => (
+    <View key={index} style={styles.optionsRow}>
+      {locationPair.map((location, index) => (
         <TouchableOpacity
+          key={index}
           style={[
             styles.longOption,
-            selectedLocation === 'Santa Fe' && styles.selectedOption, // Aplica el estilo si está seleccionado
+            selectedLocation === location && styles.selectedOption,
           ]}
-          onPress={() => toggleLocation('Santa Fe')}
+          onPress={() => toggleLocation(location)}
         >
-          <Text style={[selectedLocation === 'Santa Fe' && styles.selectedOptionText]}>Santa Fe</Text>
+          <Text style={[selectedLocation === location && styles.selectedOptionText]}>
+            {location}
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.longOption,
-            selectedLocation === 'Centro' && styles.selectedOption, // Aplica el estilo si está seleccionado
-          ]}
-          onPress={() => toggleLocation('Centro')}
-        >
-          <Text style={[selectedLocation === 'Centro' && styles.selectedOptionText]}>Centro</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.optionsRow}>
-        <TouchableOpacity
-          style={[
-            styles.longOption,
-            selectedLocation === 'Roma-Condesa' && styles.selectedOption, // Aplica el estilo si está seleccionado
-          ]}
-          onPress={() => toggleLocation('Roma-Condesa')}
-        >
-          <Text style={[selectedLocation === 'Roma-Condesa' && styles.selectedOptionText]}>Roma-Condesa</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.longOption,
-            selectedLocation === 'Polanco' && styles.selectedOption, // Aplica el estilo si está seleccionado
-          ]}
-          onPress={() => toggleLocation('Polanco')}
-        >
-          <Text style={[selectedLocation === 'Polanco' && styles.selectedOptionText]}>Polanco</Text>
-        </TouchableOpacity>
-      </View>
+      ))}
+    </View>
+  ))}
+</View>
+
 
       <TouchableOpacity style={styles.floatingButton} onPress={handleSearch}>
         <Text style={styles.buttonText}>BUSCAR</Text>

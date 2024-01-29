@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Modal, Alert} from 'react-native';
+import { View, Text, Image, StyleSheet, StatusBar, TouchableOpacity, Modal, Alert } from 'react-native';
 import DatePicker from 'react-native-modern-datepicker';
 import ModalSelector from 'react-native-modal-selector';
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -11,12 +11,7 @@ const horarios = [
   { key: 3, label: '12 PM' },
   { key: 4, label: '01 AM' },
   { key: 5, label: '02 AM' },
-];
-
-const mesas = [
-  { key: 1, label: 'Mesa para 4' },
-  { key: 2, label: 'Mesa para 6' },
-  { key: 3, label: 'Mesa para 10' }
+  { key: 6, label: '03 AM' },
 ];
 
 const horarios24h = {
@@ -25,21 +20,23 @@ const horarios24h = {
   '12 PM': '00:00:00', // Medianoche
   '01 AM': '01:00:00',
   '02 AM': '02:00:00',
+  '03 AM': '03:00:00'
 };
 
 const Reservar = ({ route }) => {
+  
   const [data, setData] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedHorario, setSelectedHorario] = useState(null); // Estado para el horario
   const [selectedMesa, setSelectedMesa] = useState(null); // Estado para el tipo de mesa
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+  const [mesas, setMesas] = useState([]);
   const navigation = useNavigation();
 
   // Access the passed data using route.params
   const receivedData = route.params?.data;
 
   useEffect(() => {
-    // Set the header options
     navigation.setOptions({
       title: "Reservar",
       headerStyle: customHeaderStyle,
@@ -48,7 +45,17 @@ const Reservar = ({ route }) => {
       headerTintColor: '#5271FF',
       headerBackTitleVisible: false,
     });
-  }, []);
+
+    if (receivedData && receivedData.capacidades_mesa) {
+      const tipos_de_mesa = receivedData.capacidades_mesa.split(",");
+      const mesasActualizadas = tipos_de_mesa.map((mesa, index) => ({
+        key: index + 1, 
+        label: mesa.trim() // Usar trim() para eliminar espacios adicionales
+      }));
+      setMesas(mesasActualizadas);
+    }
+
+  }, [receivedData]);
 
   // Custom header style
   const customHeaderStyle = {
@@ -152,6 +159,15 @@ const Reservar = ({ route }) => {
         animated={true}
         barStyle="light-content"
       />
+
+    <Text style={styles.whiteText}>Mapa:</Text>
+
+      <Image 
+        source={{ uri: 'https://nightout.com.mx/api' + String(receivedData.imagen_mapa.substring(1)) }} 
+        style={styles.imageStyle}
+      />
+
+
       <TouchableOpacity onPress={toggleDatePicker} style={styles.button}>
         <Text style={[styles.buttonText, { color: selectedDate ? 'white' : '#d1d1d1' }]}>
           {selectedDate || "Seleccionar fecha 📅"}
@@ -170,7 +186,7 @@ const Reservar = ({ route }) => {
           cancelStyle={{ backgroundColor: 'transparent', borderColor: 'transparent' }} // Make the "Cancelar" button transparent
           overlayStyle={{ backgroundColor: '#070808' }} 
           optionStyle={{ backgroundColor: "#070808", marginBottom: 10, }}
-          optionTextStyle={{color: 'white', fontSize: 20,}}
+          optionTextStyle={{color: 'white', fontSize: 25,}}
           optionContainerStyle={{ backgroundColor: "#070808" }}
         />
       </View>
@@ -186,8 +202,8 @@ const Reservar = ({ route }) => {
           cancelStyle={{ backgroundColor: 'transparent', borderColor: 'transparent' }} // Make the "Cancelar" button transparent
           overlayStyle={{ backgroundColor: '#070808' }} 
           optionStyle={{ backgroundColor: "#070808", marginBottom: 10, }}
-          optionTextStyle={{color: 'white', fontSize: 20,}}
-          optionContainerStyle={{ backgroundColor: "#070808" }}
+          optionTextStyle={{color: 'white', fontSize: 25,}}
+          optionContainerStyle={{ backgroundColor: "#070808" }} 
         />
       </View>
 
@@ -228,6 +244,18 @@ const Reservar = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
+  whiteText: {
+    fontSize: 20,
+    color: 'white',
+    marginBottom: 10,
+  },
+  imageStyle: {
+    width: '90%', 
+    height: 200, 
+    resizeMode: 'cover', 
+    marginBottom: 30,
+    borderRadius: 20,
+  },
   floatingButton: {
     position: 'absolute',
     bottom: 30, // Place it at the bottom
