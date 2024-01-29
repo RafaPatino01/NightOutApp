@@ -52,7 +52,7 @@ function generateDateTimeHTML(dateTimeString) {
 
     // Generate the HTML string
     const htmlString = `
-        <p class="py-0 m-0 searchable">${day}/${month}/${year}</p>
+        <p class="py-0 m-0 searchable_fecha">${day}/${month}/${year}</p>
         <p class="py-0 m-0">${hour}</p>
     `;
 
@@ -169,6 +169,20 @@ function filterReservas() {
 
     reservas.forEach(reserva => {
         const searchableElements = reserva.querySelectorAll('.searchable');
+        const isMatch = Array.from(searchableElements).some(element => 
+            element.textContent.toLowerCase().includes(searchQuery)
+        );
+
+        reserva.style.display = isMatch ? '' : 'none';
+    });
+}
+
+function filterReservas2() {
+    const searchQuery = document.getElementById('searchInput2').value.toLowerCase();
+    const reservas = document.querySelectorAll('#reservas_historial .container2');
+
+    reservas.forEach(reserva => {
+        const searchableElements = reserva.querySelectorAll('.searchable_fecha');
         const isMatch = Array.from(searchableElements).some(element => 
             element.textContent.toLowerCase().includes(searchQuery)
         );

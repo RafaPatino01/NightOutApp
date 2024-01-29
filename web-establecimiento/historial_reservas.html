@@ -58,9 +58,19 @@
 
     <h2 class="text-white ms-3 mt-4">Historial Reservas</h2>
 
-    <div class="m-3 search-container">
-        <input class="form-control mb-3" type="text" id="searchInput" placeholder="Búsqueda general (nombre | fecha | tipo mesa)" oninput="filterReservas()">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="m-3 search-container">
+                <input class="form-control mb-3" type="text" id="searchInput" placeholder="Búsqueda general (nombre | tipo reserva | tipo mesa)" oninput="filterReservas()">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="m-3 search-container">
+                <input class="form-control mb-3" type="text" id="searchInput2" placeholder="Búsqueda fechas (DD/MM/AAAA)" oninput="filterReservas2()">
+            </div>
+        </div>
     </div>
+    
 
     <div id="reservas_historial"></div>
 
