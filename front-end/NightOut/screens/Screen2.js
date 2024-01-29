@@ -19,14 +19,19 @@ const Screen2 = () => {
   };
 
   const getFilteredReservas = () => {
-    const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
+    const twoDaysAgo = new Date();
+    twoDaysAgo.setHours(0, 0, 0, 0); // Comienza al inicio del día actual
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 1); // Resta 3 días para incluir todo el día de ayer
   
     return Object.keys(reservas).map(key => {
       const filteredData = reservas[key].filter(reserva => {
+        const reservaDate = new Date(reserva.fecha_hora);
+  
         if (selectedTab === 0) {
-          return new Date(reserva.fecha_hora) >= currentDate;
+          // Incluye reservas desde el inicio de ayer y reservas futuras
+          return reservaDate >= twoDaysAgo;
         } else {
+          // Mantiene la lógica para la pestaña de asistencia
           return reserva.asistencia === 1;
         }
       });
@@ -34,6 +39,7 @@ const Screen2 = () => {
       return { title: establecimientosDict[key] ? establecimientosDict[key].nombre : "", data: filteredData };
     }).filter(section => section.data.length > 0); // Filtra secciones sin datos
   };
+  
   
 
   const openModalWithItem = (itemId) => {
@@ -112,16 +118,11 @@ const Screen2 = () => {
   
         // Ordena las reservas
         const sortedReservas = sortReservas(reservasData);
-  
-        // Obtén la fecha actual
-        const currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0); // Ignorar la hora y mantener solo la fecha
-  
+
         // Filtra las reservas
         const filteredReservas = sortedReservas.filter(reserva => {
-          const reservaDate = new Date(reserva.fecha_hora);
           // Incluye reservas donde el usuario ha asistido o las reservas para fechas futuras
-          return reserva.asistencia === 1 || reservaDate >= currentDate;
+          return reserva.asistencia === 1 || true;
         });
   
         // Agrupar reservas por establecimiento
@@ -142,26 +143,6 @@ const Screen2 = () => {
       console.error('Error al obtener el ID del usuario o las reservas:', error);
     }
   };
-  
-  
-
-  // Define una función para cargar los datos de los establecimientos
-  const loadEstablecimientos = async () => {
-    try {
-      const establecimientosData = await fetchEstablecimientos();
-      setEstablecimientos(establecimientosData); // Actualiza el estado con los establecimientos obtenidos
-  
-      // Realiza el procesamiento después de que los establecimientos se hayan cargado
-      let temp = {};
-      establecimientosData.forEach((element) => {
-        temp[element.id] = element;
-      });
-      console.log('Establecimientos cargados con éxito.');
-      setEstablecimientosDict(temp)
-    } catch (error) {
-      console.error('Error al cargar los establecimientos:', error);
-    }
-  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -172,7 +153,9 @@ const Screen2 = () => {
   function formatToDayMonthYear(dateString) {
     const date = new Date(dateString);
 
-    const day = date.getDate();
+    const parts = dateString.split('-'); // Split the string by hyphen
+    const day = parts[2].substring(0, 2);
+
     const month = date.getMonth();
     const year = date.getFullYear();
 
@@ -182,13 +165,10 @@ const Screen2 = () => {
         "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
     ];
 
-    // Pad the day with a leading zero if needed
-    const formattedDay = day < 10 ? `0${day}` : day;
-
     // Obtén el nombre del mes en español y en mayúsculas
     const formattedMonth = meses[month];
 
-    return `${formattedDay} de ${formattedMonth}`;
+    return `${day} de ${formattedMonth}`;
   } 
 
   const getBackgroundColor = (item) => {
