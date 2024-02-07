@@ -1,26 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, StatusBar, RefreshControl } from 'react-native';
 import { fetchEstablecimientos } from '../functions/functions';
 import { useNavigation } from '@react-navigation/native';
 
 const Screen1 = () => {
   const navigation = useNavigation();
 
+  const [refreshing, setRefreshing] = useState(false);
   const [establecimientos, setEstablecimientos] = useState([]);
   const [filteredEstablecimientos, setFilteredEstablecimientos] = useState([]);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [activeFilter, setActiveFilter] = useState('Todos'); // New state for active filter
 
-  useEffect(() => {
+  const onRefresh = () => {
+    setRefreshing(true);
     fetchEstablecimientos()
       .then((data) => {
         setEstablecimientos(data);
-        setFilteredEstablecimientos(data); // Set the filtered list to all items initially
+        setFilteredEstablecimientos(data);
+        setRefreshing(false); // Termina el refreshing
       })
       .catch((error) => {
-        console.error('Error in component:', error);
+        console.error('Error refreshing data:', error);
+        setRefreshing(false); // También termina el refreshing en caso de error
       });
-  }, []);
+  };
 
   const handleItemPress = (item) => {
     console.log(item.nombre + ' was pressed.');
@@ -41,32 +45,6 @@ const Screen1 = () => {
 
     return <Text style={styles.starText}>{stars}</Text>;
   };
-
-  const establecimientoView = ({ item }) => (
-    <TouchableOpacity onPress={() => handleItemPress(item)}>
-      <View style={styles.establecimientoContainer}>
-        <Image
-          source={{ uri: 'https://nightout.com.mx/api' + item.images[0].substring(1) }}
-          style={styles.image}
-          onLoad={handleImageLoad} // Call the function when the image is loaded
-        />
-        {imageLoaded && (
-          // Only show this view when the image is loaded
-          <View style={styles.establecimiento}>
-            <Text style={styles.establecimientoText}>{item.nombre}</Text>
-          </View>
-        )}
-        {imageLoaded && <View style={styles.bottomBorder}></View>}
-        {imageLoaded && (
-          <View style={styles.establecimiento}>
-            <StarRating rating={item.resenas_calificacion} />
-            <Text style={styles.establecimientoText2}>{item.ubicacion_general}</Text>
-          </View>
-        )}
-      </View>
-    </TouchableOpacity>
-  );
-
 
   const applyFilter = (tipo) => {
     if (activeFilter === tipo) {
@@ -96,7 +74,42 @@ const Screen1 = () => {
     color: activeFilter === tipo ? 'black' : 'white', // Change text color to black if active
   });
   
+  useEffect(() => {
+    fetchEstablecimientos()
+      .then((data) => {
+        setEstablecimientos(data);
+        setFilteredEstablecimientos(data); // Set the filtered list to all items initially
+      })
+      .catch((error) => {
+        console.error('Error in component:', error);
+      });
+  }, []);
   
+  const establecimientoView = ({ item }) => (
+    <TouchableOpacity onPress={() => handleItemPress(item)}>
+      <View style={styles.establecimientoContainer}>
+        <Image
+          source={{ uri: 'https://nightout.com.mx/api' + item.images[0].substring(1) }}
+          style={styles.image}
+          onLoad={handleImageLoad} // Call the function when the image is loaded
+        />
+        {imageLoaded && (
+          // Only show this view when the image is loaded
+          <View style={styles.establecimiento}>
+            <Text style={styles.establecimientoText}>{item.nombre}</Text>
+          </View>
+        )}
+        {imageLoaded && <View style={styles.bottomBorder}></View>}
+        {imageLoaded && (
+          <View style={styles.establecimiento}>
+            <StarRating rating={item.resenas_calificacion} />
+            <Text style={styles.establecimientoText2}>📍{item.ubicacion_general}</Text>
+          </View>
+        )}
+      </View>
+    </TouchableOpacity>
+  );
+
   return (
     <View style={styles.container}>
       <StatusBar
@@ -104,7 +117,15 @@ const Screen1 = () => {
           animated={true}
           barStyle="dark-content"
       />
-      
+      <View style={styles.quickFilters}> 
+        
+      <Image
+        source={require('../img/logo-dark.png')}  // Assuming the image is in the 'img' folder at your project root
+        style={styles.imageLogo}
+      />
+        
+      </View>
+
       <View style={styles.quickFilters}>
         <TouchableOpacity style={getFilterStyle('Antro')} onPress={() => applyFilter('Antro')}>
           <Text style={getFilterTextStyle('Antro')}>ANTROS</Text>
@@ -119,10 +140,16 @@ const Screen1 = () => {
 
 
       <FlatList
-          style={styles.flatlist}
-          data={filteredEstablecimientos} // Use filteredEstablecimientos instead of establecimientos
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={establecimientoView}
+        style={styles.flatlist}
+        data={filteredEstablecimientos}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={establecimientoView}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
       />
     </View>
   );
@@ -176,6 +203,10 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     width: '100%',
     height: 200,
+  },
+  imageLogo: {
+    width: 142,
+    height: 44,
   },
   bottomBorder: {
     width: '100%', // Cover the entire width

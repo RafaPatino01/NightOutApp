@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="es" class="h-100" data-bs-theme="auto">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NightOut México</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="manifest" href="images/site.webmanifest">
+    <link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=League+Spartan&display=swap" rel="stylesheet">
+
+    <style>
+
+      html, body {
+        font-family: "League Spartan", sans-serif !important;
+        font-optical-sizing: auto !important;
+        font-weight: 400 !important;
+        font-style: normal !important;
+      }
+
+      .navbar-glass {
+        background: rgba(36, 36, 36, 0.6); /* Fondo blanco semitransparente */
+        backdrop-filter: blur(10px); /* Efecto de desenfoque */
+        -webkit-backdrop-filter: blur(10px);
+      }
+
+      .bg-custom {
+        background-color: rgb(244, 244, 244);
+      }
+
+      .text-black {
+        color: rgb(15, 15, 15);
+      }
+
+      .bg-custom-1 {
+        border-radius: 1.2rem !important;
+        background: linear-gradient(120deg, #5f2bd0, #190d53, #3f1080, #8413a0);
+        background-size: 200% 200%;
+        transition: background-position 1.5s ease, transform 1.5s ease; /* Add transform to the transition */
+        background-position: 0% 50%;
+      }
+      .bg-custom-2 {
+        border-radius: 1.2rem !important;
+        background: linear-gradient(120deg, #3f1080, #1347a0, #5f2bd0, #190d53);
+        background-size: 200% 200%;
+        transition: background-position 1.5s ease, transform 1.5s ease; /* Add transform to the transition */
+        background-position: 0% 50%;
+      }
+
+      .bg-custom-1:hover, .bg-custom-2:hover {
+        cursor: pointer;
+        background-position: 100% 50%;
+        /*transform: scale(1.01);  Increase the size a bit */
+      }
+
+      .border-radius-round {
+        border-radius: 1.2rem !important;
+      }
+
+      .border-radius-round2 {
+        border-top-right-radius: 1.2rem !important;
+        border-top-left-radius: 1.2rem !important;
+      }
+
+
+      button, a {
+        border-radius: 1rem !important;
+      }
+
+      .imagen-desplazada {
+        position: relative;
+        top: -400px; /* Ajusta este valor según la cantidad que quieras desplazar la imagen hacia arriba */
+        width: 60%;
+        transition: background-position 0.5s ease, transform 0.5s ease;
+      }
+
+      .imagen-desplazada:hover, .pricing:hover {
+        cursor: pointer;
+        transform: scale(1.02);
+      }
+
+      .max-height-custom {
+        max-height: 300px;
+      }
+
+      .w-60 {
+        width: 60%;
+      }
+
+      .stepper {
+        .line {
+          width: 2px;
+          background-color: lightgrey !important;
+        }
+      }
+
+      .bg-primary {
+        background-color: #6744f2 !important;
+      }
+
+      .mt-large {
+        margin-top: 100px;
+      }
+
+      .renata-app {
+        width: 90%;
+      }
+
+      .pricing {
+        transition: background-position 0.5s ease, transform 0.5s ease;
+      }
+
+      .tema-gris .accordion-item {
+        background-color: #f8f9fa00; /* Un tono de gris claro */
+        color: #333; /* Color del texto */
+      }
+
+      .tema-gris .accordion-button {
+        background-color: #f8f9fa; /* Un tono de gris para los botones */
+      }
+
+      .accordion-item {
+        border: none;
+        margin-bottom: 10px;
+      }
+
+      /* Opcional: si también deseas eliminar los bordes de los botones cuando están colapsados */
+      .accordion-button.collapsed {
+        border-bottom: none;
+      }
+
+      .accordion-header {
+        background-color: transparent !important;
+      }
+
+      .qr-white {
+        filter: invert(100%);
+      }
+
+      .navbar-glass .navbar-toggler {
+        border-color: rgba(255, 255, 255, 0.1); /* Borde claro */
+      }
+
+      .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255, 255, 255, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+      }
+
+
+
+    </style>
+
+    <!-- Custom styles for this template -->
+    <link href="sticky-footer-navbar.css" rel="stylesheet">
+  </head>
+
+<header>
+  <nav class="navbar navbar-expand-sm fixed-top navbar-glass px-lg-5 px-md-5 px-sm-3 py-2">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <img src="images/logo_dark.png" alt="Logo" height="40"> <!-- Ajusta la altura según necesites -->
+      </a>
+      
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav ms-auto mb-2 mb-md-0">
+          <li class="nav-item">
+            <a class="nav-link text-light" href="#app">App</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="#uso">Uso</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="#contacto">Contacto</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="#FAQ">FAQ</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+</header>
+
+<body class="bg-dark">
+<!-- Begin page content -->
+<main class="flex-shrink-0 py-5 px-4">
+
+  <div class="container mt-5 p-lg-5 p-md-5 p-sm-2 bg-custom-1 text-light">
+    <div class="col-sm-12 col-md-6 col-lg-5 p-3">
+      <h2 class="d-none d-md-block">Reserva ahora!</h2>
+      <h1 class="mt-3 mb-4"><img src="images/logo_dark.png" class="w-100"></h1>
+      <p class="lead w-100">
+        Con NightOut México, tu entrada a las mejores noches está a solo unos clics de distancia. Olvídate de las filas y asegura tu acceso con solo mostrar tu código QR.
+      </p>
+      <a class="btn btn-lg btn-light me-3 mb-3">Abrir App ↗️</a>
+    </div>
+  </div>
+
+  <section id="app">
+    <div class="container mt-5 p-lg-5 p-md-5 p-sm-2 bg-white border-radius-round text-dark">
+    
+      <div class="row p-0 m-0">
+  
+        
+        <div class="col-sm-12 col-md-6 col-lg-5 p-3">
+          <h2 class="mb-5 pb-4">Transforma tu experiencia nocturna con reservaciones a través de NightOut</h2>
+      
+          <h4 class="mb-0">Minimiza el esfuerzo de planificación</h4>
+          <p class="lead w-100 mb-5">
+              Haz tus reservas automáticamente con unos pocos clics y recibe tu código QR de acceso sin complicaciones.
+          </p>
+      
+          <h4 class="mb-0">Eleva la experiencia de tus noches</h4>
+          <p class="lead w-100 mb-5">
+              Disfruta de una interfaz intuitiva que te permite explorar, elegir y reservar en los mejores antros, todo en lenguaje natural y decisiones inteligentes.
+          </p>
+      
+          <h4 class="mb-0">Gestiona tus reservaciones eficientemente</h4>
+          <p class="lead w-100 mb-5">
+              Con NightOut, organiza fácilmente tus planes nocturnos, encontrando el lugar perfecto para cada ocasión sin esfuerzo.
+          </p>
+      
+      </div>
+      
+    
+    
+        <div class="d-none d-lg-block col-lg-7 p-3 text-center max-height-custom animate__animated animate__fadeInUp">
+          <img class="imagen-desplazada" src="images/screenshot.png" alt="renata screenshot">
+        </div>
+  
+      </div>
+      
+    </div>
+  </section>
+  
+
+  
+    <div class="container mt-5 p-lg-5 p-md-5 p-sm-2 bg-white border-radius-round text-dark text-center">
+      <br class="d-block d-lg-none">
+      <h2 class="mb-5">Reserva, Explora, Disfruta</h2>
+      
+      <!-- Imagen para dispositivos de escritorio (lg y mayores) -->
+      <div class="w-100 p-0 m-0 text-center d-none d-lg-block">
+        <img class="w-100" src="images/antro.jpg" alt="">
+      </div>
+  
+      <div class="w-100 p-3 m-0 text-center d-block d-lg-none">
+        <img class="w-100 mb-4" src="images/antro.jpg" alt="">
+      </div>
+    </div>
+  
+  
+
+  <div class="container mt-5 p-lg-5 p-md-5 p-sm-2 bg-custom-2 border-radius-round text-white text-center">
+    <div class="row p-5">
+      <div class="col-md-4 col-sm-12 text-center mt-4">
+        <img src="images/atencion.png" class="w-25">
+        <h4 class="text-center w-100 mt-3">Reserva 24/7</h4>
+      </div>
+      <div class="col-md-4 col-sm-12 text-center mt-4">
+        <img src="images/qr-code.svg" class="w-25 qr-white">
+        <h4 class="text-center w-100 mt-3">QR</h4>
+      </div>
+      <div class="col-md-4 col-sm-12 text-center mt-4">
+        <img src="images/recordatorios.png" class="w-25 mb-3">
+        <h4 class="text-center w-100 mt-3">Recordatorios</h4>
+      </div>
+    </div>
+  </div>
+
+  <section id="uso">
+  <div class="container mt-5 p-lg-5 p-md-5 p-sm-2 bg-white border-radius-round text-dark">
+    <div class="row">
+      <div class="col-md-5 col-sm-12 mt-4 px-md-5 px-sm-3 px-2">        
+        <div class="stepper d-flex flex-column mt-5 ml-2">
+          <div class="d-flex mb-1">
+            <div class="d-flex flex-column pr-4 align-items-center">
+              <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1">1</div>
+              <div class="line h-100"></div>
+            </div>
+            <div class="px-4">
+              <h4 class="mb-0">Descarga NightOut</h4>
+              <p class="lead w-100 mb-5">
+                Instala la app desde tu tienda de aplicaciones favorita sin costo alguno.
+              </p>
+            </div>
+          </div>
+          <div class="d-flex mb-1">
+            <div class="d-flex flex-column pr-4 align-items-center">
+              <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1">2</div>
+              <div class="line h-100"></div>
+            </div>
+            <div class="px-4">
+              <h4 class="mb-0">Explora y Elige</h4>
+              <p class="lead w-100 mb-5">
+                Navega por la selección de antros, bares y restaurantes. Encuentra el lugar perfecto para tu noche.
+              </p>
+            </div>
+          </div>
+          <div class="d-flex mb-1">
+            <div class="d-flex flex-column pr-4 align-items-center">
+              <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1">3</div>
+              <div class="line h-100"></div>
+            </div>
+            <div class="px-4">
+              <h4 class="mb-0">Haz tu Reserva</h4>
+              <p class="lead w-100 mb-5">
+                Elige tu fecha, hora y mesa deseada. Recibe la confirmación y tu código QR de manera instantánea.
+              </p>
+            </div>
+          </div>
+          <div class="d-flex mb-1">
+            <div class="d-flex flex-column pr-4 align-items-center">
+              <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1">4</div>
+              <div class="line h-100 d-none"></div>
+            </div>
+            <div class="px-4">
+              <h4 class="mb-0">Disfruta la Noche</h4>
+              <p class="lead w-100 mb-5">
+                Muestra tu código QR al llegar y aprovecha las promociones exclusivas. ¡Prepárate para una experiencia inolvidable!
+              </p>
+            </div>
+          </div>
+          
+        </div>
+    </div>
+    
+
+      <div class="col-md-7 col-sm-12 mt-4 px-md-5 px-sm-3 px-2 d-none d-lg-block">
+        <div class="row">
+          <img src="images/antro2.png" class="renata-app">
+        </div>
+      </div>
+    </div>
+  </div>
+  </section>
+
+  <section id="FAQ">
+    <div class="container mt-5 p-lg-5 p-md-5 p-sm-2 bg-white border-radius-round text-dark text-center">
+      <br class="d-block d-lg-none">
+  
+      <h2 class="mt-0 mb-3">FAQ❓</h2>
+      <p class="lead mb-5">Encuentra respuestas a preguntas comunes sobre las funcionalidades de NightOut, seguridad y proceso de configuración.</p>
+  
+      <div class="row justify-content-center">
+  
+        <div class="accordion accordion-flush tema-gris col-md-10 col-sm-12">
+          
+          <div class="accordion-item col-12">
+            <h2 class="accordion-header" id="flush-headingOne">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                ¿Qué es NightOut?
+              </button>
+            </h2>
+            <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+              <div class="accordion-body text-start">
+                NightOut es una aplicación móvil creada para ofrecerte la calidad de entretenimiento que te mereces. Te facilita conocer y hacer reservaciones en establecimientos de entretenimiento como antros, bares, terrazas o restaurantes sin necesidad de llamar o mandar mensajes. Tu diversión está al alcance de un click.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item col-12">
+            <h2 class="accordion-header" id="flush-headingTwo">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                ¿Cómo puedo hacer una reserva?
+              </button>
+            </h2>
+            <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+              <div class="accordion-body text-start">
+                A través del menú principal o desde el buscador, dirígete al perfil del establecimiento donde deseas reservar. Selecciona la opción de reservar, elige fecha y hora, selecciona la mesa deseada, y confirma tu reserva. Espera a que el establecimiento apruebe tu reservación. Al llegar, muestra tu código QR para acumular reservas y ganar cortesías.
+              </div>
+            </div>
+          </div>
+
+          
+          <div class="accordion-item col-12">
+            <h2 class="accordion-header" id="flush-headingThree">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+                ¿Cómo puedo cancelar una reserva?
+              </button>
+            </h2>
+            <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
+              <div class="accordion-body text-start">
+                Si necesitas cancelar una reservación ya aceptada, comunícate al número de teléfono de atención a clientes indicado al final de la página.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item col-12">
+            <h2 class="accordion-header" id="flush-headingFive">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseFive" aria-expanded="false" aria-controls="flush-collapseFive">
+                ¿Hay alguna tarifa por usar la aplicación?
+              </button>
+            </h2>
+            <div id="flush-collapseFive" class="accordion-collapse collapse" aria-labelledby="flush-headingFive" data-bs-parent="#accordionFlushExample">
+              <div class="accordion-body text-start">
+                No, todos nuestros servicios son gratuitos. Nos importas TÚ, y deseamos ofrecerte el mejor servicio sin costo alguno. :)
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item col-12">
+            <h2 class="accordion-header" id="flush-headingSix">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseSix" aria-expanded="false" aria-controls="flush-collapseSix">
+                ¿Qué hacer si tengo problemas técnicos o dificultades con la aplicación?
+              </button>
+            </h2>
+            <div id="flush-collapseSix" class="accordion-collapse collapse" aria-labelledby="flush-headingSix" data-bs-parent="#accordionFlushExample">
+              <div class="accordion-body text-start">
+                Si tienes inconvenientes, comunícate con nosotros a través del número o correo electrónico de atención a clientes indicados al final de este documento. Estaremos encantados de ayudarte.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item col-12">
+            <h2 class="accordion-header" id="flush-headingSeven">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseSeven" aria-expanded="false" aria-controls="flush-collapseSeven">
+                ¿Cómo registro mi establecimiento en NightOut?
+              </button>
+            </h2>
+            <div id="flush-collapseSeven" class="accordion-collapse collapse" aria-labelledby="flush-headingSeven" data-bs-parent="#accordionFlushExample">
+              <div class="accordion-body text-start">
+                Para unirte a la comunidad NightOut, contáctanos mediante el número de teléfono o correo electrónico provistos al final de este documento. Estaremos felices de integrarte.
+              </div>
+            </div>
+          </div>
+
+
+
+        </div>
+        
+      </div>
+      
+    </div>
+  </section>
+  
+
+
+  <section id="contacto">
+    <div class="container mt-5 p-lg-5 p-md-5 p-sm-2 bg-white border-radius-round text-dark text-center">
+      <br class="d-block d-lg-none">
+  
+      <div class="row justify-content-center">
+        <div class="col-lg-4 col-md-12 mb-5">
+          <img src="images/logo512.png" style="max-width: 70px; margin-bottom: 30px;">
+          <h4 class="mb-3">By</h4>
+          <p class="lead">Night Out México</p>
+        </div>
+  
+        <div class="col-lg-4 col-md-12 mb-5">
+          <img src="images/mail.jpg" style="max-width: 55px; margin-top: 10px; margin-bottom: 49px;">
+          <h4 class="mb-3">EMAIL</h4>
+          <p class="lead">atencion@nightout.com.mx</p>
+        </div>
+  
+        <div class="col-lg-4 col-md-12 mb-5">
+          <img src="images/phone.png" style="max-width: 50px; margin-top: 10px; margin-bottom: 39px;">
+          <h4 class="mb-3">PHONE</h4>
+          <p class="lead">+52 961 640 3015</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+
+
+
+</main>
+
+<footer class="footer mt-auto py-3 bg-white">
+  <div class="container d-flex flex-column flex-sm-row justify-content-center align-items-center">
+    <p class="lead text-muted text-center mb-2 mb-sm-0 me-sm-5">© NightOut México 2024</p>
+    <a class="lead text-muted text-center mb-2 mb-sm-0 me-sm-5" target="_blank" href="https://nightout.com.mx/NightOutPrivacy.pdf">Política de privacidad</a>
+    <a class="lead text-muted text-center mb-2 mb-sm-0 me-sm-5" target="_blank" href="https://nightout.com.mx/soporte.html">Soporte</a>
+  </div>
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    </body>
+</html>

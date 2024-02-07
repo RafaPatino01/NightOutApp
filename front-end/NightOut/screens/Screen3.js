@@ -9,9 +9,11 @@ import {
 } from 'react-native';
 import { fetchUserById } from '../functions/functions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const Screen3 = () => {
   const [userData, setUserData] = useState(null);
+  const navigation = useNavigation();
 
   const opciones = [
     { key: 'aviso', text: 'Aviso de privacidad' },
@@ -19,8 +21,20 @@ const Screen3 = () => {
     { key: 'cerrar', text: 'Cerrar sesión' },
   ];
 
-  const onOptionPress = () => {
-    console.log("presionado")
+  const onOptionPress = async (pOption) => {
+    switch(pOption){
+      case "cerrar":
+        console.log("cerrando sesión...")
+        try {
+          await AsyncStorage.removeItem('userToken');
+          navigation.navigate('Login');
+        } catch (error) {
+          console.error('Error al cerrar sesión:', error);
+        }
+        
+
+    }
+      
   };
 
   const getUserIdByUserToken = async (userToken) => {

@@ -6,7 +6,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const Login = () => {
   const navigation = useNavigation();
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -36,10 +35,9 @@ const Login = () => {
     }
   };
 
-  const handleLoginPress = () => {
+  const handleLoginPress = async () => {
     // Call the imported handleLogin function
-    if(handleLogin(email, password)){
-      // You can add your navigation logic here
+    if(await handleLogin(email, password)){
       navigation.navigate('Home');
       saveSession(email)
     };
@@ -50,41 +48,41 @@ const Login = () => {
     navigation.navigate('Register');
   };
 
+  const checkSession = async () => {
+    try {
+      // Check if the user token exists in AsyncStorage
+      const userToken = await AsyncStorage.getItem('userToken');
+
+      if (userToken) {
+        // User is logged in, navigate to the Home page
+        navigation.navigate('Home');
+      } 
+      
+    } catch (error) {
+      console.error('Error checking session:', error);
+    }
+  };
 
   useEffect(() => {
-    const checkSession = async () => {
-      try {
-        // Check if the user token exists in AsyncStorage
-        const userToken = await AsyncStorage.getItem('userToken');
-
-        if (userToken) {
-          // User is logged in, navigate to the Home page
-          navigation.navigate('Home');
-        } 
-        
-      } catch (error) {
-        console.error('Error checking session:', error);
-      }
-    };
-
     // Call the checkSession function when the component mounts
     checkSession();
   }, [navigation]);
 
   return (
     <ImageBackground
-      source={require('../img/background.png')}
+      source={require('../img/background.jpeg')}
       style={styles.background}
     >
       <View style={styles.container}>
-        <Image source={require('../img/logo.png')} style={styles.logo} />
+        <Image source={require('../img/logo-dark.png')} style={styles.logo} />
         
         <Text style={styles.texto1}>Regístrate y lleva tu experiencia de fiesta a otro nivel.</Text>
 
         <TextInput
           style={styles.input}
-          placeholder="Correo / Usuario"
-          onChangeText={(text) => setEmail(text)}
+          placeholder="Usuario (teléfono)"
+          keyboardType="numeric"
+          onChangeText={(text) => setEmail(text.replace(/\D/g, ''))}
           value={email}
         />
         <TextInput
@@ -134,7 +132,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 300,
-    height: 150,
+    height: 94,
     marginBottom: 20,
   },
   input: {

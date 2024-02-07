@@ -26,15 +26,8 @@ const Register = () => {
 
   const goBack = async () => {
     // Check if all required fields are filled
-    if (!nombre || !apellido || !genero || !email || !contrasena || !numTelefono) {
+    if (!nombre || !apellido || !genero || !contrasena || !email) {
       alert('Por favor, complete todos los campos requeridos.');
-      return;
-    }
-  
-    // Validate the email format using a regular expression
-    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-    if (!emailRegex.test(email)) {
-      alert('Por favor, ingrese un correo electrónico válido.');
       return;
     }
   
@@ -44,7 +37,7 @@ const Register = () => {
       apellido: apellido,
       genero: genero,
       fechaNacimiento: '2004-12-05', // Establecer una fecha fija
-      correoElectronico: email.toLowerCase(),
+      correoElectronico: email,
       redesSociales: '', // Puedes agregar este campo si lo necesitas
       contrasena: contrasena,
       reservasActivas: 0, // Puedes establecer estos valores según tus necesidades
@@ -73,7 +66,7 @@ const Register = () => {
 
   return (
     <ImageBackground
-        source={require('../img/background.png')}
+        source={require('../img/background.jpeg')}
         style={styles.background}
       >
       <KeyboardAvoidingView
@@ -83,7 +76,7 @@ const Register = () => {
       
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.container}>
-            <Image source={require('../img/logo.png')} style={styles.logo} />
+            <Image source={require('../img/logo-dark.png')} style={styles.logo} />
             
             <Text style={styles.texto2}>Registra tus datos</Text>
 
@@ -126,24 +119,16 @@ const Register = () => {
                 >
                   <Text style={styles.generoButtonText}>Mujer</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  style={[
-                    styles.generoButton,
-                    genero === 'X' && styles.selectedGenero,
-                  ]}
-                  onPress={() => selectGenero('X')}
-                >
-                  <Text style={styles.generoButtonText}>No binario</Text>
-                </TouchableOpacity>
               </View>
             </View>
             
             <View style={styles.inputContainer}>
-              <Text style={styles.texto1}>Email:</Text>
+              <Text style={styles.texto1}>Número telefónico:</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Email"
-                onChangeText={(text) => setEmail(text)}
+                keyboardType="numeric"
+                placeholder="Número de Teléfono"
+                onChangeText={(text) => setEmail(text.replace(/\D/g, ''))}
                 value={email}
               />
             </View>
@@ -155,16 +140,6 @@ const Register = () => {
                 onChangeText={(text) => setContrasena(text)}
                 value={contrasena}
                 secureTextEntry // This hides the input text for passwords
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.texto1}>Número de Teléfono:</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Número de Teléfono"
-                onChangeText={handleNumTelefonoChange} // Update this line
-                value={numTelefono}
-                keyboardType="numeric"
               />
             </View>
           </View>
@@ -203,7 +178,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 300,
-    height: 150,
+    height: 94,
     marginBottom: 20,
   },
   texto1: {
