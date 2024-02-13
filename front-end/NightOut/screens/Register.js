@@ -151,7 +151,7 @@ const Register = () => {
               <Text style={styles.buttonText}>REGISTRARME</Text>
             </TouchableOpacity>
           </View>
-          <Text style={styles.buttonText2}>Al registrarte, confirmas que eres mayor de 18 años.</Text>
+          <Text style={styles.buttonText2}>Al registrarte, confirmas que eres mayor de 18 años y estás de acuerdo con los términos de uso y política de privacidad.</Text>
         </ScrollView>
       </KeyboardAvoidingView>
     </ImageBackground>

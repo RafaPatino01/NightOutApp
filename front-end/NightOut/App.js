@@ -1,4 +1,5 @@
 import React from 'react';
+import { enableScreens } from 'react-native-screens';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Provider as PaperProvider } from 'react-native-paper';
@@ -17,6 +18,8 @@ import Login from './screens/Login';
 import Register from './screens/Register';
 import Reservar from './screens/Reservar';
 import ResultadosBusqueda from './screens/ResultadosBusqueda';
+
+enableScreens();
 
 // Ignorar todos los mensajes de advertencia
 LogBox.ignoreAllLogs();

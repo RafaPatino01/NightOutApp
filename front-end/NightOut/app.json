@@ -2,7 +2,7 @@
   "expo": {
     "name": "NightOut",
     "slug": "NightOut",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -17,16 +17,18 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.nightoutmx.nightoutmx",
-      "runtimeVersion": "1.0.4",
-      "buildNumber": "6"
+      "runtimeVersion": "1.0.5",
+      "buildNumber": "7",
+      "jsEngine": "jsc"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "runtimeVersion": "1.0.4",
-      "package": "com.nightoutmx.nightoutmx"
+      "runtimeVersion": "1.0.5",
+      "package": "com.nightoutmx.nightoutmx",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
