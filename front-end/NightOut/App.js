@@ -19,7 +19,7 @@ import Register from './screens/Register';
 import Reservar from './screens/Reservar';
 import ResultadosBusqueda from './screens/ResultadosBusqueda';
 
-enableScreens();
+enableScreens(); // Fix bug
 
 // Ignorar todos los mensajes de advertencia
 LogBox.ignoreAllLogs();
