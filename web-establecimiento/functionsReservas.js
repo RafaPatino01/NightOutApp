@@ -108,7 +108,15 @@ function createReservaHTML(reserva, usuario) {
         ? `<div class='bg-custom p-2 rounded small searchable'>Reserva App</div><p class='mt-2 text-bold small searchable'>${usuario.nombre} ${usuario.apellido}</p>`
         : `<div class='bg-secondary p-2 rounded small searchable'>Reserva Establecimiento</div><p class='mt-2 text-bold small searchable'>${reserva.nombre}</p>`;
 
-    let status = reserva.asistencia === 1 ? "✅" : "🟡";
+        
+    let status = "🟡 Solicitada";
+
+    if(reserva.asistencia == 1){
+        status = "✅ Asistió";
+    }
+    else if(reserva.confirmado == 1 && reserva.asistencia == 0){
+        status = "🔵 Confirmado";
+    }
 
     return `
         <div class="container2 mt-3 px-4" id="modal_activate${reserva.id}">
@@ -140,14 +148,16 @@ function addEventListenersToReservas(reservas) {
             // Load the modal content here (replace with your modal content)
             const modalContent = `
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">¿Deseas eliminar la reserva?</h5>
+              <h5 class="modal-title" id="exampleModalLabel">Información Reserva</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 ID de Reserva: ${reserva.id}
             </div>
             <div class="modal-footer">
+            <!--
                 <button type="button" class="btn btn-danger" onclick="deleteReserva(${reserva.id})">Borrar Reserva</button>
+                -->
             </div>
           `;
       

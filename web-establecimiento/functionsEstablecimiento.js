@@ -72,13 +72,13 @@ function getReservas(pId){
                 <div class="container2 mt-3 px-4">
                     <div class="row bg-dark p-3 rounded">
                         <div class="col-7">
-                            <p class="m-0 text-bold">${name}</p>
+                            <p class="m-0 text-bold searchable_item">${name}</p>
                             <hr>
-                            <p class="py-0 m-0">${reserva.tipo_de_mesa}</p>
+                            <p class="py-0 m-0 searchable_item">${reserva.tipo_de_mesa}</p>
                             ${generateDateTimeHTML(reserva.fecha_hora)}
                         </div>
 
-                        <div class="col-5 text-center bg-success d-flex align-items-center rounded" onclick="confirmarReserva(${reserva.id})">
+                        <div class="col-5 text-center bg-primary d-flex align-items-center rounded" onclick="confirmarReserva(${reserva.id})">
                         <p class="w-100 text-center text-white text-truncate">
 
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
@@ -137,9 +137,9 @@ function getReservas2(pId){
                 <div class="container2 mt-3 px-4">
                     <div class="row bg-dark p-3 rounded">
                         <div class="col-8">
-                            <p class="m-0 text-bold searchable">${name}</p>
+                            <p class="m-0 text-bold searchable_item">${name}</p>
                             <hr>
-                            <p class="py-0 m-0 searchable">${reserva.tipo_de_mesa}</p>
+                            <p class="py-0 m-0 searchable_item">${reserva.tipo_de_mesa}</p>
                             ${generateDateTimeHTML(reserva.fecha_hora)}
                         </div>
 
@@ -272,8 +272,10 @@ function filterReservas() {
     const searchQuery = document.getElementById('searchInput').value.toLowerCase();
     const reservas = document.querySelectorAll('#reservas_pendientes .container2');
 
+    console.log("reservas: " + String(reservas));
+
     reservas.forEach(reserva => {
-        const searchableElements = reserva.querySelectorAll('.searchable');
+        const searchableElements = reserva.querySelectorAll('.searchable_item');
         const isMatch = Array.from(searchableElements).some(element => 
             element.textContent.toLowerCase().includes(searchQuery)
         );
