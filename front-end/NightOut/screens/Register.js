@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   View,
+  Linking,
   Text,
   TextInput,
   Image,
@@ -63,6 +64,17 @@ const Register = () => {
   const selectGenero = (selectedGenero) => {
     setGenero(selectedGenero);
   };
+
+  const onTermsOfUsePress = () => {
+    // Show an alert for debugging
+    alert('Terms of Use pressed');
+  };
+  
+  const onPrivacyPolicyPress = () => {
+    // Show an alert for debugging
+    alert('Privacy Policy pressed');
+  };
+  
 
   return (
     <ImageBackground
@@ -128,9 +140,14 @@ const Register = () => {
                 style={styles.input}
                 keyboardType="numeric"
                 placeholder="Número de Teléfono"
-                onChangeText={(text) => setEmail(text.replace(/\D/g, ''))}
-                value={email}
+                onChangeText={(text) => {
+                  const filteredText = text.replace(/\D/g, '');
+                  const limitedText = filteredText.substring(0, 10);
+                  setEmail(limitedText);
+                }}
+                value={email} 
               />
+
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.texto1}>Contraseña:</Text>
@@ -151,8 +168,26 @@ const Register = () => {
               <Text style={styles.buttonText}>REGISTRARME</Text>
             </TouchableOpacity>
           </View>
-          <Text style={styles.buttonText2}>Al registrarte, confirmas que eres mayor de 18 años y estás de acuerdo con los términos de uso y política de privacidad.</Text>
-        </ScrollView>
+          <Text style={styles.baseText}>
+              Al registrarte, confirmas que eres mayor de 18 años y estás de acuerdo con{' '}
+          </Text>
+          <Text
+            style={styles.linkText}
+            onPress={() => Linking.openURL('https://nightout.com.mx/NightOutTerms.pdf')}
+          >
+            Términos de uso
+          </Text>
+          <Text
+            style={styles.linkText2}
+            onPress={() => Linking.openURL('https://nightout.com.mx/NightOutPrivacy.pdf')}
+          >
+            Política de privacidad
+          </Text>
+              
+          
+
+
+      </ScrollView>
       </KeyboardAvoidingView>
     </ImageBackground>
     
@@ -160,6 +195,24 @@ const Register = () => {
 };
 
 const styles = StyleSheet.create({
+  baseText: {
+    padding: 30,
+    color: "white",
+    fontSize: 16,
+    // Add your text styling here
+  },
+  linkText: {
+    marginBottom: 20,
+    paddingHorizontal: 30,
+    color: 'lightblue',
+    textDecorationLine: 'underline',
+  },
+  linkText2: {
+    marginBottom: 90,
+    paddingHorizontal: 30,
+    color: 'lightblue',
+    textDecorationLine: 'underline',
+  },
   background: {
     flex: 1,
     resizeMode: 'cover',

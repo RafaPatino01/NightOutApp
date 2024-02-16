@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import {
+  Linking,
   View,
   Text,
   StyleSheet,
   Image,
   FlatList,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert
 } from 'react-native';
 import { fetchUserById } from '../functions/functions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,13 +18,68 @@ const Screen3 = () => {
   const navigation = useNavigation();
 
   const opciones = [
-    { key: 'aviso', text: 'Aviso de privacidad' },
-    { key: 'faq', text: 'FAQ' },
-    { key: 'cerrar', text: 'Cerrar sesión' },
+    { key: 'aviso', text: '🔒 Aviso de privacidad' },
+    { key: 'eliminar', text: '🗑️ Eliminar cuenta' },
+    { key: 'faq', text: '🤔 FAQ' },
+    { key: 'cerrar', text: '⬅️ Cerrar sesión' },
   ];
+
+  const showDeleteConfirmation = async () => {
+    // Obtain the user ID from storage or context
+    const userToken = await AsyncStorage.getItem('userToken');
+    const userId = await getUserIdByUserToken(userToken); // Assuming this function exists and works as intended
+    Alert.alert(
+      "Eliminar Cuenta", // Alert Title
+      "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.", // Alert message
+      [
+        {
+          text: "Cancelar",
+          style: "cancel"
+        },
+        { text: "Eliminar", onPress: async () => {
+            deleteUser(userId);
+            await AsyncStorage.removeItem('userToken');
+            navigation.navigate('Login');
+          }
+        }
+      ]
+    );
+  };
+
+  function deleteUser(userId) {
+    // Send a DELETE request to delete the user
+    fetch(`https://nightout.com.mx/api/delete_usuario/${userId}`, {
+        method: 'DELETE',
+    })
+    .then(response => {
+        if (response.ok) {
+            // Handle success (e.g., show a success message)
+            console.log('User deleted successfully');
+            // Optionally, you can redirect to a different page or update the UI here.
+        } else {
+            // Handle errors (e.g., show an error message)
+            console.error('Failed to delete user');
+        }
+    })
+    .catch(error => {
+        // Handle network errors
+        console.error('Network error:', error);
+    });
+  }
 
   const onOptionPress = async (pOption) => {
     switch(pOption){
+      case "eliminar":
+        console.log("eliminando cuenta...")
+        try {
+
+          showDeleteConfirmation();
+
+        } catch (error) {
+          console.error('Error al eliminar cuenta:', error);
+        }
+        break;
+
       case "cerrar":
         console.log("cerrando sesión...")
         try {
@@ -31,8 +88,15 @@ const Screen3 = () => {
         } catch (error) {
           console.error('Error al cerrar sesión:', error);
         }
-        
+        break;
 
+      case "faq":
+        Linking.openURL('https://nightout.com.mx/#FAQ');
+        break;
+
+      case "aviso":
+        Linking.openURL('https://nightout.com.mx/NightOutPrivacy.pdf');
+        break;
     }
       
   };
@@ -63,6 +127,7 @@ const Screen3 = () => {
           const data = await fetchUserById(usuarioId);
           setUserData((data));
           console.log(data)
+          console.log(usuarioId)
         }
       } catch (error) {
         console.error('Error fetching user:', error);
@@ -84,7 +149,7 @@ const Screen3 = () => {
         </View>
         <View style={styles.userDataContainer}>
           <View style={styles.item}>
-            <Text style= {styles.boldValue}>{userData.nombre}</Text>
+            <Text style= {styles.boldValue}>{userData.nombre} {userData.apellido}</Text>
           </View>
           <View style={styles.item}>
             <Text style= {styles.normalValue}>{userData.correo_electronico}</Text>
