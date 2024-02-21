@@ -160,6 +160,12 @@ app.put('/update_establecimiento/:id', async (req, res) => {
       queryIndex++;
     }
 
+    if (establecimientoData.fixed !== undefined) {
+      fieldUpdates.push(`fixed = $${queryIndex}`);
+      queryValues.push(establecimientoData.fixed);
+      queryIndex++;
+    }
+
     if (establecimientoData.ubicacion !== undefined) {
       fieldUpdates.push(`ubicacion = $${queryIndex}`);
       queryValues.push(establecimientoData.ubicacion);

@@ -61,6 +61,13 @@ const Screen1 = () => {
         setFilteredEstablecimientos(filteredData);
       }
     }
+
+    let filteredData = [...establecimientos]; // Asume esto es el resultado de tu filtrado actual
+    if (tipo !== 'Todos') {
+      filteredData = establecimientos.filter(item => item.tipo === tipo);
+    }
+    sortAndSetFilteredEstablecimientos(filteredData);
+
   };
   
 
@@ -74,11 +81,30 @@ const Screen1 = () => {
     color: activeFilter === tipo ? 'black' : 'white', // Change text color to black if active
   });
   
+  const sortAndSetFilteredEstablecimientos = (data) => {
+    // Ordenar los datos para que los elementos con 'fixed' distinto de 0 vengan primero
+    const sortedData = data.sort((a, b) => {
+      // Convertir 'fixed' a números para la comparación si es que no lo son
+      const fixedA = Number(a.fixed);
+      const fixedB = Number(b.fixed);
+  
+      // Colocar elementos con 'fixed' distinto de 0 al principio
+      if (fixedA !== 0 && fixedB === 0) {
+        return -1; // a viene antes que b
+      } else if (fixedB !== 0 && fixedA === 0) {
+        return 1; // b viene antes que a
+      }
+      return 0; // Sin cambio en el orden
+    });
+  
+    setFilteredEstablecimientos(sortedData);
+  };
+
   useEffect(() => {
     fetchEstablecimientos()
       .then((data) => {
-        setEstablecimientos(data);
-        setFilteredEstablecimientos(data); // Set the filtered list to all items initially
+        // Usa la función sortAndSetFilteredEstablecimientos aquí después de la carga inicial
+        sortAndSetFilteredEstablecimientos(data);
       })
       .catch((error) => {
         console.error('Error in component:', error);
@@ -87,14 +113,17 @@ const Screen1 = () => {
   
   const establecimientoView = ({ item }) => (
     <TouchableOpacity onPress={() => handleItemPress(item)}>
-      <View style={styles.establecimientoContainer}>
+      <View style={[
+          styles.establecimientoContainer,
+          item.fixed !== 0 && styles.borderBlue // Aplica el estilo borderBlue si item.fixed es distinto de '0'
+      ]}>
         <Image
           source={{ uri: 'https://nightout.com.mx/api' + item.images[0].substring(1) }}
           style={styles.image}
-          onLoad={handleImageLoad} // Call the function when the image is loaded
+          onLoad={handleImageLoad} // Llama a la función cuando la imagen se carga
         />
         {imageLoaded && (
-          // Only show this view when the image is loaded
+          // Solo muestra esta vista cuando la imagen se carga
           <View style={styles.establecimiento}>
             <Text style={styles.establecimientoText}>{item.nombre}</Text>
           </View>
@@ -109,6 +138,7 @@ const Screen1 = () => {
       </View>
     </TouchableOpacity>
   );
+  
 
   return (
     <View style={styles.container}>
@@ -138,7 +168,6 @@ const Screen1 = () => {
         </TouchableOpacity>
       </View>
 
-
       <FlatList
         style={styles.flatlist}
         data={filteredEstablecimientos}
@@ -156,6 +185,10 @@ const Screen1 = () => {
 };
 
 const styles = StyleSheet.create({
+  borderBlue: {
+    borderWidth: 6, // El grosor del borde
+    borderColor: '#5874fc', // El color del borde
+  },
   filter: {
     width: "33%",
     padding: 10, // Add some padding to make the buttons look nicer

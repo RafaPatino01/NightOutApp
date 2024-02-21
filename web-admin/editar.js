@@ -77,9 +77,13 @@ if (pId) {
     .then(data => {
         // Populate the HTML form with the retrieved data
         const establecimientoData = data;
+
+        console.log(establecimientoData);
+        
         if (establecimientoData) {
             // Populate the form fields
             document.getElementById('nombre').value = establecimientoData.nombre;
+            document.getElementById('fixed').checked = establecimientoData.fixed === 1;
             document.getElementById('email').value = establecimientoData.email;
             document.getElementById('ubicacion').value = establecimientoData.ubicacion;
             document.getElementById('capacidad_total').value = establecimientoData.capacidad_total;
@@ -268,10 +272,14 @@ function updateUser(userId) {
 
 // Function to send the establecimiento data to the backend for update
 function updateEstablecimiento(establecimientoId) {
+
+    console.log(document.getElementById('fixed').value);
+
     // Get establecimiento data from the form
     const establecimientoData = {
         email: document.getElementById('email').value,
         nombre: document.getElementById('nombre').value,
+        fixed: document.getElementById('fixed').checked ? 1 : 0,
         descripcion: document.getElementById('descripcion').value,
         horario: document.getElementById('horario').value,
         tipo: document.getElementById('tipo').value,
