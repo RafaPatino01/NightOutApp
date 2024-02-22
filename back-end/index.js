@@ -1083,10 +1083,10 @@ app.post('/add_establecimiento', upload.fields([{ name: 'images', maxCount: 10 }
     // Adjusted query string to correctly align with the provided values
     const queryString = `
     INSERT INTO public.establecimientos (
-      nombre, ubicacion, capacidad_total, num_mesas, email, contrasena, tipo, descripcion, horario, horarioCSV,
+      capacidad_actual, resenas_calificacion, nombre, ubicacion, capacidad_total, num_mesas, email, contrasena, tipo, descripcion, horario, horarioCSV,
       restricciones, tipo_de_pago, precios, redes_sociales, link_google_maps, ubicacion_general, images, imagen_mapa, capacidades_mesa
     )
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+    VALUES (0,5,$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
     `;
 
 
