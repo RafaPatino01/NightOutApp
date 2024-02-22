@@ -1080,22 +1080,26 @@ app.post('/add_establecimiento', upload.fields([{ name: 'images', maxCount: 10 }
     }
     
     // Insert the compressed image paths into your database
+    // Adjusted query string to correctly align with the provided values
     const queryString = `
-      INSERT INTO public.establecimientos (
-        nombre, ubicacion, capacidad_total, capacidad_actual, num_mesas, imagen_mapa, capacidades_mesa,
-        email, contrasena, tipo, descripcion, horario, horarioCSV, restricciones, tipo_de_pago, precios,
-        resenas_calificacion, redes_sociales, link_google_maps, ubicacion_general, images
-      )
-      VALUES ($1, $2, $3, 0, $4, $17, $18, $5, $6, $7, $8, $9, $10, $11, $12, 0, $13, $14, $15, $16, $17)
+    INSERT INTO public.establecimientos (
+      nombre, ubicacion, capacidad_total, num_mesas, email, contrasena, tipo, descripcion, horario, horarioCSV,
+      restricciones, tipo_de_pago, precios, redes_sociales, link_google_maps, ubicacion_general, images, imagen_mapa, capacidades_mesa
+    )
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
     `;
+
+
+
 
     const sha256 = crypto.createHash('sha256');
     const hashedPassword = sha256.update(contrasena).digest('hex');
 
+    // Ensure values align with your adjusted query placeholders
     const values = [
       nombre, ubicacion, capacidad_total, num_mesas, email, hashedPassword, tipo, descripcion, horario, horarioCSV,
       restricciones, tipo_de_pago, precios, redes_sociales, link_google_maps, ubicacion_general, imagePaths,
-      imagePaths2[0], capacidades_mesa
+      imagePaths2[0], capacidades_mesa // Assuming imagePaths2[0] is the path for imagen_mapa
     ];
 
     await client.query(queryString, values);
