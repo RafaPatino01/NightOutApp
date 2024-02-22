@@ -1021,6 +1021,7 @@ app.post('/add_establecimiento', upload.fields([{ name: 'images', maxCount: 10 }
     nombre,
     descripcion,
     horario,
+    horarioCSV,
     tipo,
     num_mesas,
     capacidades_mesa,
@@ -1082,17 +1083,17 @@ app.post('/add_establecimiento', upload.fields([{ name: 'images', maxCount: 10 }
     const queryString = `
       INSERT INTO public.establecimientos (
         nombre, ubicacion, capacidad_total, capacidad_actual, num_mesas, imagen_mapa, capacidades_mesa,
-        email, contrasena, tipo, descripcion, horario, restricciones, tipo_de_pago, precios,
+        email, contrasena, tipo, descripcion, horario, horarioCSV, restricciones, tipo_de_pago, precios,
         resenas_calificacion, redes_sociales, link_google_maps, ubicacion_general, images
       )
-      VALUES ($1, $2, $3, 0, $4, $17, $18, $5, $6, $7, $8, $9, $10, $11, $12, 0, $13, $14, $15, $16)
+      VALUES ($1, $2, $3, 0, $4, $17, $18, $5, $6, $7, $8, $9, $10, $11, $12, 0, $13, $14, $15, $16, $17)
     `;
 
     const sha256 = crypto.createHash('sha256');
     const hashedPassword = sha256.update(contrasena).digest('hex');
 
     const values = [
-      nombre, ubicacion, capacidad_total, num_mesas, email, hashedPassword, tipo, descripcion, horario,
+      nombre, ubicacion, capacidad_total, num_mesas, email, hashedPassword, tipo, descripcion, horario, horarioCSV,
       restricciones, tipo_de_pago, precios, redes_sociales, link_google_maps, ubicacion_general, imagePaths,
       imagePaths2[0], capacidades_mesa
     ];
