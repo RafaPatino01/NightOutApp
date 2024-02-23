@@ -232,9 +232,9 @@ app.put('/update_establecimiento/:id', async (req, res) => {
       queryIndex++;
     }
 
-    if (establecimientoData.horarioCSV !== undefined) {
-      fieldUpdates.push(`horarioCSV = $${queryIndex}`);
-      queryValues.push(establecimientoData.horarioCSV);
+    if (establecimientoData.horariocsv !== undefined) {
+      fieldUpdates.push(`horariocsv = $${queryIndex}`);
+      queryValues.push(establecimientoData.horariocsv);
       queryIndex++;
     }
 
@@ -1027,7 +1027,7 @@ app.post('/add_establecimiento', upload.fields([{ name: 'images', maxCount: 10 }
     nombre,
     descripcion,
     horario,
-    horarioCSV,
+    horariocsv,
     tipo,
     num_mesas,
     capacidades_mesa,
@@ -1089,7 +1089,7 @@ app.post('/add_establecimiento', upload.fields([{ name: 'images', maxCount: 10 }
     // Adjusted query string to correctly align with the provided values
     const queryString = `
     INSERT INTO public.establecimientos (
-      capacidad_actual, resenas_calificacion, nombre, ubicacion, capacidad_total, num_mesas, email, contrasena, tipo, descripcion, horario, horarioCSV,
+      capacidad_actual, resenas_calificacion, nombre, ubicacion, capacidad_total, num_mesas, email, contrasena, tipo, descripcion, horario, horariocsv,
       restricciones, tipo_de_pago, precios, redes_sociales, link_google_maps, ubicacion_general, images, imagen_mapa, capacidades_mesa
     )
     VALUES (0,5,$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
@@ -1103,7 +1103,7 @@ app.post('/add_establecimiento', upload.fields([{ name: 'images', maxCount: 10 }
 
     // Ensure values align with your adjusted query placeholders
     const values = [
-      nombre, ubicacion, capacidad_total, num_mesas, email, hashedPassword, tipo, descripcion, horario, horarioCSV,
+      nombre, ubicacion, capacidad_total, num_mesas, email, hashedPassword, tipo, descripcion, horario, horariocsv,
       restricciones, tipo_de_pago, precios, redes_sociales, link_google_maps, ubicacion_general, imagePaths,
       imagePaths2[0], capacidades_mesa // Assuming imagePaths2[0] is the path for imagen_mapa
     ];
