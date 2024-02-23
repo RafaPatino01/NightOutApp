@@ -92,6 +92,7 @@ if (pId) {
             document.getElementById('tipo').value = establecimientoData.tipo;
             document.getElementById('descripcion').value = establecimientoData.descripcion;
             document.getElementById('horario').value = establecimientoData.horario;
+            document.getElementById('horarioCSV').value = establecimientoData.horarioCSV;
             document.getElementById('restricciones').value = establecimientoData.restricciones;
             document.getElementById('tipo_de_pago').value = establecimientoData.tipo_de_pago;
             document.getElementById('precios').value = establecimientoData.precios;
@@ -282,6 +283,7 @@ function updateEstablecimiento(establecimientoId) {
         fixed: document.getElementById('fixed').checked ? 1 : 0,
         descripcion: document.getElementById('descripcion').value,
         horario: document.getElementById('horario').value,
+        horario: document.getElementById('horarioCSV').value,
         tipo: document.getElementById('tipo').value,
         num_mesas: document.getElementById('num_mesas').value,
         capacidades_mesa: document.getElementById('capacidades_mesa').value,

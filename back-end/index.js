@@ -232,6 +232,12 @@ app.put('/update_establecimiento/:id', async (req, res) => {
       queryIndex++;
     }
 
+    if (establecimientoData.horarioCSV !== undefined) {
+      fieldUpdates.push(`horarioCSV = $${queryIndex}`);
+      queryValues.push(establecimientoData.horarioCSV);
+      queryIndex++;
+    }
+
     if (establecimientoData.restricciones !== undefined) {
       fieldUpdates.push(`restricciones = $${queryIndex}`);
       queryValues.push(establecimientoData.restricciones);
