@@ -31,6 +31,10 @@ if (id) {
       // Handle the received "establecimiento" object
         console.log('Received establecimiento:', establecimiento);
         document.getElementById("usuario").innerHTML += establecimiento.nombre;
+
+        let allow_reservas_element = document.getElementById("allow_reservas_check");
+allow_reservas_element.checked = establecimiento.allow_reservas === 1;
+        allow_reservas_element.setAttribute('data-id', establecimiento.id);
         //obtain reservas of current establecimiento
         getReservas(establecimiento.id)
 

@@ -696,6 +696,41 @@ app.get('/get_resenas', async (req, res) => {
   }
 });
 
+app.post('/update_allow_reservas', async (req, res) => {
+  const { establecimiento_id, allow_reservas } = req.body;
+
+  if (allow_reservas !== 0 && allow_reservas !== 1) {
+    return res.status(400).json({ error: 'Invalid allow_reservas value' });
+  }
+
+  try {
+    const client = await pool.connect();
+
+    const queryString = `
+      UPDATE public.establecimientos
+      SET allow_reservas = $1
+      WHERE id = $2
+    `;
+
+    const values = [allow_reservas, establecimiento_id];
+
+    const result = await client.query(queryString, values);
+    client.release();
+
+    if (result.rowCount === 0) {
+      // No rows were updated, which means the establecimiento does not exist
+      return res.status(404).json({ message: 'Establecimiento not found' });
+    }
+
+    console.log('Establecimiento updated successfully');
+    res.status(200).json({ message: 'Establecimiento updated successfully' });
+  } catch (error) {
+    console.error('Error updating Establecimiento in PostgreSQL:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
 // Define a route to handle the POST request
 app.post('/add_usuario', async (req, res) => {
   const {

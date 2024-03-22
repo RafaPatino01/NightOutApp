@@ -49,10 +49,19 @@
     <br>
     <h1 class="text-white ms-3 mt-5">Portal de establecimiento</h1>
 
-    <div class="container2 mt-3 px-4">
-        <div class="row bg-dark p-3 rounded">
+    <div class="container3 mt-3 px-4">
+        <div class="row bg-dark p-3 rounded d-flex">
             <hr>
-            <p class="text-bold" id="usuario"></p>
+            <div class="col">
+                <p class="text-bold lead bg-secondary rounded p-3 text-light" id="usuario"></p>
+            </div>
+            <div class="col">
+                <div class="form-check form-switch">
+                    <input class="form-check-input lead" type="checkbox" id="allow_reservas_check" style="cursor: pointer;">
+                    <label class="form-check-label lead" for="allow_reservas_check">Permitir Reservas</label>
+                  </div>
+            </div>
+            
         </div>
     </div>
 
@@ -88,6 +97,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="functionsReservas.js"></script>
     <script src="functionsLogin.js"></script>
+    <script src="allow_reservas.js"></script>
 
 </body>
 </html>
