@@ -174,7 +174,7 @@ app.put('/update_establecimiento/:id', upload.fields([{ name: 'images', maxCount
         await sharp(file.buffer).resize(800).jpeg({ quality: 80 }).toFile(filepath);
 
         // Update your database here as per your schema
-        await client.query(`UPDATE establecimientos SET images = array_append(images, $1) WHERE id = $2`, [filename, id]);
+        await client.query(`UPDATE establecimientos SET images = array_append(images, $1) WHERE id = $2`, ["./uploads/"+filename, id]);
       }
     }
 
@@ -187,7 +187,7 @@ app.put('/update_establecimiento/:id', upload.fields([{ name: 'images', maxCount
 
       // Update your database here for the map image
       // Assuming your database schema allows for a single map image per establecimiento
-      await client.query(`UPDATE establecimientos SET imagen_mapa = $1 WHERE id = $2`, [filename, id]);
+      await client.query(`UPDATE establecimientos SET imagen_mapa = $1 WHERE id = $2`, ["./uploads/"+filename, id]);
     }
 
     // Commit transaction
