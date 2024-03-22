@@ -54,7 +54,7 @@ app.get('/search_establecimientos', async (req, res) => {
 
     // Agregar condiciones de filtrado según las variables proporcionadas
     if (price) {
-      if(!price == "Todos"){
+      if(price != "Todos"){
         sqlQuery += ` AND precios = '${price}'`;
       }
     }
