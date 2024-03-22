@@ -293,8 +293,7 @@ function updateEstablecimiento(establecimientoId) {
     formData.append('tipo_de_pago', document.getElementById('tipo_de_pago').value);
     formData.append('precios', document.getElementById('precios').value);
     formData.append('redes_sociales', document.getElementById('redes_sociales').value);
-    // Assuming mapaUrl and imageUrls are handled correctly elsewhere in your code,
-    // and you're correctly appending them to the formData if necessary.
+    formData.append('imageUrls', JSON.stringify(imageUrls));
 
     // Append files for images and imagen_mapa
     const imageFiles = document.getElementById('images').files;
@@ -307,7 +306,8 @@ function updateEstablecimiento(establecimientoId) {
     }
 
     // Send a PUT request to update the establecimiento data
-    fetch(`https://nightout.com.mx/api/update_establecimiento/${establecimientoId}`, {
+    //fetch(`https://nightout.com.mx/api/update_establecimiento/${establecimientoId}`, {
+    fetch(`https://localhost:3000/update_establecimiento/${establecimientoId}`, {
         method: 'PUT',
         // Do not set 'Content-Type': 'application/json' here because we are sending FormData
         body: formData // Send the formData instead of JSON

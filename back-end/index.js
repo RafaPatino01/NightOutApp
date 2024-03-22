@@ -140,7 +140,6 @@ app.delete('/delete_establecimiento/:id', async (req, res) => {
 });
 
 
-
 app.put('/update_establecimiento/:id', upload.fields([{ name: 'images', maxCount: 10 }, { name: 'imagen_mapa', maxCount: 1 }]), async (req, res) => {
   const { id } = req.params;
 
@@ -150,18 +149,22 @@ app.put('/update_establecimiento/:id', upload.fields([{ name: 'images', maxCount
     // Start transaction
     await client.query('BEGIN');
 
+    const keptImageUrls = req.body.imageUrls ? JSON.parse(req.body.imageUrls) : [];
+    delete req.body.imageUrls; // Remove 'imageUrls' from textFields to avoid SQL errors
+
     // Process and update text fields
     const textFields = req.body;
     // Construct the SET part of the SQL update statement dynamically
-    const setFields = Object.keys(textFields).map((field, index) => `"${field}" = $${index + 1}`).join(', ');
+    const setFields = Object.keys(textFields)
+      .map((field, index) => `"${field}" = $${index + 1}`)
+      .join(', ');
     const textValues = Object.values(textFields);
 
     if (setFields) {
-      await client.query(
-        `UPDATE establecimientos SET ${setFields} WHERE id = $${textValues.length + 1}`,
-        [...textValues, id]
-      );
+      await client.query(`UPDATE establecimientos SET ${setFields} WHERE id = $${textValues.length + 1}`, [...textValues, id]);
     }
+
+    await client.query(`UPDATE establecimientos SET images = $1 WHERE id = $2`, [keptImageUrls, id]);
 
     // Process and update images if any
     if (req.files.images) {
