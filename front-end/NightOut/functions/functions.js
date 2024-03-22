@@ -125,3 +125,24 @@ export const deleteReservaById = async (reservaId) => {
     return false;
   }
 };
+
+export const fetchEstablecimientoById = async (id) => {
+  try {
+    const response = await axios.get(`https://${ip}/get_establecimiento/${id}`);
+    // Check if the response was successful
+    if (response.status === 200) {
+      // If successful, return the fetched establecimiento
+      return response.data;
+    } else {
+      // Handle responses with status codes other than 200
+      console.error('Failed to fetch establecimiento. Status:', response.status);
+      alert('Failed to fetch establecimiento. Please try again.');
+      return null; // Return null or appropriate error handling
+    }
+  } catch (error) {
+    // Handle errors in making the request
+    console.error('Error fetching establecimiento:', error);
+    alert('Error fetching establecimiento. Please try again.');
+    return null; // Return null or appropriate error handling
+  }
+};

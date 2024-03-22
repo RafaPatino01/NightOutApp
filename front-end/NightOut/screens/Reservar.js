@@ -48,6 +48,7 @@ const Reservar = ({ route }) => {
   const receivedData = route.params?.data;
 
   useEffect(() => {
+    console.log(receivedData.allow_reservas);
     navigation.setOptions({
       title: "Reservar",
       headerStyle: customHeaderStyle,
@@ -126,62 +127,73 @@ const Reservar = ({ route }) => {
 
 
   const handleReservar = async () => {
-    if (selectedDate && selectedHorario && selectedMesa) {
-      try {
-        const userToken = await AsyncStorage.getItem('userToken');
-        if (userToken) {
-          const apiUrl = `https://nightout.com.mx/api/get_usuarios/?correo_electronico=${userToken.toLowerCase()}`;
-    
-          // Realizar la consulta GET para obtener el ID del usuario
-          const response = await fetch(apiUrl);
-          if (response.status === 200) {
-            const userData = await response.json();
-            const userId = userData[0].id;
-    
-            // Formatear la fecha y hora en formato SQL
-            const formattedDateTime = formatToSQLDateTime(selectedDate, horarios24h[selectedHorario]);
-    
-            // Construir el cuerpo de la solicitud POST
-            const reservaData = {
-              fecha_hora: formattedDateTime,
-              usuario_id: userId,
-              establecimiento_id: receivedData.id,
-              numero_personas: 1, 
-              confirmado: 0, 
-              asistencia: 0, 
-              tipo_mesa: selectedMesa,
-            };
-    
-            // Realizar la solicitud POST para agregar la reserva
-            const postUrl = 'https://nightout.com.mx/api/add_reserva';
-            const postResponse = await fetch(postUrl, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(reservaData),
-            });
-    
-            if (postResponse.status === 201) {
-              console.log('Reserva insertada con éxito');
-              navigation.navigate('Mis Reservas');
-              Alert.alert("Tu reserva se ha solicitado correctamente");
+
+    if(receivedData.allow_reservas == 0){
+      Alert.alert("❌ El establecimiento no permite reservar en estos momentos");
+      navigation.goBack();
+    }
+    else {
+      if (selectedDate && selectedHorario && selectedMesa) {
+        try {
+          const userToken = await AsyncStorage.getItem('userToken');
+          if (userToken) {
+            const apiUrl = `https://nightout.com.mx/api/get_usuarios/?correo_electronico=${userToken.toLowerCase()}`;
+      
+            // Realizar la consulta GET para obtener el ID del usuario
+            const response = await fetch(apiUrl);
+            if (response.status === 200) {
+              const userData = await response.json();
+              const userId = userData[0].id;
+      
+              // Formatear la fecha y hora en formato SQL
+              const formattedDateTime = formatToSQLDateTime(selectedDate, horarios24h[selectedHorario]);
+      
+              // Construir el cuerpo de la solicitud POST
+              const reservaData = {
+                fecha_hora: formattedDateTime,
+                usuario_id: userId,
+                establecimiento_id: receivedData.id,
+                numero_personas: 1, 
+                confirmado: 0, 
+                asistencia: 0, 
+                tipo_mesa: selectedMesa,
+              };
+      
+              // Realizar la solicitud POST para agregar la reserva
+              const postUrl = 'https://nightout.com.mx/api/add_reserva';
+              const postResponse = await fetch(postUrl, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(reservaData),
+              });
+      
+              if (postResponse.status === 201) {
+                console.log('Reserva insertada con éxito');
+                navigation.navigate('Mis Reservas');
+                Alert.alert("✅ Tu reserva se ha solicitado correctamente");
+              } else {
+                console.error('Error al insertar la reserva:', postResponse.status);
+                // Puedes manejar el error de inserción aquí
+                Alert.alert("❌ Tu reserva no ha podido ser solicitada");
+  
+              }
             } else {
-              console.error('Error al insertar la reserva:', postResponse.status);
-              // Puedes manejar el error de inserción aquí
+              throw new Error(`Error en la solicitud: ${response.status}`);
             }
           } else {
-            throw new Error(`Error en la solicitud: ${response.status}`);
+            console.log("userToken no encontrado");
           }
-        } else {
-          console.log("userToken no encontrado");
+        } catch (error) {
+          console.error("Error en la consulta o al insertar la reserva:", error);
         }
-      } catch (error) {
-        console.error("Error en la consulta o al insertar la reserva:", error);
+      } else {
+        Alert.alert("Campos Incompletos", "Por favor, llene todos los campos antes de continuar.");
       }
-    } else {
-      Alert.alert("Campos Incompletos", "Por favor, llene todos los campos antes de continuar.");
     }
+
+    
   };
 
   return (
@@ -262,6 +274,7 @@ const Reservar = ({ route }) => {
           />
         </View>
       </Modal>
+
 
       <TouchableOpacity
         style={styles.floatingButton}

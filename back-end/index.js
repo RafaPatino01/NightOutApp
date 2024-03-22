@@ -54,16 +54,18 @@ app.get('/search_establecimientos', async (req, res) => {
 
     // Agregar condiciones de filtrado según las variables proporcionadas
     if (price) {
-      sqlQuery += ` AND precios = '${price}'`;
+      if(!price == "Todos"){
+        sqlQuery += ` OR precios = '${price}'`;
+      }
     }
     if (searchQuery) {
       sqlQuery += ` OR nombre ILIKE '%${searchQuery}%'`; // Filtrar por nombre que contenga la búsqueda
     }
     if (selectedLocation) {
-      sqlQuery += ` AND ubicacion_general = '${selectedLocation}'`;
+      sqlQuery += ` OR ubicacion_general = '${selectedLocation}'`;
     }
     if (selectedType) {
-      sqlQuery += ` AND tipo = '${selectedType}'`;
+      sqlQuery += ` OR tipo = '${selectedType}'`;
     }
 
     const result = await client.query(sqlQuery);

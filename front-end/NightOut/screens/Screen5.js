@@ -9,7 +9,7 @@ const Screen5 = ({ route }) => {
   const navigation = useNavigation();
   const [locations, setLocations] = useState([]);
 
-  const [price, setPrice] = useState(1);
+  const [price, setPrice] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -25,11 +25,12 @@ const Screen5 = ({ route }) => {
 
   const getPriceLabel = (value) => {
     switch (value) {
+      case 0: return 'Todos';
       case 1: return '$';
       case 2: return '$$';
       case 3: return '$$$';
       case 4: return '$$$$';
-      default: return '$';
+      default: return 'Todos';
     }
   };
 
@@ -114,7 +115,7 @@ const Screen5 = ({ route }) => {
       <View style={styles.sliderContainer}>
         <Slider
           style={styles.slider}
-          minimumValue={1}
+          minimumValue={0}
           maximumValue={4}
           minimumTrackTintColor="#5271FF"
           maximumTrackTintColor="#000000"

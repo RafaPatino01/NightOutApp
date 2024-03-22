@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, StatusBar, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, StatusBar, TouchableOpacity, Linking, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Carousel from 'react-native-snap-carousel';
 import instagramIcon from '../assets/instagram_logo.png';
+import { fetchEstablecimientoById } from '../functions/functions';
 
 const DetalleEstablecimiento = ({ route }) => {
   const [data, setData] = useState([]);
   const navigation = useNavigation();
   const [activeIndex, setActiveIndex] = useState(0);
-
+  const [allowReservas, setAllowReservas] = useState(0); // State to store allow_reservas
 
   // Access the passed data using route.params
   const receivedData = route.params?.data;
@@ -26,6 +27,22 @@ const DetalleEstablecimiento = ({ route }) => {
   };
 
   useEffect(() => {
+
+    const fetchDetails = async () => {
+      try {
+        const establecimientoData = await fetchEstablecimientoById(receivedData.id);
+        if (establecimientoData) {
+          // Update allowReservas state based on fetched data
+          setAllowReservas(establecimientoData.allow_reservas);
+        }
+      } catch (error) {
+        console.error('Failed to fetch establecimiento details:', error);
+        Alert.alert('Error', 'Failed to load establecimiento details. Please try again later.');
+      }
+    };
+
+    fetchDetails();
+
     // Set the header options
     navigation.setOptions({
       title: receivedData.nombre,
@@ -52,7 +69,7 @@ const DetalleEstablecimiento = ({ route }) => {
     }));
 
     setData(updatedData);
-  }, []);
+  }, [receivedData]);
 
   const renderItem = ({ item }) => {
     return (
@@ -164,8 +181,11 @@ const DetalleEstablecimiento = ({ route }) => {
       <TouchableOpacity
         style={styles.floatingButton}
         onPress={() => {
-          console.log("RESERVAR PRESSED")
-          navigation.navigate("Reservar", { data: receivedData })
+          if (allowReservas === 0) {
+            Alert.alert("❌ El establecimiento no permite reservar en estos momentos");
+          } else {
+            navigation.navigate("Reservar", { data: receivedData })
+          }
         }}
       >
         <Text style={styles.buttonText}>RESERVAR</Text>
