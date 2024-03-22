@@ -306,8 +306,7 @@ function updateEstablecimiento(establecimientoId) {
     }
 
     // Send a PUT request to update the establecimiento data
-    //fetch(`https://nightout.com.mx/api/update_establecimiento/${establecimientoId}`, {
-    fetch(`https://localhost:3000/update_establecimiento/${establecimientoId}`, {
+    fetch(`https://nightout.com.mx/api/update_establecimiento/${establecimientoId}`, {
         method: 'PUT',
         // Do not set 'Content-Type': 'application/json' here because we are sending FormData
         body: formData // Send the formData instead of JSON
