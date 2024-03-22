@@ -273,54 +273,61 @@ function updateUser(userId) {
 
 // Function to send the establecimiento data to the backend for update
 function updateEstablecimiento(establecimientoId) {
+    const formData = new FormData();
+    
+    // Append text fields to formData
+    formData.append('email', document.getElementById('email').value);
+    formData.append('nombre', document.getElementById('nombre').value);
+    formData.append('fixed', document.getElementById('fixed').checked ? 1 : 0);
+    formData.append('descripcion', document.getElementById('descripcion').value);
+    formData.append('horario', document.getElementById('horario').value);
+    formData.append('horariocsv', document.getElementById('horariocsv').value);
+    formData.append('tipo', document.getElementById('tipo').value);
+    formData.append('num_mesas', document.getElementById('num_mesas').value);
+    formData.append('capacidades_mesa', document.getElementById('capacidades_mesa').value);
+    formData.append('capacidad_total', document.getElementById('capacidad_total').value);
+    formData.append('ubicacion', document.getElementById('ubicacion').value);
+    formData.append('ubicacion_general', document.getElementById('ubicacion_general').value);
+    formData.append('link_google_maps', document.getElementById('link_google_maps').value);
+    formData.append('restricciones', document.getElementById('restricciones').value);
+    formData.append('tipo_de_pago', document.getElementById('tipo_de_pago').value);
+    formData.append('precios', document.getElementById('precios').value);
+    formData.append('redes_sociales', document.getElementById('redes_sociales').value);
+    // Assuming mapaUrl and imageUrls are handled correctly elsewhere in your code,
+    // and you're correctly appending them to the formData if necessary.
 
-    console.log(document.getElementById('fixed').value);
-
-    // Get establecimiento data from the form
-    const establecimientoData = {
-        email: document.getElementById('email').value,
-        nombre: document.getElementById('nombre').value,
-        fixed: document.getElementById('fixed').checked ? 1 : 0,
-        descripcion: document.getElementById('descripcion').value,
-        horario: document.getElementById('horario').value,
-        horariocsv: document.getElementById('horariocsv').value,
-        tipo: document.getElementById('tipo').value,
-        num_mesas: document.getElementById('num_mesas').value,
-        capacidades_mesa: document.getElementById('capacidades_mesa').value,
-        capacidad_total: document.getElementById('capacidad_total').value,
-        ubicacion: document.getElementById('ubicacion').value,
-        ubicacion_general: document.getElementById('ubicacion_general').value,
-        link_google_maps: document.getElementById('link_google_maps').value,
-        restricciones: document.getElementById('restricciones').value,
-        tipo_de_pago: document.getElementById('tipo_de_pago').value,
-        precios: document.getElementById('precios').value,
-        redes_sociales: document.getElementById('redes_sociales').value,
-        imagen_mapa: mapaUrl, 
-        images: imageUrls, 
-    };
+    // Append files for images and imagen_mapa
+    const imageFiles = document.getElementById('images').files;
+    for (let i = 0; i < imageFiles.length; i++) {
+        formData.append('images', imageFiles[i]);
+    }
+    const mapaFile = document.getElementById('imagen_mapa').files[0];
+    if (mapaFile) {
+        formData.append('imagen_mapa', mapaFile);
+    }
 
     // Send a PUT request to update the establecimiento data
     fetch(`https://nightout.com.mx/api/update_establecimiento/${establecimientoId}`, {
         method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(establecimientoData)
+        // Do not set 'Content-Type': 'application/json' here because we are sending FormData
+        body: formData // Send the formData instead of JSON
     })
-        .then(response => {
-            if (response.ok) {
-                // Handle success (e.g., show a success message)
-                console.log('Establecimiento data updated successfully');
-                alert("Los datos del establecimiento han sido actualizados.");
-                window.location.href = "establecimientos.html";
-            } else {
-                // Handle errors (e.g., show an error message)
-                console.error('Failed to update establecimiento data');
-            }
-        })
-        .catch(error => {
-            // Handle network errors
-            console.error('Network error:', error);
-        });
+    .then(response => {
+        if (response.ok) {
+            // Handle success (e.g., show a success message)
+            console.log('Establecimiento data updated successfully');
+            alert("Los datos del establecimiento han sido actualizados.");
+            window.location.href = "establecimientos.html";
+        } else {
+            // Handle errors (e.g., show an error message)
+            console.error('Failed to update establecimiento data');
+            response.text().then(text => console.error(text));
+        }
+    })
+    .catch(error => {
+        // Handle network errors
+        console.error('Network error:', error);
+    });
 }
+
 

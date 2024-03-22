@@ -141,170 +141,63 @@ app.delete('/delete_establecimiento/:id', async (req, res) => {
 
 
 
-app.put('/update_establecimiento/:id', async (req, res) => {
+app.put('/update_establecimiento/:id', upload.fields([{ name: 'images', maxCount: 10 }, { name: 'imagen_mapa', maxCount: 1 }]), async (req, res) => {
+  const { id } = req.params;
+
   try {
-    const establecimientoId = req.params.id;
-    const establecimientoData = req.body; // Assuming you send establecimiento data in the request body
-
     const client = await pool.connect();
-    const fieldUpdates = [];
-    const queryValues = [];
 
-    // Construct the SQL UPDATE statement based on the provided establecimiento data
-    let queryIndex = 1; // Start with the first parameter index
+    // Start transaction
+    await client.query('BEGIN');
 
-    // Check if each field is included in the request body and add it to the update statement
-    if (establecimientoData.nombre !== undefined) {
-      fieldUpdates.push(`nombre = $${queryIndex}`);
-      queryValues.push(establecimientoData.nombre);
-      queryIndex++;
+    // Process and update text fields
+    const textFields = req.body;
+    // Construct the SET part of the SQL update statement dynamically
+    const setFields = Object.keys(textFields).map((field, index) => `"${field}" = $${index + 1}`).join(', ');
+    const textValues = Object.values(textFields);
+
+    if (setFields) {
+      await client.query(
+        `UPDATE establecimientos SET ${setFields} WHERE id = $${textValues.length + 1}`,
+        [...textValues, id]
+      );
     }
 
-    if (establecimientoData.fixed !== undefined) {
-      fieldUpdates.push(`fixed = $${queryIndex}`);
-      queryValues.push(establecimientoData.fixed);
-      queryIndex++;
+    // Process and update images if any
+    if (req.files.images) {
+      // Similar process as add_establecimiento for each image
+      for (const file of req.files.images) {
+        const filename = `${Date.now()}-${file.originalname}`;
+        const filepath = path.join(__dirname, 'uploads', filename);
+
+        // Use sharp to compress and save the image
+        await sharp(file.buffer).resize(800).jpeg({ quality: 80 }).toFile(filepath);
+
+        // Update your database here as per your schema
+        await client.query(`UPDATE establecimientos SET images = array_append(images, $1) WHERE id = $2`, [filename, id]);
+      }
     }
 
-    if (establecimientoData.ubicacion !== undefined) {
-      fieldUpdates.push(`ubicacion = $${queryIndex}`);
-      queryValues.push(establecimientoData.ubicacion);
-      queryIndex++;
+    if (req.files.imagen_mapa && req.files.imagen_mapa[0]) {
+      const file = req.files.imagen_mapa[0];
+      const filename = `${Date.now()}-${file.originalname}`;
+      const filepath = path.join(__dirname, 'uploads', filename);
+
+      await sharp(file.buffer).resize(800).jpeg({ quality: 80 }).toFile(filepath);
+
+      // Update your database here for the map image
+      // Assuming your database schema allows for a single map image per establecimiento
+      await client.query(`UPDATE establecimientos SET imagen_mapa = $1 WHERE id = $2`, [filename, id]);
     }
 
-    if (establecimientoData.capacidad_total !== undefined) {
-      fieldUpdates.push(`capacidad_total = $${queryIndex}`);
-      queryValues.push(establecimientoData.capacidad_total);
-      queryIndex++;
-    }
-
-    if (establecimientoData.capacidad_actual !== undefined) {
-      fieldUpdates.push(`capacidad_actual = $${queryIndex}`);
-      queryValues.push(establecimientoData.capacidad_actual);
-      queryIndex++;
-    }
-
-    if (establecimientoData.num_mesas !== undefined) {
-      fieldUpdates.push(`num_mesas = $${queryIndex}`);
-      queryValues.push(establecimientoData.num_mesas);
-      queryIndex++;
-    }
-
-    if (establecimientoData.imagen_mapa !== undefined) {
-      fieldUpdates.push(`imagen_mapa = $${queryIndex}`);
-      queryValues.push(establecimientoData.imagen_mapa);
-      queryIndex++;
-    }
-
-    if (establecimientoData.capacidades_mesa !== undefined) {
-      fieldUpdates.push(`capacidades_mesa = $${queryIndex}`);
-      queryValues.push(establecimientoData.capacidades_mesa);
-      queryIndex++;
-    }
-
-    if (establecimientoData.email !== undefined) {
-      fieldUpdates.push(`email = $${queryIndex}`);
-      queryValues.push(establecimientoData.email);
-      queryIndex++;
-    }
-
-    if (establecimientoData.contrasena !== undefined) {
-      fieldUpdates.push(`contrasena = $${queryIndex}`);
-      queryValues.push(establecimientoData.contrasena);
-      queryIndex++;
-    }
-
-    if (establecimientoData.tipo !== undefined) {
-      fieldUpdates.push(`tipo = $${queryIndex}`);
-      queryValues.push(establecimientoData.tipo);
-      queryIndex++;
-    }
-
-    if (establecimientoData.descripcion !== undefined) {
-      fieldUpdates.push(`descripcion = $${queryIndex}`);
-      queryValues.push(establecimientoData.descripcion);
-      queryIndex++;
-    }
-
-    if (establecimientoData.horario !== undefined) {
-      fieldUpdates.push(`horario = $${queryIndex}`);
-      queryValues.push(establecimientoData.horario);
-      queryIndex++;
-    }
-
-    if (establecimientoData.horariocsv !== undefined) {
-      fieldUpdates.push(`horariocsv = $${queryIndex}`);
-      queryValues.push(establecimientoData.horariocsv);
-      queryIndex++;
-    }
-
-    if (establecimientoData.restricciones !== undefined) {
-      fieldUpdates.push(`restricciones = $${queryIndex}`);
-      queryValues.push(establecimientoData.restricciones);
-      queryIndex++;
-    }
-
-    if (establecimientoData.tipo_de_pago !== undefined) {
-      fieldUpdates.push(`tipo_de_pago = $${queryIndex}`);
-      queryValues.push(establecimientoData.tipo_de_pago);
-      queryIndex++;
-    }
-
-    if (establecimientoData.precios !== undefined) {
-      fieldUpdates.push(`precios = $${queryIndex}`);
-      queryValues.push(establecimientoData.precios);
-      queryIndex++;
-    }
-
-    if (establecimientoData.resenas_calificacion !== undefined) {
-      fieldUpdates.push(`resenas_calificacion = $${queryIndex}`);
-      queryValues.push(establecimientoData.resenas_calificacion);
-      queryIndex++;
-    }
-
-    if (establecimientoData.redes_sociales !== undefined) {
-      fieldUpdates.push(`redes_sociales = $${queryIndex}`);
-      queryValues.push(establecimientoData.redes_sociales);
-      queryIndex++;
-    }
-
-    if (establecimientoData.link_google_maps !== undefined) {
-      fieldUpdates.push(`link_google_maps = $${queryIndex}`);
-      queryValues.push(establecimientoData.link_google_maps);
-      queryIndex++;
-    }
-
-    if (establecimientoData.ubicacion_general !== undefined) {
-      fieldUpdates.push(`ubicacion_general = $${queryIndex}`);
-      queryValues.push(establecimientoData.ubicacion_general);
-      queryIndex++;
-    }
-
-    if (establecimientoData.images !== undefined) {
-      fieldUpdates.push(`images = $${queryIndex}`);
-      queryValues.push(establecimientoData.images);
-      queryIndex++;
-    }
-
-    // Create the final query string
-    const queryString = `
-      UPDATE public.establecimientos
-      SET 
-        ${fieldUpdates.join(', ')}
-      WHERE id = $${queryIndex}
-    `;
-
-    queryValues.push(establecimientoId);
-
-    // Execute the SQL statement with the provided data
-    const result = await client.query(queryString, queryValues);
-
+    // Commit transaction
+    await client.query('COMMIT');
+    
     client.release();
-
-    res.json({ message: 'Establecimiento data updated successfully' });
+    res.status(200).send('Establecimiento updated successfully');
   } catch (error) {
-    console.error('Error updating establecimiento data:', error);
-    res.status(500).json({ error: 'Error updating establecimiento data' });
+    console.error('Failed to update establecimiento:', error);
+    res.status(500).send('Error updating establecimiento');
   }
 });
 
