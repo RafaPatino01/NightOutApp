@@ -98,3 +98,30 @@ export const fetchUserById = async (usuarioId) => {
     throw error;
   }
 };
+
+export const deleteReservaById = async (reservaId) => {
+  try {
+    // Construye la URL del endpoint, incluyendo el ID de la reservación en la ruta
+    const apiUrl = `https://${ip}/delete_reserva/${reservaId}`;
+
+    // Realiza la petición DELETE
+    const response = await axios.delete(apiUrl);
+
+    // Verifica si la respuesta es exitosa
+    if (response.status === 200) {
+      console.log('Reserva eliminada con éxito:', response.data);
+      // Opcionalmente, puedes retornar un valor booleano o el mensaje de éxito
+      return true;
+    } else {
+      // Maneja códigos de estado HTTP diferentes a 200
+      console.error('Error al eliminar la reservación. Código de estado:', response.status);
+      alert('Error al eliminar la reservación. Por favor, inténtalo de nuevo.');
+      return false;
+    }
+  } catch (error) {
+    // Maneja errores en la petición
+    console.error('Error al eliminar la reservación:', error);
+    alert('Error al eliminar la reservación. Por favor, inténtalo de nuevo.');
+    return false;
+  }
+};

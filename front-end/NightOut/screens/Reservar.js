@@ -5,22 +5,31 @@ import DatePicker from 'react-native-modern-datepicker';
 import ModalSelector from 'react-native-modal-selector';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-const horarios = [
-  { key: 1, label: '10 PM' },
-  { key: 2, label: '11 PM' },
-  { key: 3, label: '12 PM' },
-  { key: 4, label: '01 AM' },
-  { key: 5, label: '02 AM' },
-  { key: 6, label: '03 AM' },
-];
-
 const horarios24h = {
-  '10 PM': '22:00:00',
-  '11 PM': '23:00:00',
-  '12 PM': '00:00:00', // Medianoche
+  '12 AM': '00:00:00',
   '01 AM': '01:00:00',
   '02 AM': '02:00:00',
-  '03 AM': '03:00:00'
+  '03 AM': '03:00:00',
+  '04 AM': '04:00:00',
+  '05 AM': '05:00:00',
+  '06 AM': '06:00:00',
+  '07 AM': '07:00:00',
+  '08 AM': '08:00:00',
+  '09 AM': '09:00:00',
+  '10 AM': '10:00:00',
+  '11 AM': '11:00:00',
+  '12 PM': '12:00:00',
+  '01 PM': '13:00:00',
+  '02 PM': '14:00:00',
+  '03 PM': '15:00:00',
+  '04 PM': '16:00:00',
+  '05 PM': '17:00:00',
+  '06 PM': '18:00:00',
+  '07 PM': '19:00:00',
+  '08 PM': '20:00:00',
+  '09 PM': '21:00:00',
+  '10 PM': '22:00:00',
+  '11 PM': '23:00:00'
 };
 
 const Reservar = ({ route }) => {
@@ -31,6 +40,8 @@ const Reservar = ({ route }) => {
   const [selectedMesa, setSelectedMesa] = useState(null); // Estado para el tipo de mesa
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const [mesas, setMesas] = useState([]);
+  const [horarios, setHorarios] = useState([]);
+
   const navigation = useNavigation();
 
   // Access the passed data using route.params
@@ -45,7 +56,7 @@ const Reservar = ({ route }) => {
       headerTintColor: '#5271FF',
       headerBackTitleVisible: false,
     });
-
+  
     if (receivedData && receivedData.capacidades_mesa) {
       const tipos_de_mesa = receivedData.capacidades_mesa.split(",");
       const mesasActualizadas = tipos_de_mesa.map((mesa, index) => ({
@@ -53,9 +64,30 @@ const Reservar = ({ route }) => {
         label: mesa.trim() // Usar trim() para eliminar espacios adicionales
       }));
       setMesas(mesasActualizadas);
+      
+      console.log(receivedData.horariocsv);
+  
+      // Procesar receivedData.horariocsv para actualizar los horarios
+      const horariosCSV = receivedData.horariocsv.split(", ");
+      const horariosActualizados = horariosCSV.map((hora, index) => {
+        // Obtener la clave AM/PM basada en la hora
+        const horaEn24 = parseInt(hora, 10);
+        const periodo = horaEn24 < 12 || horaEn24 === 24 ? 'AM' : 'PM';
+        const horaEn12 = horaEn24 % 12 === 0 ? 12 : horaEn24 % 12;
+        const claveHorario = `${horaEn12 < 10 ? `0${horaEn12}` : horaEn12} ${periodo}`;
+      
+        return {
+          key: index + 1,
+          label: claveHorario
+        };
+      });
+      
+  
+      setHorarios(horariosActualizados);
     }
-
+  
   }, [receivedData]);
+  
 
   // Custom header style
   const customHeaderStyle = {

@@ -1,18 +1,70 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, SectionList, TouchableOpacity, Modal, Image, RefreshControl } from 'react-native';
-import { fetchReservasByUserId, fetchEstablecimientos } from '../functions/functions';
+import { fetchReservasByUserId, fetchEstablecimientos, deleteReservaById } from '../functions/functions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import SegmentedControlTab from 'react-native-segmented-control-tab';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const Screen2 = () => {
   const [reservas, setReservas] = useState([]); // Estado para almacenar las reservas
   const [establecimientos, setEstablecimientos] = useState([]); // Estado para almacenar los establecimientos
   const [establecimientosDict, setEstablecimientosDict] = useState({}); // Estado para almacenar los establecimientos
   const [modalVisible, setModalVisible] = useState(false);
+  const [ModalNotConfirmed, setModalNotConfirmed] = useState(false);
+
+  const [selectedItem, setSelectedItem] = useState({});
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
+
+  const [confirmCancelModalVisible, setConfirmCancelModalVisible] = useState(false); // Nuevo estado para el modal de confirmación
+
+  const handleCancelReservacion = () => {
+    setModalNotConfirmed(false); // Cierra el modal de detalles
+    setConfirmCancelModalVisible(true); // Abre el modal de confirmación de cancelación
+  };
+
+  // Función para manejar la confirmación de cancelación
+  const confirmCancel = async (reservaId) => {
+    const result = await deleteReservaById(reservaId);
+    if (result) {
+      console.log("Reservación cancelada con éxito.");
+      // Opcional: muestra una notificación al usuario
+      alert("Reservación cancelada con éxito.");
+      // Recargar las reservaciones para reflejar la reservación cancelada
+      await fetchData();
+    } else {
+      console.error("No se pudo cancelar la reservación.");
+      // Opcional: muestra una notificación al usuario
+      alert("No se pudo cancelar la reservación. Por favor, inténtalo de nuevo.");
+    }
+    setConfirmCancelModalVisible(false); // Cierra el modal de confirmación
+  };
+  
+  function formatDate(dateString) {
+    const months = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+  
+    const date = new Date(dateString);
+  
+    const day = date.getUTCDate(); // Use UTC date
+    const month = months[date.getUTCMonth()]; // Use UTC month
+    const year = date.getUTCFullYear(); // Use UTC year
+  
+    let hours = date.getUTCHours(); // Use UTC hours to avoid timezone offset issues
+    const minutes = date.getUTCMinutes(); // Use UTC minutes
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+  
+    // Pad minutes with leading zero if less than 10
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+  
+    return `${day} ${month} ${year} ${hours}:${formattedMinutes}${ampm}`;
+  }
   
   const handleTabChange = (index) => {
     setSelectedTab(index);
@@ -182,12 +234,14 @@ const Screen2 = () => {
   };
 
   const handleItemPress = (item) => {
-    if (item.confirmado !== 0 && item.asistencia !== 1) { // Check if the reservation is confirmed
+    if (item.confirmado === 1 && item.asistencia === 0) {
       openModalWithItem(item.id);
     } else {
-      console.log("Reservation is not yet confirmed."); // You can also display a warning message to the user here
+      setSelectedItem(item);
+      setModalNotConfirmed(true);
+      console.log(item)
     }
-  };
+};
 
   
 
@@ -212,9 +266,13 @@ const Screen2 = () => {
           </View>
           <View style={styles.row}>
             <Text style={styles.text_invisible}>
+              {item.confirmado === 1 && item.asistencia === 0 ? 
+                <Icon name="qrcode" size={30} color="#000" /> 
+                : ""}
               {item.confirmado === 0 ? "(Por confirmar)" : ""}
               {item.asistencia === 1 ? "(Has asistido)" : ""}
             </Text>
+
             <Text style={styles.text}>
               {formatToDayMonthYear(item.fecha_hora)}
             </Text>
@@ -250,18 +308,87 @@ const Screen2 = () => {
       >
 
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.5)" }}>
-          <View style={{ padding: 20, backgroundColor: "white", borderRadius: 10, width: '80%', height: '40%', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <View style={{ padding: 20, backgroundColor: "white", borderRadius: 10, width: '80%', height: '50%', flexDirection: 'column', justifyContent: 'space-between' }}>
             <View>
-              <Text style={{ textAlign: "center" }}>Muestra el QR en el establecimiento</Text> 
+              <Text style={{ paddingBottom: 5, fontWeight: "700", fontSize: 20 }}>Reserva confirmada</Text>
+
+              <Text style={{ paddingBottom: 5 }}>🗓️ {formatDate(selectedItem.fecha_hora)}</Text>
+
+            <Text style={{ paddingBottom: 15 }}>🍸 {selectedItem.tipo_de_mesa}</Text>
+              <Text>Muestra el QR en el establecimiento</Text> 
               <Image source={{ uri: 'https://nightout.com.mx/api/uploads/reservas_qr/qr_'+selectedItemId+'.png' } } style={{ width: "100%", height:220, resizeMode: "contain" }} />
               
             </View>
-            <TouchableOpacity onPress={() => setModalVisible(false)} style={{ backgroundColor: '#5271FF', padding: 10, alignItems: 'center' }}>
-              <Text style={{ color: 'white' }}>Close</Text>
+            <TouchableOpacity onPress={() => setModalVisible(false)} style={{ backgroundColor: '#5271FF', padding: 10, alignItems: 'center', marginBottom: 10,}}>
+              <Text style={{ color: 'white'}}>Cerrar</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={confirmCancelModalVisible}
+        onRequestClose={() => {
+          setConfirmCancelModalVisible(!confirmCancelModalVisible);
+        }}
+      >
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.5)" }}>
+          <View style={{ padding: 20, backgroundColor: "white", borderRadius: 10, width: '80%', alignItems: 'center' }}>
+            <Text style={{ marginBottom: 20 }}>¿Estás seguro de que quieres cancelar tu reservación?</Text>
+            <TouchableOpacity onPress={() => confirmCancel(selectedItem.id)} style={{ backgroundColor: '#EC5858', padding: 10, alignItems: 'center', marginBottom: 10, width: '100%', justifyContent: 'center' }}>
+              <Text style={{ color: 'white' }}>Sí, cancelar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setConfirmCancelModalVisible(false)} style={{ backgroundColor: '#5271FF', padding: 10, alignItems: 'center', width: '100%', justifyContent: 'center' }}>
+              <Text style={{ color: 'white' }}>No, mantener</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={ModalNotConfirmed}
+        onRequestClose={() => {
+          setModalNotConfirmed(!ModalNotConfirmed);
+        }}
+      >
+
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.5)" }}>
+        <View style={{ padding: 20, backgroundColor: "white", borderRadius: 10, width: '80%', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <View style={{ paddingBottom: 20 }}>
+            <Text style={{ paddingBottom: 5, fontWeight: "700", fontSize: 20 }}>Detalles de la reservación</Text>
+
+            {/* Conditional rendering based on confirmado and asistencia */}
+            {selectedItem.confirmado === 0 ? (
+              <Text style={{ paddingBottom: 5 }}>🟡 (Por confirmar)</Text>
+            ) : selectedItem.asistencia === 1 ? (
+              <Text style={{ paddingBottom: 5 }}>🟢 (Has asistido)</Text>
+            ) : null}
+
+            <Text style={{ paddingBottom: 5 }}>🗓️ {formatDate(selectedItem.fecha_hora)}</Text>
+
+            <Text style={{ paddingBottom: 5 }}>🍸 {selectedItem.tipo_de_mesa}</Text>
+
+            
+          </View>
+
+          {selectedItem.asistencia === 0 ? (
+              <TouchableOpacity onPress={handleCancelReservacion} style={{ borderWidth: 1, borderColor:"#EC5858", backgroundColor: 'white', padding: 10, alignItems: 'center', marginBottom: 10, }}>
+              <Text style={{ color: '#EC5858' }}>Cancelar Reservación</Text>
+            </TouchableOpacity>
+          ) : null}
+          <TouchableOpacity onPress={() => setModalNotConfirmed(false)} style={{ backgroundColor: '#5271FF', padding: 10, alignItems: 'center' }}>
+            <Text style={{ color: 'white' }}>Cerrar</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      </Modal>
+
+      
 
       <SectionList
         sections={getFilteredReservas()}

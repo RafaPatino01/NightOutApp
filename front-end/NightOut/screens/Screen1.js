@@ -18,6 +18,7 @@ const Screen1 = () => {
       .then((data) => {
         setEstablecimientos(data);
         setFilteredEstablecimientos(data);
+        sortAndSetFilteredEstablecimientos(data);
         setRefreshing(false); // Termina el refreshing
       })
       .catch((error) => {

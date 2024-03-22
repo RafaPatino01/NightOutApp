@@ -117,6 +117,18 @@ const DetalleEstablecimiento = ({ route }) => {
         <View style={styles.horizontalBar}></View>
 
         <View style={styles.row2}>
+          <TouchableOpacity style={styles.text}
+          onPress={() => {
+            Linking.openURL(receivedData.link_google_maps);
+          }}
+          >
+            <Text style={ styles.text2 }>🌎 Ubicación en Maps</Text>
+            </TouchableOpacity>
+        </View>
+
+        <View style={styles.horizontalBar}></View>
+
+        <View style={styles.row2}>
           <Text style={styles.text}>{receivedData.horario}</Text>
         </View>
 
@@ -216,6 +228,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     resizeMode: 'cover',
+  },
+  text2: {
+    fontSize: 18,
+    color: "#5271FF",
+    fontWeight: "bold",
   },
   text: {
     fontSize: 18,
