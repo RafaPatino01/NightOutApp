@@ -9,72 +9,59 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
-  KeyboardAvoidingView, // Add this import
-  Platform, // Add this import for cross-platform behavior
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { registerUser } from '../functions/functions'; // Import the handleLogin function
+import { registerUser } from '../functions/functions';
 
 const Register = () => {
   const navigation = useNavigation();
-
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
   const [genero, setGenero] = useState('');
   const [email, setEmail] = useState('');
   const [contrasena, setContrasena] = useState('');
+  const [confirmarContrasena, setConfirmarContrasena] = useState('');
   const [numTelefono, setNumTelefono] = useState('');
 
   const goBack = async () => {
-    // Check if all required fields are filled
-    if (!nombre || !apellido || !genero || !contrasena || !email) {
+    // Validación de campos requeridos incluida
+    if (!nombre || !apellido || !genero || !contrasena || !email || !confirmarContrasena) {
       alert('Por favor, complete todos los campos requeridos.');
       return;
     }
-  
-    // Create an object with user data
+
+    // Nueva validación de contraseña
+    if (contrasena.length < 7 || !/\d/.test(contrasena)) {
+      alert('La contraseña debe tener más de 6 caracteres y contener al menos un número.');
+      return;
+    }
+
+    if (contrasena !== confirmarContrasena) {
+      alert('Las contraseñas no coinciden.');
+      return;
+    }
+
     const userData = {
-      nombre: nombre,
-      apellido: apellido,
-      genero: genero,
-      fechaNacimiento: '2004-12-05', // Establecer una fecha fija
+      nombre,
+      apellido,
+      genero,
+      fechaNacimiento: '2004-12-05',
       correoElectronico: email,
-      redesSociales: '', // Puedes agregar este campo si lo necesitas
-      contrasena: contrasena,
-      reservasActivas: 0, // Puedes establecer estos valores según tus necesidades
+      contrasena,
+      reservasActivas: 0,
       reservasPrevias: 0,
-      numTelefono: numTelefono,
+      numTelefono,
     };
-  
-    // Enviar el objeto de datos del usuario a la función de registro (si es necesario)
+
     registerUser(userData);
-  
-    // Navegar hacia atrás
     navigation.goBack();
   };
   
-
-  // Add this function to your component
-  const handleNumTelefonoChange = (text) => {
-    // Use a regular expression to remove any non-numeric characters
-    const numericText = text.replace(/[^0-9]/g, '');
-    setNumTelefono(numericText);
-  };
-
   const selectGenero = (selectedGenero) => {
     setGenero(selectedGenero);
   };
-
-  const onTermsOfUsePress = () => {
-    // Show an alert for debugging
-    alert('Terms of Use pressed');
-  };
-  
-  const onPrivacyPolicyPress = () => {
-    // Show an alert for debugging
-    alert('Privacy Policy pressed');
-  };
-  
 
   return (
     <ImageBackground
@@ -159,6 +146,18 @@ const Register = () => {
                 secureTextEntry // This hides the input text for passwords
               />
             </View>
+            
+            <View style={styles.inputContainer}>
+              <Text style={styles.texto1}>Confirmar Contraseña:</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Confirmar Contraseña"
+                onChangeText={setConfirmarContrasena}
+                value={confirmarContrasena}
+                secureTextEntry // Oculta el texto de entrada
+              />
+            </View>
+
           </View>
           <View style={styles.buttonContainer}>
             <TouchableOpacity

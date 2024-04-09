@@ -732,6 +732,43 @@ app.post('/update_allow_reservas', async (req, res) => {
   }
 });
 
+app.post('/change_password', async (req, res) => {
+  const { userId, newPassword } = req.body;
+
+  try {
+    const client = await pool.connect();
+
+    // Check if the user exists
+    const userExistsQuery = 'SELECT id FROM public.usuarios WHERE id = $1';
+    const userExistsResult = await client.query(userExistsQuery, [userId]);
+
+    if (userExistsResult.rows.length === 0) {
+      // User does not exist, respond with an error message
+      client.release();
+      return res.json({ res: 'User does not exist' });
+    }
+
+    // Hash the new password using SHA-256
+    const sha256 = crypto.createHash('sha256');
+    const hashedNewPassword = sha256.update(newPassword).digest('hex');
+
+    // Update the user's password in the database
+    const updateUserPasswordQuery = `
+      UPDATE public.usuarios
+      SET contrasena = $2
+      WHERE id = $1
+    `;
+
+    await client.query(updateUserPasswordQuery, [userId, hashedNewPassword]);
+    client.release();
+    console.log('Password updated successfully');
+
+    res.json({ res: "OK" });
+  } catch (error) {
+    console.error('Error updating user password in PostgreSQL:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 // Define a route to handle the POST request
 app.post('/add_usuario', async (req, res) => {

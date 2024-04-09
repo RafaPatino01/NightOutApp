@@ -87,8 +87,11 @@ function getReservas(pId){
                             <div class="col-12 col-md-6">
                                 <p class="m-0 text-bold searchable">${name}</p>
                                 <hr>
-                                <p class="py-0 m-0 searchable">${reserva.tipo_de_mesa}</p>
+                                <p class="py-0 m-0 searchable"> <span class="bg-secondary p-1 rounded">Tipo de mesa:</span> ${reserva.tipo_de_mesa}</p>
                                 ${generateDateTimeHTML(reserva.fecha_hora)}
+                                <hr>
+                                <i class="m-0 text-muted">Reserva creada el ${formatDate(reserva.created_at)}</i>
+                                
                             </div>
     
                             <div class="col-12 col-md-6 px-0 py-4 m-0">
@@ -143,8 +146,11 @@ function getReservas(pId){
                         <div class="col-12 col-md-6">
                             <p class="m-0 text-bold searchable">${name}</p>
                             <hr>
-                            <p class="py-0 m-0 searchable">${reserva.tipo_de_mesa}</p>
+                            <p class="py-0 m-0 searchable"> <span class="bg-secondary p-1 rounded">Tipo de mesa:</span> ${reserva.tipo_de_mesa}</p>
                             ${generateDateTimeHTML(reserva.fecha_hora)}
+                            <hr>
+                            <i class="m-0 text-muted">Reserva creada el ${formatDate(reserva.created_at)}</i>
+                            
                         </div>
 
                         <div class="col-12 col-md-6 px-0 py-4 m-0">
@@ -212,7 +218,9 @@ function getUsuario(pId) {
 }
 
 function generateDateTimeHTML(dateTimeString) {
-    // Extract the date and time from the dateTimeString
+
+    console.log(String(dateTimeString))
+
     let year = dateTimeString.substring(0, 4);
     let month = dateTimeString.substring(5, 7);
     let day = dateTimeString.substring(8, 10);
@@ -220,8 +228,8 @@ function generateDateTimeHTML(dateTimeString) {
 
     // Generate the HTML string
     const htmlString = `
-        <p class="py-0 m-0 searchable_fecha">${day}/${month}/${year}</p>
-        <p class="py-0 m-0">${hour}</p>
+        <p class="py-0 mx-0 my-2"><span class="bg-secondary p-1 rounded">Fecha:</span> <span class="searchable_fecha">${day}/${month}/${year} <span></p>
+        <p class="py-0 mx-0 my-2"><span class="bg-secondary p-1 rounded">Horario:</span> ${hour}</p>
     `;
 
     return htmlString;
@@ -324,3 +332,10 @@ function filterReservas2() {
         reserva.style.display = isMatch ? '' : 'none';
     });
 }
+
+function formatDate(dateString) {
+    const options = { day: 'numeric', month: 'long', year: 'numeric' };
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', options);
+}
+  

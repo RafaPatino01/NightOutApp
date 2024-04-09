@@ -78,8 +78,11 @@ function getReservas(pId){
                         <div class="col-7">
                             <p class="m-0 text-bold searchable_item">${name}</p>
                             <hr>
-                            <p class="py-0 m-0 searchable_item">${reserva.tipo_de_mesa}</p>
+                            <p class="py-0 m-0 searchable_item"> <span class="bg-secondary p-1 rounded">Tipo de mesa:</span> ${reserva.tipo_de_mesa}</p>
                             ${generateDateTimeHTML(reserva.fecha_hora)}
+                            <hr>
+                            <i class="m-0 text-muted">Reserva creada el ${formatDate(reserva.created_at)}</i>
+                            
                         </div>
 
                         <div class="col-5 text-center bg-primary d-flex align-items-center rounded" onclick="confirmarReserva(${reserva.id})">
@@ -145,6 +148,9 @@ function getReservas2(pId){
                             <hr>
                             <p class="py-0 m-0 searchable_item">${reserva.tipo_de_mesa}</p>
                             ${generateDateTimeHTML(reserva.fecha_hora)}
+                            <hr>
+                            <i class="m-0 text-muted">Reserva creada el ${formatDate(reserva.created_at)}</i>
+                            
                         </div>
 
                         <div class="col-4 p-0 m-0">
@@ -220,8 +226,8 @@ function generateDateTimeHTML(dateTimeString) {
 
     // Generate the HTML string
     const htmlString = `
-        <p class="py-0 m-0 searchable_fecha">${day}/${month}/${year}</p>
-        <p class="py-0 m-0">${hour}</p>
+        <p class="py-0 mx-0 my-2"><span class="bg-secondary p-1 rounded">Fecha:</span> <span class="searchable_fecha">${day}/${month}/${year} <span></p>
+        <p class="py-0 mx-0 my-2"><span class="bg-secondary p-1 rounded">Horario:</span> ${hour}</p>
     `;
 
     return htmlString;
@@ -301,4 +307,11 @@ function filterReservas2() {
 
         reserva.style.display = isMatch ? '' : 'none';
     });
+}
+
+
+function formatDate(dateString) {
+    const options = { day: 'numeric', month: 'long', year: 'numeric' };
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', options);
 }

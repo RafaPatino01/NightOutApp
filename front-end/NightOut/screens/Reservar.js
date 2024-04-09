@@ -6,30 +6,54 @@ import ModalSelector from 'react-native-modal-selector';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const horarios24h = {
-  '12 AM': '00:00:00',
-  '01 AM': '01:00:00',
-  '02 AM': '02:00:00',
-  '03 AM': '03:00:00',
-  '04 AM': '04:00:00',
-  '05 AM': '05:00:00',
-  '06 AM': '06:00:00',
-  '07 AM': '07:00:00',
-  '08 AM': '08:00:00',
-  '09 AM': '09:00:00',
-  '10 AM': '10:00:00',
-  '11 AM': '11:00:00',
-  '12 PM': '12:00:00',
-  '01 PM': '13:00:00',
-  '02 PM': '14:00:00',
-  '03 PM': '15:00:00',
-  '04 PM': '16:00:00',
-  '05 PM': '17:00:00',
-  '06 PM': '18:00:00',
-  '07 PM': '19:00:00',
-  '08 PM': '20:00:00',
-  '09 PM': '21:00:00',
-  '10 PM': '22:00:00',
-  '11 PM': '23:00:00'
+  '12:00 AM': '00:00:00',
+  '01:00 AM': '01:00:00',
+  '02:00 AM': '02:00:00',
+  '03:00 AM': '03:00:00',
+  '04:00 AM': '04:00:00',
+  '05:00 AM': '05:00:00',
+  '06:00 AM': '06:00:00',
+  '07:00 AM': '07:00:00',
+  '08:00 AM': '08:00:00',
+  '09:00 AM': '09:00:00',
+  '10:00 AM': '10:00:00',
+  '11:00 AM': '11:00:00',
+  '12:00 PM': '12:00:00',
+  '01:00 PM': '13:00:00',
+  '02:00 PM': '14:00:00',
+  '03:00 PM': '15:00:00',
+  '04:00 PM': '16:00:00',
+  '05:00 PM': '17:00:00',
+  '06:00 PM': '18:00:00',
+  '07:00 PM': '19:00:00',
+  '08:00 PM': '20:00:00',
+  '09:00 PM': '21:00:00',
+  '10:00 PM': '22:00:00',
+  '11:00 PM': '23:00:00',
+  '12:30 AM': '00:30:00',
+  '01:30 AM': '01:30:00',
+  '02:30 AM': '02:30:00',
+  '03:30 AM': '03:30:00',
+  '04:30 AM': '04:30:00',
+  '05:30 AM': '05:30:00',
+  '06:30 AM': '06:30:00',
+  '07:30 AM': '07:30:00',
+  '08:30 AM': '08:30:00',
+  '09:30 AM': '09:30:00',
+  '10:30 AM': '10:30:00',
+  '11:30 AM': '11:30:00',
+  '12:30 PM': '12:30:00',
+  '01:30 PM': '13:30:00',
+  '02:30 PM': '14:30:00',
+  '03:30 PM': '15:30:00',
+  '04:30 PM': '16:30:00',
+  '05:30 PM': '17:30:00',
+  '06:30 PM': '18:30:00',
+  '07:30 PM': '19:30:00',
+  '08:30 PM': '20:30:00',
+  '09:30 PM': '21:30:00',
+  '10:30 PM': '22:30:00',
+  '11:30 PM': '23:30:00'
 };
 
 const Reservar = ({ route }) => {
@@ -70,18 +94,27 @@ const Reservar = ({ route }) => {
   
       // Procesar receivedData.horariocsv para actualizar los horarios
       const horariosCSV = receivedData.horariocsv.split(", ");
-      const horariosActualizados = horariosCSV.map((hora, index) => {
-        // Obtener la clave AM/PM basada en la hora
+      const horariosActualizados = horariosCSV.flatMap((hora, index) => {
+        // Convertir la hora a un número para facilitar la manipulación
         const horaEn24 = parseInt(hora, 10);
+        // Determinar el periodo AM/PM
         const periodo = horaEn24 < 12 || horaEn24 === 24 ? 'AM' : 'PM';
+        // Ajustar para formato de 12 horas
         const horaEn12 = horaEn24 % 12 === 0 ? 12 : horaEn24 % 12;
-        const claveHorario = `${horaEn12 < 10 ? `0${horaEn12}` : horaEn12} ${periodo}`;
-      
-        return {
-          key: index + 1,
-          label: claveHorario
-        };
+        // Generar las claves para la hora exacta y la hora y media
+        const claveHorarioExacta = `${horaEn12 < 10 ? `0${horaEn12}` : horaEn12}:00 ${periodo}`;
+        const claveHorarioMedia = `${horaEn12 < 10 ? `0${horaEn12}` : horaEn12}:30 ${periodo}`;
+
+        // Devolver dos objetos por cada hora: uno para la hora exacta y otro para la media hora
+        return [{
+          key: index * 2 + 1, // Asegurarse de que cada clave sea única
+          label: claveHorarioExacta
+        }, {
+          key: index * 2 + 2, // Asegurarse de que cada clave sea única
+          label: claveHorarioMedia
+        }];
       });
+
       
   
       setHorarios(horariosActualizados);
