@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import base64 from 'react-native-base64'
 import {
   Linking,
   View,
@@ -20,6 +21,7 @@ const Screen3 = () => {
   const opciones = [
     { key: 'aviso', text: '🔒 Aviso de privacidad' },
     { key: 'eliminar', text: '🗑️ Eliminar cuenta' },
+    { key: 'change', text: '🔑 Cambiar contraseña' },
     { key: 'faq', text: '🤔 FAQ' },
     { key: 'cerrar', text: '⬅️ Cerrar sesión' },
   ];
@@ -69,6 +71,26 @@ const Screen3 = () => {
 
   const onOptionPress = async (pOption) => {
     switch(pOption){
+      case "change":
+        console.log("cambiando contraseña...");
+        try {
+          const userToken = await AsyncStorage.getItem('userToken');
+          const userId = await getUserIdByUserToken(userToken); // Assuming this function retrieves the correct ID
+          
+          // Encode the userId in Base64
+          const encodedUserId = base64.encode(String(userId));
+          
+          // Construct the URL with the encoded userId parameter
+          const resetPasswordUrl = `https://nightout.com.mx/web-admin/reset_password.html?userId=${encodedUserId}`;
+          
+          // Open the URL in the device's default browser
+          Linking.openURL(resetPasswordUrl);
+        } catch (error) {
+          console.error('Error al cambiar contraseña:', error);
+        }
+        break;
+
+
       case "eliminar":
         console.log("eliminando cuenta...")
         try {
