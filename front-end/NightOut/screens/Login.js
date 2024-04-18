@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, TextInput, Image, ImageBackground } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, TextInput, Image, ImageBackground, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { handleLogin } from '../functions/functions'; // Import the handleLogin function
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -33,6 +33,20 @@ const Login = () => {
     } catch (error) {
       console.error('Error retrieving session:', error);
     }
+  };
+
+  const handleForgotPassword = () => {
+    // Open the Forgot Password URL in the default web browser
+    const url = 'https://nightout.com.mx/web-admin/forgot_password.html';
+    Linking.canOpenURL(url)
+      .then((supported) => {
+        if (supported) {
+          Linking.openURL(url);
+        } else {
+          console.log("Can't handle URL: " + url);
+        }
+      })
+      .catch((err) => console.error('An error occurred', err));
   };
 
   const handleLoginPress = async () => {
@@ -105,6 +119,17 @@ const Login = () => {
               onPress={handleLoginPress}
             >
               <Text style={styles.buttonText}>INGRESA</Text>
+            </TouchableOpacity>
+
+        </View>
+
+        <View style={styles.buttonContainer}>
+
+        <TouchableOpacity
+              style={styles.button1}
+              onPress={handleForgotPassword}
+            >
+              <Text style={styles.buttonText}>Olvidé mi contraseña</Text>
             </TouchableOpacity>
         </View>
         
