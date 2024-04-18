@@ -737,41 +737,59 @@ app.post('/update_allow_reservas', async (req, res) => {
 
 app.post('/send_reset_password', async (req, res) => {
   const phoneNumber = req.body.phone_number;
-  const url = 'https://graph.facebook.com/v18.0/290794877447729/messages';
-  const data = {
-      messaging_product: "whatsapp",
-      to: phoneNumber,
-      type: "template",
-      template: {
-        name: "reset_password",
-        language: {
-            code: "es_MX"
-        },
-        components: [{
-            type: "body",
-            parameters: [
-                { 
-                  type: "text", 
-                  text: "https://nightout.com.mx/web-admin/reset_password.html?userId=NDY="
-                }
-            ]
-        }]
-      }
-  };
-
+  
+  // Inicia conexión a la base de datos y realiza la consulta
+  const client = await pool.connect();
   try {
+      const query = 'SELECT id FROM public.usuarios WHERE correo_electronico = $1';
+      const queryResult = await client.query(query, [phoneNumber]);
+      client.release(); // Libera el cliente al pool de conexiones
+
+      if (queryResult.rows.length === 0) {
+          return res.status(404).send({ message: 'No user found with this phone number.' });
+      }
+
+      const userId = queryResult.rows[0].id;
+      const encodedUserId = Buffer.from(String(userId)).toString('base64');
+      const resetLink = `https://nightout.com.mx/web-admin/reset_password.html?userId=${encodedUserId}`;
+
+      // Configuración de datos para el envío del mensaje de WhatsApp
+      const url = 'https://graph.facebook.com/v18.0/290794877447729/messages';
+      const data = {
+          messaging_product: "whatsapp",
+          to: phoneNumber,
+          type: "template",
+          template: {
+              name: "reset_password",
+              language: {
+                  code: "es_MX"
+              },
+              components: [{
+                  type: "body",
+                  parameters: [{
+                      type: "text", 
+                      text: resetLink
+                  }]
+              }]
+          }
+      };
+
+      // Envío del mensaje de WhatsApp
       const response = await axios.post(url, data, {
           headers: {
-              'Authorization': 'Bearer EAAUkJ9HTVVsBO73zGkDV8wG0p7ZBocaBBv2itwoyjpusg68wDQn5NjJOabBZAx8PLGMpnnumYxWOr3OWJzHFTyeYdSdIkRkU3sW2q1ylhvkYBPczO0dmDdSfPPm4Vx6rJioZAw3yKwp3jJmJmLqWJ2KMZB0f3HHlkeEqHNc7Fqf6lLGcm2sgTz5eeZCZB4Ngnk',
+              'Authorization': 'Bearer TU_ACCESS_TOKEN',
               'Content-Type': 'application/json'
           }
       });
       res.status(200).send(response.data);
+
   } catch (error) {
       console.error('Error:', error);
+      client.release(); // Asegúrate de liberar el cliente en caso de error también
       res.status(500).send({ message: 'Internal Server Error', error: error.message });
   }
 });
+
 
 app.post('/change_password', async (req, res) => {
   const { userId, newPassword } = req.body;
