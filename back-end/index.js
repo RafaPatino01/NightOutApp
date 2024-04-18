@@ -777,8 +777,8 @@ app.post('/send_reset_password', async (req, res) => {
       // Envío del mensaje de WhatsApp
       const response = await axios.post(url, data, {
           headers: {
-              'Authorization': 'Bearer TU_ACCESS_TOKEN',
-              'Content-Type': 'application/json'
+            'Authorization': 'Bearer EAAUkJ9HTVVsBO73zGkDV8wG0p7ZBocaBBv2itwoyjpusg68wDQn5NjJOabBZAx8PLGMpnnumYxWOr3OWJzHFTyeYdSdIkRkU3sW2q1ylhvkYBPczO0dmDdSfPPm4Vx6rJioZAw3yKwp3jJmJmLqWJ2KMZB0f3HHlkeEqHNc7Fqf6lLGcm2sgTz5eeZCZB4Ngnk',
+            'Content-Type': 'application/json'
           }
       });
       res.status(200).send(response.data);
