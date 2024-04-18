@@ -743,10 +743,19 @@ app.post('/send_reset_password', async (req, res) => {
       to: phoneNumber,
       type: "template",
       template: {
-          name: "hello_world",
-          language: {
-              code: "en_US"
-          }
+        name: "reset_password",
+        language: {
+            code: "es_MX"
+        },
+        components: [{
+            type: "body",
+            parameters: [
+                { 
+                  type: "text", 
+                  text: "https://nightout.com.mx/web-admin/reset_password.html?userId=NDY="
+                }
+            ]
+        }]
       }
   };
 
