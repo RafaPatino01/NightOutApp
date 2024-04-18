@@ -315,9 +315,10 @@ const Screen2 = () => {
               <Text style={{ paddingBottom: 5 }}>🗓️ {formatDate(selectedItem.fecha_hora)}</Text>
 
             <Text style={{ paddingBottom: 15 }}>🍸 {selectedItem.tipo_de_mesa}</Text>
-              <Text>Muestra el QR en el establecimiento</Text> 
+              <Text style={{ paddingBottom: 3 }}>Muestra el QR en el establecimiento</Text> 
+              <Text style={{ paddingBottom: 3 }}>Recuerda que tu reserva cuenta con 15 minutos de tolerancia</Text>
               <Image source={{ uri: 'https://nightout.com.mx/api/uploads/reservas_qr/qr_'+selectedItemId+'.png' } } style={{ width: "100%", height:220, resizeMode: "contain" }} />
-              
+
             </View>
             <TouchableOpacity onPress={() => setModalVisible(false)} style={{ backgroundColor: '#5271FF', padding: 10, alignItems: 'center', marginBottom: 10,}}>
               <Text style={{ color: 'white'}}>Cerrar</Text>

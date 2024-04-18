@@ -10,6 +10,8 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
+const fetch = require('node-fetch'); // peticiones HTTP
+
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -729,6 +731,42 @@ app.post('/update_allow_reservas', async (req, res) => {
   } catch (error) {
     console.error('Error updating Establecimiento in PostgreSQL:', error);
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.post('/send_reset_password', async (req, res) => {
+  const phoneNumber = req.body.phone_number;
+  const url = 'https://graph.facebook.com/v18.0/290794877447729/messages';
+  const body = {
+      messaging_product: "whatsapp",
+      to: "52"+phoneNumber,
+      type: "template",
+      template: {
+          name: "hello_world",
+          language: {
+              code: "en_US"
+          }
+      }
+  };
+
+  try {
+      const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+              'Authorization': 'Bearer EAAUkJ9HTVVsBOyoBcTKvqSZAzlk39bZCBChxmZBtKQoYKsn2vZCcOPcAjnGP345wQ6n7PQaBKPLwN8qkZAA4eon1YHeNu0kaboZC7Wq1w1arAHVEIoGO4GtA17ZBA9o9ABu627VK2PDiPcxBpyaArV0wOhIC3BrMGcsquJCAPYnhVr0AgEA0ycA3gubNnNJpTQB6xFMwNOjZAL2AZB7KJfyoZD',
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+      });
+      const data = await response.json();
+      if (response.ok) {
+          res.status(200).send(data);
+      } else {
+          res.status(response.status).send(data);
+      }
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).send({ message: 'Internal Server Error', error });
   }
 });
 

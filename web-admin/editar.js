@@ -98,6 +98,8 @@ if (pId) {
             document.getElementById('precios').value = establecimientoData.precios;
             document.getElementById('redes_sociales').value = establecimientoData.redes_sociales;
             document.getElementById('link_google_maps').value = establecimientoData.link_google_maps;
+            document.getElementById('link_menu').value = establecimientoData.link_menu;
+
             document.getElementById('ubicacion_general').value = establecimientoData.ubicacion_general;
             
             // Assuming you have an array of image URLs in the 'images' property of 'establecimientoData'
@@ -289,6 +291,8 @@ function updateEstablecimiento(establecimientoId) {
     formData.append('ubicacion', document.getElementById('ubicacion').value);
     formData.append('ubicacion_general', document.getElementById('ubicacion_general').value);
     formData.append('link_google_maps', document.getElementById('link_google_maps').value);
+    formData.append('link_menu', document.getElementById('link_menu').value);
+
     formData.append('restricciones', document.getElementById('restricciones').value);
     formData.append('tipo_de_pago', document.getElementById('tipo_de_pago').value);
     formData.append('precios', document.getElementById('precios').value);

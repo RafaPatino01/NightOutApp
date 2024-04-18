@@ -146,6 +146,18 @@ const DetalleEstablecimiento = ({ route }) => {
         <View style={styles.horizontalBar}></View>
 
         <View style={styles.row2}>
+          <TouchableOpacity style={styles.text}
+          onPress={() => {
+            Linking.openURL(receivedData.link_menu);
+          }}
+          >
+            <Text style={ styles.text3 }>📖 Ver menú</Text>
+            </TouchableOpacity>
+        </View>
+
+        <View style={styles.horizontalBar}></View>
+
+        <View style={styles.row2}>
           <Text style={styles.text}>{receivedData.horario}</Text>
         </View>
 
@@ -174,7 +186,9 @@ const DetalleEstablecimiento = ({ route }) => {
 
         <View style={styles.row3}>
           <Text style={styles.textBold}>Tipo de pago:</Text>
-          <Text style={styles.textNormal}>{receivedData.tipo_de_pago}</Text>
+          <Text style={styles.textNormal}>
+            {receivedData.tipo_de_pago == "Ambos" ? "Tarjeta y efectivo" : receivedData.tipo_de_pago}
+          </Text>
         </View>
       </ScrollView>
 
@@ -252,6 +266,11 @@ const styles = StyleSheet.create({
   text2: {
     fontSize: 18,
     color: "#5271FF",
+    fontWeight: "bold",
+  },
+  text3: {
+    fontSize: 18,
+    color: "#BB8FCE",
     fontWeight: "bold",
   },
   text: {

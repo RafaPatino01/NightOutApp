@@ -4,6 +4,7 @@ import { View, Text, Image, StyleSheet, StatusBar, TouchableOpacity, Modal, Aler
 import DatePicker from 'react-native-modern-datepicker';
 import ModalSelector from 'react-native-modal-selector';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 const horarios24h = {
   '12:00 AM': '00:00:00',
@@ -67,6 +68,13 @@ const Reservar = ({ route }) => {
   const [horarios, setHorarios] = useState([]);
 
   const navigation = useNavigation();
+
+  const [isImageViewerVisible, setImageViewerVisible] = useState(false);
+  const imageUrl = `https://nightout.com.mx/api${route.params?.data.imagen_mapa.substring(1)}`;
+  const images = [{
+    // URL property assumes your image URL is correct and accessible
+    url: imageUrl,
+  }];
 
   // Access the passed data using route.params
   const receivedData = route.params?.data;
@@ -239,10 +247,12 @@ const Reservar = ({ route }) => {
 
     <Text style={styles.whiteText}>Mapa:</Text>
 
-      <Image 
-        source={{ uri: 'https://nightout.com.mx/api' + String(receivedData.imagen_mapa.substring(1)) }} 
-        style={styles.imageStyle}
-      />
+      <TouchableOpacity onPress={() => setImageViewerVisible(true)} style={styles.imageContainer}>
+        <Image 
+          source={{ uri: imageUrl }} 
+          style={styles.imageStyle}
+        />
+      </TouchableOpacity>
 
 
       <TouchableOpacity onPress={toggleDatePicker} style={styles.button}>
@@ -308,6 +318,15 @@ const Reservar = ({ route }) => {
         </View>
       </Modal>
 
+      <Modal visible={isImageViewerVisible} transparent={true}>
+        <ImageViewer 
+          imageUrls={images} 
+          onCancel={() => setImageViewerVisible(false)} 
+          enableSwipeDown={true}
+          onSwipeDown={() => setImageViewerVisible(false)}
+        />
+      </Modal>
+
 
       <TouchableOpacity
         style={styles.floatingButton}
@@ -334,6 +353,17 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     borderRadius: 20,
   },
+  imageContainer: {
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  screen: {
+    paddingTop: 30,
+    flex: 1,
+    backgroundColor: "#070808",
+    alignItems: 'center',
+  },
   floatingButton: {
     position: 'absolute',
     bottom: 30, // Place it at the bottom
@@ -349,12 +379,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 16,
-  },
-  screen: {
-    paddingTop: 30,
-    flex: 1,
-    backgroundColor: "#070808",
-    alignItems: 'center',
   },
   modal: {
     flex: 1,

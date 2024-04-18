@@ -83,21 +83,17 @@ const Screen1 = () => {
   });
   
   const sortAndSetFilteredEstablecimientos = (data) => {
-    // Ordenar los datos para que los elementos con 'fixed' distinto de 0 vengan primero
-    const sortedData = data.sort((a, b) => {
-      // Convertir 'fixed' a números para la comparación si es que no lo son
-      const fixedA = Number(a.fixed);
-      const fixedB = Number(b.fixed);
+    const fixedItems = data.filter(item => Number(item.fixed) !== 0);
+    const nonFixedItems = data.filter(item => Number(item.fixed) === 0);
   
-      // Colocar elementos con 'fixed' distinto de 0 al principio
-      if (fixedA !== 0 && fixedB === 0) {
-        return -1; // a viene antes que b
-      } else if (fixedB !== 0 && fixedA === 0) {
-        return 1; // b viene antes que a
-      }
-      return 0; // Sin cambio en el orden
-    });
+    // Improved shuffle function using the Fisher-Yates (modern algorithm) shuffle
+    for (let i = nonFixedItems.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [nonFixedItems[i], nonFixedItems[j]] = [nonFixedItems[j], nonFixedItems[i]];
+    }
   
+    // Combine the fixed and non-fixed items, with fixed items at the top
+    const sortedData = [...fixedItems, ...nonFixedItems];
     setFilteredEstablecimientos(sortedData);
   };
 
