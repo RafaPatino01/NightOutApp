@@ -757,7 +757,7 @@ app.post('/send_reset_password', async (req, res) => {
       const url = 'https://graph.facebook.com/v18.0/290794877447729/messages';
       const data = {
           messaging_product: "whatsapp",
-          to: phoneNumber,
+          to: "52"+phoneNumber,
           type: "template",
           template: {
               name: "reset_password",
