@@ -78,7 +78,7 @@ function getReservas(pId){
                         <div class="col-7">
                             <p class="m-0 text-bold searchable_item">${name}</p>
                             <hr>
-                            <p class="py-0 m-0 searchable_item"> <span class="bg-secondary p-1 rounded">Tipo de mesa:</span> ${reserva.tipo_de_mesa}</p>
+                            <p class="py-0 m-0 searchable_tipo"> <span class="bg-secondary p-1 rounded">Tipo de mesa:</span> ${reserva.tipo_de_mesa}</p>
                             ${generateDateTimeHTML(reserva.fecha_hora)}
                             <hr>
                             <i class="m-0 text-muted">Reserva creada el ${formatDate(reserva.created_at)}</i>
@@ -146,7 +146,7 @@ function getReservas2(pId){
                         <div class="col-8">
                             <p class="m-0 text-bold searchable_item">${name}</p>
                             <hr>
-                            <p class="py-0 m-0 searchable_item">${reserva.tipo_de_mesa}</p>
+                            <p class="py-0 m-0 searchable_tipo">${reserva.tipo_de_mesa}</p>
                             ${generateDateTimeHTML(reserva.fecha_hora)}
                             <hr>
                             <i class="m-0 text-muted">Reserva creada el ${formatDate(reserva.created_at)}</i>
@@ -226,8 +226,8 @@ function generateDateTimeHTML(dateTimeString) {
 
     // Generate the HTML string
     const htmlString = `
-        <p class="py-0 mx-0 my-2"><span class="bg-secondary p-1 rounded">Fecha:</span> <span class="searchable_fecha">${day}/${month}/${year} <span></p>
-        <p class="py-0 mx-0 my-2"><span class="bg-secondary p-1 rounded">Horario:</span> ${hour}</p>
+        <p class="py-0 mx-0 my-2 searchable_fecha"><span class="bg-secondary p-1 rounded">Fecha:</span> <span class="searchable_fecha">${day}/${month}/${year} <span></p>
+        <p class="py-0 mx-0 my-2 searchable_horario"><span class="bg-secondary p-1 rounded">Horario:</span> ${hour}</p>
     `;
 
     return htmlString;
@@ -279,33 +279,23 @@ async function cancelarReserva(reserva_id) {
 }
 
 function filterReservas() {
-    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
-    const reservas = document.querySelectorAll('#reservas_pendientes .container2');
-
-    console.log("reservas: " + String(reservas));
-
-    reservas.forEach(reserva => {
-        const searchableElements = reserva.querySelectorAll('.searchable_item');
-        const isMatch = Array.from(searchableElements).some(element => 
-            element.textContent.toLowerCase().includes(searchQuery)
-        );
-
-        reserva.style.display = isMatch ? '' : 'none';
-    });
-}
-
-function filterReservas2() {
-    console.log("filterReservas2")
-    const searchQuery = document.getElementById('searchInput2').value.toLowerCase();
+    const nameQuery = document.getElementById('searchName').value.toLowerCase();
+    const dateQuery = document.getElementById('searchDate').value.toLowerCase();
+    const timeQuery = document.getElementById('searchTime').value.toLowerCase();
+    const typeQuery = document.getElementById('searchType').value.toLowerCase();
     const reservas = document.querySelectorAll('#reservas_pendientes .container2');
 
     reservas.forEach(reserva => {
-        const searchableElements = reserva.querySelectorAll('.searchable_fecha');
-        const isMatch = Array.from(searchableElements).some(element => 
-            element.textContent.toLowerCase().includes(searchQuery)
-        );
+        const nameMatch = reserva.querySelector('.searchable_item').textContent.toLowerCase().includes(nameQuery);
+        const dateMatch = reserva.querySelector('.searchable_fecha').textContent.toLowerCase().includes(dateQuery);
+        const timeMatch = reserva.querySelector('.searchable_horario').textContent.toLowerCase().includes(timeQuery);
+        const typeMatch = reserva.querySelector('.searchable_tipo').textContent.toLowerCase().includes(typeQuery);
 
-        reserva.style.display = isMatch ? '' : 'none';
+        if (nameMatch && dateMatch && timeMatch && typeMatch) {
+            reserva.style.display = '';
+        } else {
+            reserva.style.display = 'none';
+        }
     });
 }
 
