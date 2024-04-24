@@ -570,7 +570,7 @@ app.get('/get_reservas_by_id/:id', async (req, res) => {
     const { id } = req.params;
 
     // Query para buscar la reserva con el id dado
-    const queryString = 'SELECT * FROM reservas WHERE establecimiento_id = $1 AND fecha_hora > CURRENT_TIMESTAMP AND confirmado = 0;';
+    const queryString = 'SELECT * FROM reservas WHERE establecimiento_id = $1 AND fecha_hora >= CURRENT_DATE - INTERVAL \'1 day\' AND confirmado = 0;';
 
     const result = await client.query(queryString, [id]);
 

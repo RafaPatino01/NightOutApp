@@ -56,7 +56,7 @@ function generateDateTimeHTML(dateTimeString) {
     // Generate the HTML string
     const htmlString = `
         <p class="py-0 m-0 searchable_fecha">${day}/${month}/${year}</p>
-        <p class="py-0 m-0">${hour}</p>
+        <p class="py-0 m-0 searchable_horario">${hour}</p>
     `;
 
     return htmlString;
@@ -130,12 +130,12 @@ function createReservaHTML(reserva, usuario) {
                     <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
                     </svg>
                 </div>
-                <div class="col-lg-2 col-5 align-items-center border-end">
+                <div class="col-lg-2 col-5 align-items-center border-end searchable_item">
                     ${name}
                 </div>
                 <div class="col-lg-2 col-5 ps-3">
-                    <p class="py-0 m-0">Status: ${status}</p>
-                    <p class="py-0 m-0 searchable">${reserva.tipo_de_mesa}</p>
+                    <p class="py-0 m-0 searchable_status">Status: ${status}</p>
+                    <p class="py-0 m-0 searchable_tipo">${reserva.tipo_de_mesa}</p>
                     ${generateDateTimeHTML(reserva.fecha_hora)}
                 </div>
             </div>
@@ -175,35 +175,29 @@ function addEventListenersToReservas(reservas) {
     });
 }
 
-
 function filterReservas() {
-    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+    const nameQuery = document.getElementById('searchName').value.toLowerCase();
+    const dateQuery = document.getElementById('searchDate').value.toLowerCase();
+    const timeQuery = document.getElementById('searchTime').value.toLowerCase();
+    const typeQuery = document.getElementById('searchType').value.toLowerCase();
+    const statusQuery = document.getElementById('searchStatus').value.toLowerCase();
+
     const reservas = document.querySelectorAll('#reservas_historial .container2');
 
     reservas.forEach(reserva => {
-        const searchableElements = reserva.querySelectorAll('.searchable');
-        const isMatch = Array.from(searchableElements).some(element => 
-            element.textContent.toLowerCase().includes(searchQuery)
-        );
+        const nameMatch = reserva.querySelector('.searchable_item').textContent.toLowerCase().includes(nameQuery);
+        const dateMatch = reserva.querySelector('.searchable_fecha').textContent.toLowerCase().includes(dateQuery);
+        const timeMatch = reserva.querySelector('.searchable_horario').textContent.toLowerCase().includes(timeQuery);
+        const typeMatch = reserva.querySelector('.searchable_tipo').textContent.toLowerCase().includes(typeQuery);
+        const statusMatch = reserva.querySelector('.searchable_status').textContent.toLowerCase().includes(statusQuery);
 
-        reserva.style.display = isMatch ? '' : 'none';
+        if (nameMatch && dateMatch && timeMatch && typeMatch && statusMatch) {
+            reserva.style.display = '';
+        } else {
+            reserva.style.display = 'none';
+        }
     });
 }
-
-function filterReservas2() {
-    const searchQuery = document.getElementById('searchInput2').value.toLowerCase();
-    const reservas = document.querySelectorAll('#reservas_historial .container2');
-
-    reservas.forEach(reserva => {
-        const searchableElements = reserva.querySelectorAll('.searchable_fecha');
-        const isMatch = Array.from(searchableElements).some(element => 
-            element.textContent.toLowerCase().includes(searchQuery)
-        );
-
-        reserva.style.display = isMatch ? '' : 'none';
-    });
-}
-
 
 function deleteReserva(pReservaID){
     console.log("Eliminando: " + String(pReservaID));
