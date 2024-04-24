@@ -65,7 +65,8 @@ function getReservas(pId){
 
             let fechaReserva = new Date(reserva.fecha_hora);
             let hoy = new Date();
-            
+            hoy.setDate(hoy.getDate() - 1); // Ajustamos 'ayer' para que sea el día anterior
+
             // Ajustamos 'hoy' para que no tome en cuenta la hora
             hoy.setHours(0, 0, 0, 0);
 
