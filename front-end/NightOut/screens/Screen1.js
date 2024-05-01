@@ -13,6 +13,7 @@ const Screen1 = () => {
   const [activeFilter, setActiveFilter] = useState('Todos'); // New state for active filter
 
   const onRefresh = () => {
+    setActiveFilter('Todos');
     setRefreshing(true);
     fetchEstablecimientos()
       .then((data) => {
@@ -50,20 +51,15 @@ const Screen1 = () => {
   const applyFilter = (tipo) => {
     if (activeFilter === tipo) {
       // Si el filtro seleccionado es el mismo que el filtro activo, resetea el filtro
-      setActiveFilter('Todos');
-      setFilteredEstablecimientos(establecimientos);
+      onRefresh();
     } else {
       // Si no, aplica el filtro como antes
       setActiveFilter(tipo);
-      if (tipo === 'Todos') {
-        setFilteredEstablecimientos(establecimientos);
-      } else {
-        const filteredData = establecimientos.filter(item => item.tipo === tipo);
-        setFilteredEstablecimientos(filteredData);
-      }
+      const filteredData = establecimientos.filter(item => item.tipo === tipo);
+      setFilteredEstablecimientos(filteredData);
     }
 
-    let filteredData = [...establecimientos]; // Asume esto es el resultado de tu filtrado actual
+    let filteredData = [...establecimientos];
     if (tipo !== 'Todos') {
       filteredData = establecimientos.filter(item => item.tipo === tipo);
     }

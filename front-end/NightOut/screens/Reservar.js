@@ -161,11 +161,25 @@ const Reservar = ({ route }) => {
     setDatePickerVisible(!isDatePickerVisible);
   };
 
-  // Calculate the minimum and maximum allowed dates
-  const today = new Date();
+  function getCurrentDateInCDMX() {
+    const now = new Date();
+    
+    // Adjust to Mexico City timezone using 'toLocaleString' with timezone option
+    const mexicoCityTime = now.toLocaleString('en-US', { timeZone: 'America/Mexico_City' });
+  
+    // Convert the adjusted time back to a Date object
+    const dateInCDMX = new Date(mexicoCityTime);
+  
+    return dateInCDMX;
+  }
+  
+  const today = getCurrentDateInCDMX(); // Ensure 'today' is always a Date object
+  
+  // Later in your DatePicker or elsewhere
+  const currentDateString = today.toISOString().split('T')[0]; // Use ISO string safely here
   const oneMonthFromNow = new Date(today);
-  oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1);
-
+  oneMonthFromNow.setMonth(today.getMonth() + 1); // Set to one month ahead
+  
 
   const handleReservar = async () => {
 
