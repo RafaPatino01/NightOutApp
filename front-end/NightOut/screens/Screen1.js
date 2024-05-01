@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, StatusBar, RefreshControl } from 'react-native';
 import { fetchEstablecimientos } from '../functions/functions';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
 
 const Screen1 = () => {
   const navigation = useNavigation();
@@ -92,6 +92,13 @@ const Screen1 = () => {
     const sortedData = [...fixedItems, ...nonFixedItems];
     setFilteredEstablecimientos(sortedData);
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      onRefresh(); // Call onRefresh when the screen gains focus
+      return () => {};
+    }, [])
+  );
 
   useEffect(() => {
     fetchEstablecimientos()
