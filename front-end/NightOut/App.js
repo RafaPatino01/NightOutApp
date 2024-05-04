@@ -107,7 +107,7 @@ function App() {
             }}
           />
 
-          <Stack.Screen name="Screen4" component={Screen4} />
+          <Stack.Screen name="Mis Puntos" component={Screen4} />
 
           <Stack.Screen 
             options={{ headerShown: true }} 

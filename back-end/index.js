@@ -617,25 +617,48 @@ app.get('/get_reservas_by_id2/:id', async (req, res) => {
 });
 
 app.get('/asistencia_reserva/:id', async (req, res) => {
+  const reservaId = req.params.id;
   try {
-    const reservaId = req.params.id;
-
     const client = await pool.connect();
 
-    // Construct the SQL UPDATE statement
-    const queryString = 'UPDATE public.reservas SET asistencia = 1 WHERE id = $1';
+    // Start transaction
+    await client.query('BEGIN');
 
-    // Execute the SQL statement with the provided reserva ID
-    const result = await client.query(queryString, [reservaId]);
+    // Update the asistencia status for the reserva
+    const updateReservaQuery = 'UPDATE public.reservas SET asistencia = 1 WHERE id = $1 RETURNING usuario_id';
+    const updateReservaResult = await client.query(updateReservaQuery, [reservaId]);
+    if (updateReservaResult.rows.length === 0) {
+      throw new Error('Reserva not found');
+    }
 
+    // Retrieve user_id from the updated reserva
+    const userId = updateReservaResult.rows[0].usuario_id;
+
+    // Define points to add (example: 10 points for attending)
+    const pointsToAdd = 10;
+
+    // Update user points
+    const updatePointsQuery = `
+      UPDATE usuarios
+      SET total_puntos = total_puntos + $1
+      WHERE id = $2
+    `;
+    await client.query(updatePointsQuery, [pointsToAdd, userId]);
+
+    // Commit transaction
+    await client.query('COMMIT');
     client.release();
 
-    res.json({ message: 'Reserva updated successfully' });
+    res.json({ message: 'Reserva updated and points added successfully' });
   } catch (error) {
-    console.error('Error updating reserva:', error);
-    res.status(500).json({ error: 'Error updating reserva' });
+    // Roll back transaction in case of error
+    await client.query('ROLLBACK');
+    client.release();
+    console.error('Transaction error:', error);
+    res.status(500).json({ error: 'Error updating reserva and adding points' });
   }
 });
+
 
 app.get('/confirmar_reserva/:id', async (req, res) => {
   try {
@@ -897,6 +920,226 @@ app.post('/add_usuario', async (req, res) => {
     res.json({ res: "OK" });
   } catch (error) {
     console.error('Error inserting user into PostgreSQL:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.post('/remove_points_usuario', async (req, res) => {
+  const {
+    user_id,
+    points_to_remove
+  } = req.body;
+
+  try {
+    const client = await pool.connect();
+
+    const updatePointsQuery = `
+      UPDATE usuarios
+      SET total_puntos = total_puntos - $1
+      WHERE id = $2 AND total_puntos >= $1
+    `;
+
+    const values = [points_to_remove, user_id];
+
+    const result = await client.query(updatePointsQuery, values);
+    client.release();
+
+    if (result.rowCount === 0) {
+      console.log('No points removed, possibly due to insufficient balance');
+      res.status(400).json({ message: 'No points removed, possibly due to insufficient balance' });
+    } else {
+      console.log('User points updated successfully');
+      res.status(200).json({ message: 'User points updated successfully' });
+    }
+  } catch (error) {
+    console.error('Error updating user points in PostgreSQL:', error);
+    client.release();
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.post('/remove_points_establecimiento', async (req, res) => {
+  const {
+    establecimiento_id,
+    points_to_remove
+  } = req.body;
+
+  try {
+    const client = await pool.connect();
+
+    const updatePointsQuery = `
+      UPDATE establecimientos
+      SET total_puntos = total_puntos - $1
+      WHERE id = $2 AND total_puntos >= $1
+    `;
+
+    const values = [points_to_remove, establecimiento_id];
+
+    const result = await client.query(updatePointsQuery, values);
+    client.release();
+
+    if (result.rowCount === 0) {
+      console.log('No points removed, possibly due to insufficient balance');
+      res.status(400).json({ message: 'No points removed, possibly due to insufficient balance' });
+    } else {
+      console.log('Establishment points updated successfully');
+      res.status(200).json({ message: 'Establishment points updated successfully' });
+    }
+  } catch (error) {
+    console.error('Error updating establishment points in PostgreSQL:', error);
+    client.release();
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+app.post('/add_points_establecimiento', async (req, res) => {
+  const {
+    establecimiento_id,
+    points_to_add
+  } = req.body;
+
+  try {
+    const client = await pool.connect();
+
+    const updatePointsQuery = `
+      UPDATE establecimientos
+      SET total_puntos = total_puntos + $1
+      WHERE id = $2
+    `;
+
+    const values = [points_to_add, establecimiento_id];
+
+    await client.query(updatePointsQuery, values);
+    client.release();
+    console.log('Establishment points updated successfully');
+
+    res.status(200).json({ message: 'Establishment points updated successfully' });
+  } catch (error) {
+    console.error('Error updating establishment points in PostgreSQL:', error);
+    client.release();
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.post('/add_points_usuario', async (req, res) => {
+  const {
+    user_id,
+    points_to_add
+  } = req.body;
+
+  try {
+    const client = await pool.connect();
+
+    const updatePointsQuery = `
+      UPDATE usuarios
+      SET total_puntos = total_puntos + $1
+      WHERE id = $2
+    `;
+
+    const values = [points_to_add, user_id];
+
+    await client.query(updatePointsQuery, values);
+    client.release();
+    console.log('Points updated successfully');
+
+    res.status(200).json({ message: 'Points updated successfully' });
+  } catch (error) {
+    console.error('Error updating points in PostgreSQL:', error);
+    client.release();
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.post('/new_transaction', async (req, res) => {
+  const {
+    origen_id,
+    destino_id,
+    transaction_type,
+    points_to_transfer
+  } = req.body;
+
+  try {
+    const client = await pool.connect();
+    let checkBalanceQuery, updateOrigenQuery, updateDestinoQuery, insertTransactionQuery;
+
+    // Define the query to insert the transaction record
+    insertTransactionQuery = `
+      INSERT INTO transactions (fecha, origen, destino, monto)
+      VALUES (NOW(), $1, $2, $3)
+    `;
+
+    if (transaction_type === 'establecimiento->usuario') {
+      // Check if the establishment has enough points
+      checkBalanceQuery = `
+        SELECT total_puntos FROM establecimientos WHERE id = $1
+      `;
+
+      const checkResult = await client.query(checkBalanceQuery, [origen_id]);
+      if (checkResult.rows.length === 0 || checkResult.rows[0].total_puntos < points_to_transfer) {
+        res.status(400).json({ message: 'Insufficient points in the establishment' });
+        client.release();
+        return;
+      }
+
+      // Update queries for the transaction
+      updateOrigenQuery = `
+        UPDATE establecimientos
+        SET total_puntos = total_puntos - $1
+        WHERE id = $2
+      `;
+
+      updateDestinoQuery = `
+        UPDATE usuarios
+        SET total_puntos = total_puntos + $1
+        WHERE id = $2
+      `;
+    } else if (transaction_type === 'usuario->establecimiento') {
+      // Check if the user has enough points
+      checkBalanceQuery = `
+        SELECT total_puntos FROM usuarios WHERE id = $1
+      `;
+
+      const checkResult = await client.query(checkBalanceQuery, [origen_id]);
+      if (checkResult.rows.length === 0 || checkResult.rows[0].total_puntos < points_to_transfer) {
+        res.status(400).json({ message: 'Insufficient points in user account' });
+        client.release();
+        return;
+      }
+
+      // Update queries for the transaction
+      updateOrigenQuery = `
+        UPDATE usuarios
+        SET total_puntos = total_puntos - $1
+        WHERE id = $2
+      `;
+
+      updateDestinoQuery = `
+        UPDATE establecimientos
+        SET total_puntos = total_puntos + $1
+        WHERE id = $2
+      `;
+    } else {
+      res.status(400).json({ message: 'Invalid transaction type' });
+      client.release();
+      return;
+    }
+
+    // Perform the updates
+    await client.query(updateOrigenQuery, [points_to_transfer, origen_id]);
+    await client.query(updateDestinoQuery, [points_to_transfer, destino_id]);
+    
+    // Record the transaction
+    await client.query(insertTransactionQuery, [origen_id, destino_id, points_to_transfer]);
+
+    console.log('Transaction completed successfully');
+    res.status(200).json({ message: 'Transaction completed successfully' });
+
+    client.release();
+
+  } catch (error) {
+    console.error('Error handling transaction:', error);
+    client.release();
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });

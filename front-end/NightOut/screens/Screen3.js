@@ -19,6 +19,7 @@ const Screen3 = () => {
   const navigation = useNavigation();
 
   const opciones = [
+    { key: 'puntos', text: '🎁 Mis puntos' },
     { key: 'aviso', text: '🔒 Aviso de privacidad' },
     { key: 'eliminar', text: '🗑️ Eliminar cuenta' },
     { key: 'change', text: '🔑 Cambiar contraseña' },
@@ -71,6 +72,11 @@ const Screen3 = () => {
 
   const onOptionPress = async (pOption) => {
     switch(pOption){
+      case "puntos":
+        navigation.navigate("Mis Puntos");
+        
+        break;
+
       case "change":
         console.log("cambiando contraseña...");
         try {
