@@ -4,6 +4,7 @@ import { fetchUserById } from '../functions/functions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import QRCode from 'react-native-qrcode-svg';
+import Icon from 'react-native-vector-icons/FontAwesome';  // Make sure to import the Icon component
 
 const Screen4 = () => {
   const [userData, setUserData] = useState(null);
@@ -26,21 +27,31 @@ const Screen4 = () => {
   };
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const intervalId = setInterval(async () => {
       try {
+        console.log("Attempting to fetch userToken...");
         const userToken = await AsyncStorage.getItem('userToken');
+        console.log("UserToken:", userToken);
         if (userToken) {
+          console.log("Fetching userId by userToken...");
           const usuarioId = await getUserIdByUserToken(userToken);
+          console.log("UsuarioId:", usuarioId);
           const data = await fetchUserById(usuarioId);
+          console.log("Fetched data:", data);
           setUserData(data);
+          console.log("Fetched puntos...");
         }
       } catch (error) {
         console.error('Error fetching user:', error);
       }
+    }, 5000);
+  
+    return () => {
+      console.log("Clearing interval...");
+      clearInterval(intervalId);
     };
-
-    fetchUserData();
   }, []);
+  
 
   if (!userData) {
     return (
@@ -54,7 +65,9 @@ const Screen4 = () => {
     <View style={styles.container}>
       <View style={styles.text_container}>
         <Text style={styles.text0}>Cuentas con:</Text>
-        <Text style={styles.text}>🎁{userData.total_puntos}</Text>
+        <Text style={styles.text}>
+          <Icon name="gift" size={36} color="white" /> {userData.total_puntos} 
+        </Text>
       </View>
       
       <View style={styles.qr}>
@@ -65,13 +78,19 @@ const Screen4 = () => {
           backgroundColor="transparent"
         />
       </View>
+      <View style={styles.text_container2}>
+        <Text style={styles.text2}>
+          Muestra tu QR en el establecimiento para utilizar tus puntos!
+        </Text>
+      </View>
+      
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   text_container: {
-    marginTop: 70,
+    marginTop: 50,
     padding: 20,
     width: "80%",
     borderWidth: 10,
@@ -80,6 +99,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: "#5271FF",
     color: "white"
+  },
+  text_container2: {
+    marginTop: 30,
+    padding: 10,
+    width: "80%",
+    borderWidth: 10,
+    borderColor: '#5271FF',
+    borderRadius: 30,
+    alignItems: 'center',
+    backgroundColor: "transparent",
+  },
+  text2: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: "black"
   },
   container: {
     flex: 1,
@@ -98,7 +132,7 @@ const styles = StyleSheet.create({
     color: "white"
   },
   qr: {
-    marginTop: 60,
+    marginTop: 30,
     padding: 10,
     borderWidth: 10,
     borderColor: '#5271FF',

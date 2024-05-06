@@ -45,7 +45,7 @@
     "react-native-sha256": "^1.4.9",
     "react-native-snap-carousel": "^3.9.1",
     "react-native-svg": "13.9.0",
-    "react-native-vector-icons": "^10.0.3",
+    "react-native-vector-icons": "^10.1.0",
     "react-native-web": "^0.19.10",
     "typescript": "^5.1.3"
   },

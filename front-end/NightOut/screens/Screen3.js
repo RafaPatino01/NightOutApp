@@ -13,6 +13,7 @@ import {
 import { fetchUserById } from '../functions/functions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/FontAwesome';  // Make sure to import the Icon component
 
 const Screen3 = () => {
   const [userData, setUserData] = useState(null);
@@ -183,7 +184,9 @@ const Screen3 = () => {
             <Text style= {styles.normalValue}>{userData.correo_electronico}</Text>
           </View>
           <View style={styles.item}>
-            <Text style= {styles.normalValue}>{userData.num_telefono}</Text>
+            <Text style= {styles.normalValueBlue}>
+              <Icon name="gift" size={16} color="#5271FF" /> 0.00
+            </Text>
           </View>
         </View>
       </View>
@@ -257,6 +260,10 @@ const styles = StyleSheet.create({
   normalValue: {
     fontSize: 16,
     color: '#555',
+  },
+  normalValueBlue: {
+    fontSize: 16,
+    color: '#5271FF',
   },
   value: {
     color: '#555',

@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, StatusBar, RefreshControl } from 'react-native';
 import { fetchEstablecimientos } from '../functions/functions';
 import { useNavigation, useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
+import Icon from 'react-native-vector-icons/FontAwesome';  // Make sure to import the Icon component
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { fetchUserById } from '../functions/functions';
 
 const Screen1 = () => {
   const navigation = useNavigation();
@@ -11,8 +14,25 @@ const Screen1 = () => {
   const [filteredEstablecimientos, setFilteredEstablecimientos] = useState([]);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [activeFilter, setActiveFilter] = useState('Todos'); // New state for active filter
+  const [userData, setUserData] = useState({total_puntos: 0});
 
   const onRefresh = () => {
+
+    const fetchUserData = async () => {
+      try {
+        const userToken = await AsyncStorage.getItem('userToken');
+        if (userToken) {
+          const usuarioId = await getUserIdByUserToken(userToken);
+          const data = await fetchUserById(usuarioId);
+          setUserData(data);
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    };
+
+    fetchUserData();
+
     setActiveFilter('Todos');
     setRefreshing(true);
     fetchEstablecimientos()
@@ -93,6 +113,24 @@ const Screen1 = () => {
     setFilteredEstablecimientos(sortedData);
   };
 
+
+  const getUserIdByUserToken = async (userToken) => {
+    try {
+      const apiUrl = `https://nightout.com.mx/api/get_usuarios/?correo_electronico=${userToken.toLowerCase()}`;
+      const response = await fetch(apiUrl);
+      if (response.status === 200) {
+        const userData = await response.json();
+        const userId = userData[0].id;
+        return userId;
+      } else {
+        throw new Error(`Error en la solicitud: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error al obtener el ID del usuario:', error);
+      throw error;
+    }
+  };
+  
   useFocusEffect(
     React.useCallback(() => {
       onRefresh(); // Call onRefresh when the screen gains focus
@@ -153,6 +191,15 @@ const Screen1 = () => {
         source={require('../img/logo-dark.png')}  // Assuming the image is in the 'img' folder at your project root
         style={styles.imageLogo}
       />
+      
+      <TouchableOpacity onPress={() => {
+        navigation.navigate("Mis Puntos");
+      }}>
+        <Text style={styles.puntos}><Icon name="gift" size={20} color="white" /> {String(userData.total_puntos)} </Text>
+      </TouchableOpacity>
+     
+
+      
         
       </View>
 
@@ -238,8 +285,8 @@ const styles = StyleSheet.create({
     height: 200,
   },
   imageLogo: {
-    width: 142,
-    height: 44,
+    width: 142*1.2,
+    height: 44*1.2,
   },
   bottomBorder: {
     width: '100%', // Cover the entire width
@@ -262,7 +309,14 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     color: "white",
     fontWeight: 'bold',
+  },
+  puntos: {
+    color: "white",
+    fontSize: 20,
+    marginEnd: 10,
+    fontWeight: "bold",
   }
+
 });
 
 export default Screen1;
