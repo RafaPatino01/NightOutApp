@@ -90,3 +90,8 @@ object-fit: cover; /* To maintain the video aspect ratio */
 .container2:hover {
     transform: scale(1.01); /* Scale the element to 110% of its original size on hover */
 }
+
+.disabled-button {
+    background-color: gray !important; /* Ensures override of other background styles */
+    border: none;
+}

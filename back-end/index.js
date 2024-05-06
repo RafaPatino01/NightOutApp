@@ -635,7 +635,7 @@ app.get('/asistencia_reserva/:id', async (req, res) => {
     const userId = updateReservaResult.rows[0].usuario_id;
 
     // Define points to add (example: 10 points for attending)
-    const pointsToAdd = 10;
+    const pointsToAdd = 50;
 
     // Update user points
     const updatePointsQuery = `
@@ -1051,6 +1051,53 @@ app.post('/add_points_usuario', async (req, res) => {
   }
 });
 
+app.get('/get_transactions', async (req, res) => {
+  const { origen, destino, startDate, endDate } = req.query;
+
+  let query = `
+    SELECT t.*, u.nombre AS usuario_nombre, u.apellido AS usuario_apellido FROM transactions t
+    JOIN usuarios u ON t.origen = u.id WHERE 1=1
+  `; // Enhanced to include apellido (last name)
+
+  const queryParams = [];
+
+  if (origen) {
+    query += ' AND t.origen = $' + (queryParams.length + 1);
+    queryParams.push(origen);
+  }
+
+  if (destino) {
+    query += ' AND t.destino = $' + (queryParams.length + 1);
+    queryParams.push(destino);
+  }
+
+  if (startDate) {
+    query += ' AND t.fecha >= $' + (queryParams.length + 1);
+    queryParams.push(startDate);
+  }
+
+  if (endDate) {
+    query += ' AND t.fecha <= $' + (queryParams.length + 1);
+    queryParams.push(endDate);
+  }
+
+  // Add order by clause to sort by fecha descending
+  query += ' ORDER BY t.fecha DESC';
+
+  try {
+    const client = await pool.connect();
+    const result = await client.query(query, queryParams);
+    res.json(result.rows);
+    client.release();
+  } catch (error) {
+    console.error('Error querying transactions:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+
+
 app.post('/new_transaction', async (req, res) => {
   const {
     origen_id,
@@ -1066,7 +1113,7 @@ app.post('/new_transaction', async (req, res) => {
     // Define the query to insert the transaction record
     insertTransactionQuery = `
       INSERT INTO transactions (fecha, origen, destino, monto)
-      VALUES (NOW(), $1, $2, $3)
+      VALUES (NOW() - INTERVAL '6 hours', $1, $2, $3)
     `;
 
     if (transaction_type === 'establecimiento->usuario') {

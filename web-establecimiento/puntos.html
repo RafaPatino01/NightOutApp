@@ -53,8 +53,81 @@
     
 
     <div class="mt-5">
-        <h1 class="text-white ms-3 mt-4">Total Puntos</h1>
-        <h2 class="btn btl-lg btn-primary ms-3 mt-4" onclick="leerQr('12')">Leer QR</h2>
+        
+        <h1 class="text-white ms-3 mt-4">Cobrar</h1>
+
+        <div class="row px-3 d-flex">
+            <div class="col-md-3 col-sm-6">
+                <div class="input-group input-group-lg mb-3">
+                    <div class="input-group-prepend me-3">
+                      <span class="input-group-text" id="inputGroup-sizing-default">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" class="bi bi-gift-fill" viewBox="0 0 16 16">
+                            <path d="M3 2.5a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 1 5 0v.006c0 .07 0 .27-.038.494H15a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h2.038A3 3 0 0 1 3 2.506zm1.068.5H7v-.5a1.5 1.5 0 1 0-3 0c0 .085.002.274.045.43zM9 3h2.932l.023-.07c.043-.156.045-.345.045-.43a1.5 1.5 0 0 0-3 0zm6 4v7.5a1.5 1.5 0 0 1-1.5 1.5H9V7zM2.5 16A1.5 1.5 0 0 1 1 14.5V7h6v9z"/>
+                        </svg>
+                      </span>
+                    </div>
+                    <input id="input-puntos" type="number" class="form-control form-control-lg" placeholder="Ingresa los puntos a cobrar" min="1" max="150" oninput="validateInput(this);">
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <button onclick="leerQr()" id="submit-button" class="btn btn-lg py-2 btn-primary disabled-button" disabled>
+                    <span class="pt-3">
+                        Leer QR 
+                    </span>
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-qr-code-scan ms-2" viewBox="0 0 16 16">
+                        <path d="M0 .5A.5.5 0 0 1 .5 0h3a.5.5 0 0 1 0 1H1v2.5a.5.5 0 0 1-1 0zm12 0a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0V1h-2.5a.5.5 0 0 1-.5-.5M.5 12a.5.5 0 0 1 .5.5V15h2.5a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1 0-1H15v-2.5a.5.5 0 0 1 .5-.5M4 4h1v1H4z"/>
+                        <path d="M7 2H2v5h5zM3 3h3v3H3zm2 8H4v1h1z"/>
+                        <path d="M7 9H2v5h5zm-4 1h3v3H3zm8-6h1v1h-1z"/>
+                        <path d="M9 2h5v5H9zm1 1v3h3V3zM8 8v2h1v1H8v1h2v-2h1v2h1v-1h2v-1h-3V8zm2 2H9V9h1zm4 2h-1v1h-2v1h3zm-4 2v-1H8v1z"/>
+                        <path d="M12 9h2V8h-2z"/>
+                    </svg>
+                </button>
+            </div>
+            
+        </div>
+
+        <hr>
+        
+        <h1 class="text-white ms-3 mt-4 mb-3">Puntos Cobrados</h1>
+        <div class="px-4">
+            <div class="input-group input-group-lg mb-3">
+                <span class="input-group-text" id="basic-addon1">FECHA INICIO</span>
+                <input type="date" class="form-control" id="startDate" required>
+            </div>
+            
+            <div class="input-group input-group-lg mb-3">
+                <span class="input-group-text" id="basic-addon2">FECHA FIN</span>
+                <input type="date" class="form-control" id="endDate" required>
+            </div>
+            
+            <button onclick="consultaTransacciones()" class="btn btn-lg btn-primary mb-5">Buscar</button>
+    
+        </div>
+       
+
+        <div class="px-4" id="resultTotalPuntos"> </div>
+
+        <div class="px-4">
+            <div class="row bg-dark px-3 py-2 rounded">
+                <div class="col-4 text-white border-end">
+                    <h3> NOMBRE </h3>
+                </div>
+                <div class="col-4 text-white border-end">
+                    <h3> FECHA </h3>
+                </div>
+                <div class="col-4 text-white">
+                    <h3> MONTO </h3>
+                </div>
+            </div>
+            
+            <div class="px-4 lead" id="resultContainer">
+                <!-- Dynamic rows will be inserted here based on fetched data -->
+            </div>
+            
+            
+        </div>
+        
     </div>
     
     
@@ -90,6 +163,8 @@
     
     <script src="qr_puntos.js"></script>
 
+    <script src="functionsLogin.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
           // Initialize the modal using Bootstrap 5's JavaScript API
@@ -100,7 +175,145 @@
               myModal.show();
           }
         });
-      </script>
+    </script>
+    <script>
+        // This function ensures that the input value is between 1 and 150
+        function validateInput(input) {
+            let value = parseInt(input.value, 10);
+            if (value < 1 || value > 1000 || isNaN(value)) { // Check if the value is out of bounds or not a number
+                input.value = ''; // Clear invalid input
+            }
+        }
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the modal using Bootstrap 5's JavaScript API
+            var myModal = new bootstrap.Modal(document.getElementById('myModal'));
+        
+            // This function can be called to show the modal
+            window.leerQr = function() {
+                myModal.show();
+            }
+
+            // Set default date values for startDate and endDate
+            var today = new Date();
+            var yesterday = new Date(today);
+            var tomorrow = new Date(today);
+
+            // Adjusting days
+            yesterday.setDate(today.getDate() - 1);
+            tomorrow.setDate(today.getDate() + 1);
+
+            // Formatting to YYYY-MM-DD format
+            yesterday = yesterday.toISOString().split('T')[0];
+            tomorrow = tomorrow.toISOString().split('T')[0];
+
+            // Setting the values to the inputs
+            document.getElementById('startDate').value = yesterday;
+            document.getElementById('endDate').value = tomorrow;
+
+            // Automatically trigger the consultaTransacciones function on page load with the default dates
+            consultaTransacciones();
+
+        });
+
+        // This function ensures that the input value is between 1 and 150 and manages the button state
+        function validateInput(input) {
+            let value = parseInt(input.value, 10);
+            let submitButton = document.getElementById('submit-button');
+            if (value >= 1 && value <= 150) {
+                submitButton.disabled = false; // Enable the button if the input is valid
+                submitButton.classList.remove('disabled-button'); // Remove the gray background class
+            } else {
+                submitButton.disabled = true; // Disable the button if the input is invalid
+                submitButton.classList.add('disabled-button'); // Apply the gray background class
+                input.value = ''; // Clear invalid input
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the modal using Bootstrap 5's JavaScript API
+            var myModal = new bootstrap.Modal(document.getElementById('myModal'));
+        
+            // This function can be called to show the modal
+            window.leerQr = function() {
+                myModal.show();
+            }
+
+        });
+
+       
+        function consultaTransacciones() {
+    const establecimiento_id = getCookie("NightOut_Establecimiento");
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+
+    if (establecimiento_id && startDate && endDate) {
+        fetch(`https://nightout.com.mx/api/get_transactions?destino=${establecimiento_id}&startDate=${startDate}&endDate=${endDate}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                updateResultContainer(data);
+            })
+            .catch(error => {
+                console.error('Error fetching data: ', error);
+                updateResultContainer([]); // Update with empty data in case of error
+            });
+    } else {
+        console.error('Missing required parameters');
+        updateResultContainer([]); // Update with empty data if parameters are missing
+    }
+}
+
+function updateResultContainer(transactions) {
+    const container = document.getElementById('resultContainer');
+    const totalContainer = document.getElementById('resultTotalPuntos');
+    container.innerHTML = ''; // Clear previous results
+
+    if (transactions.length === 0) {
+        container.innerHTML = '<div class="text-center text-white">No transactions found.</div>';
+        totalContainer.innerHTML = `<hr>  <p class="lead">Total Monto: 0 <p> <hr>`;
+        return;
+    }
+
+    let totalMonto = 0;
+    transactions.forEach(transaction => {
+        totalMonto += parseFloat(transaction.monto); // Sum up the 'monto' field
+
+        const row = document.createElement('div');
+        row.className = 'row bg-black px-3 py-2 border-3 border-top';
+        row.innerHTML = `
+            <div class="col-4 text-white border-end">
+                <p class="lead">${transaction.usuario_nombre} ${transaction.usuario_apellido}</p>
+            </div>
+            <div class="col-4 text-white border-end">
+                <p class="lead">${new Date(transaction.fecha).toLocaleString('es-MX')}</p>
+            </div>
+            <div class="col-4 text-success fw-bold">
+                <p class="lead"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2 bi bi-gift-fill" viewBox="0 0 16 16">
+                            <path d="M3 2.5a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 1 5 0v.006c0 .07 0 .27-.038.494H15a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h2.038A3 3 0 0 1 3 2.506zm1.068.5H7v-.5a1.5 1.5 0 1 0-3 0c0 .085.002.274.045.43zM9 3h2.932l.023-.07c.043-.156.045-.345.045-.43a1.5 1.5 0 0 0-3 0zm6 4v7.5a1.5 1.5 0 0 1-1.5 1.5H9V7zM2.5 16A1.5 1.5 0 0 1 1 14.5V7h6v9z"/>
+                        </svg>${transaction.monto}</p>
+            </div>
+        `;
+        container.appendChild(row);
+    });
+
+    // Display the total sum in the designated container
+    totalContainer.innerHTML = `<hr>  <p class="lead">Total Monto: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2 bi bi-gift-fill" viewBox="0 0 16 16">
+                            <path d="M3 2.5a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 1 5 0v.006c0 .07 0 .27-.038.494H15a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h2.038A3 3 0 0 1 3 2.506zm1.068.5H7v-.5a1.5 1.5 0 1 0-3 0c0 .085.002.274.045.43zM9 3h2.932l.023-.07c.043-.156.045-.345.045-.43a1.5 1.5 0 0 0-3 0zm6 4v7.5a1.5 1.5 0 0 1-1.5 1.5H9V7zM2.5 16A1.5 1.5 0 0 1 1 14.5V7h6v9z"/>
+                        </svg>${totalMonto.toFixed(2)} <p> <hr>`;
+
+}
+
+
+
+
+    </script>
+    
+    
 
 </body>
 </html>
