@@ -170,8 +170,13 @@ const Reservar = ({ route }) => {
     // Convert the adjusted time back to a Date object
     const dateInCDMX = new Date(mexicoCityTime);
   
+    // Subtract 6 hours
+    dateInCDMX.setHours(dateInCDMX.getHours() - 6);
+
     return dateInCDMX;
   }
+
+
   
   const today = getCurrentDateInCDMX(); // Ensure 'today' is always a Date object
   

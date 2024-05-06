@@ -1113,7 +1113,7 @@ app.post('/new_transaction', async (req, res) => {
     // Define the query to insert the transaction record
     insertTransactionQuery = `
       INSERT INTO transactions (fecha, origen, destino, monto)
-      VALUES (NOW() - INTERVAL '6 hours', $1, $2, $3)
+      VALUES (NOW(), $1, $2, $3)
     `;
 
     if (transaction_type === 'establecimiento->usuario') {
