@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { fetchUserById } from '../functions/functions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';  // Make sure to import the Icon component
 
 const Screen3 = () => {
@@ -147,6 +147,25 @@ const Screen3 = () => {
     }
   };
 
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchUserData = async () => {
+        try {
+          const userToken = await AsyncStorage.getItem('userToken');
+          if (userToken) {
+            const usuarioId = await getUserIdByUserToken(userToken);
+            const data = await fetchUserById(usuarioId);
+            setUserData(data);
+          }
+        } catch (error) {
+          console.error('Error fetching user:', error);
+        }
+      };
+      
+      fetchUserData();
+    }, [])
+  );
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -162,7 +181,7 @@ const Screen3 = () => {
         console.error('Error fetching user:', error);
       }
     };
-
+    
     fetchUserData();
   }, []);
 
@@ -185,7 +204,7 @@ const Screen3 = () => {
           </View>
           <View style={styles.item}>
             <Text style= {styles.normalValueBlue}>
-              <Icon name="gift" size={16} color="#5271FF" /> 0.00
+              <Icon name="gift" size={16} color="#5271FF" /> {userData.total_puntos}
             </Text>
           </View>
         </View>
