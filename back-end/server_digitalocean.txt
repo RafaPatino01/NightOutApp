@@ -11,5 +11,8 @@ asdb4klgh5B#c
 DATABASE
 ssh root@142.93.116.94
 
+sudo nano /etc/postgresql/14/main/pg_hba.conf
+sudo service postgresql restart
+
 SERVER BACKEND
 ssh root@157.245.138.79

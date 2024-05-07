@@ -22,9 +22,9 @@ const Screen3 = () => {
   const opciones = [
     { key: 'puntos', text: '🎁 Mis puntos' },
     { key: 'aviso', text: '🔒 Aviso de privacidad' },
-    { key: 'eliminar', text: '🗑️ Eliminar cuenta' },
-    { key: 'change', text: '🔑 Cambiar contraseña' },
     { key: 'faq', text: '🤔 FAQ' },
+    { key: 'change', text: '🔑 Cambiar contraseña' },
+    { key: 'eliminar', text: '🗑️ Eliminar cuenta' },
     { key: 'cerrar', text: '⬅️ Cerrar sesión' },
   ];
 

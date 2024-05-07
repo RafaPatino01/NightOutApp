@@ -1293,7 +1293,9 @@ app.post('/add_reserva_generica', async (req, res) => {
     confirmado,
     asistencia,
     tipo_mesa,
-    nombre
+    nombre,
+    nombre_rp,
+    identificador_mesa
   } = req.body;
 
   try {
@@ -1308,9 +1310,11 @@ app.post('/add_reserva_generica', async (req, res) => {
         confirmado,
         asistencia,
         tipo_de_mesa,
-        nombre
+        nombre,
+        nombre_rp,
+        identificador_mesa
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
     `;
 
     const values = [
@@ -1321,7 +1325,9 @@ app.post('/add_reserva_generica', async (req, res) => {
       confirmado,
       asistencia,
       tipo_mesa,
-      nombre
+      nombre,
+      nombre_rp,
+      identificador_mesa
     ];
 
     await client.query(queryString, values);

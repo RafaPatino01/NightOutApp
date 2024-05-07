@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
   baseText: {
     padding: 30,
     color: "white",
-    fontSize: 16,
+    fontSize: 12,
     // Add your text styling here
   },
   linkText: {
@@ -272,14 +272,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textDecorationLine: 'underline',
     fontStyle: 'italic',
-    fontSize: 16,
+    fontSize: 12,
     marginBottom: 20,
   },
   buttonText2: {
     color: 'white',
     textAlign: 'center',
     fontStyle: 'italic',
-    fontSize: 14,
+    fontSize: 12,
     marginBottom: 80,
   },
   generoButtons: {

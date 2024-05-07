@@ -339,10 +339,28 @@ const Reservar = ({ route }) => {
 
       <Modal visible={isImageViewerVisible} transparent={true}>
         <ImageViewer 
-          imageUrls={images} 
-          onCancel={() => setImageViewerVisible(false)} 
+          imageUrls={images}
+          onCancel={() => {
+            console.log('onCancel called');
+            setImageViewerVisible(false);
+          }}
           enableSwipeDown={true}
-          onSwipeDown={() => setImageViewerVisible(false)}
+          onSwipeDown={() => {
+            console.log('onSwipeDown called');
+            setImageViewerVisible(false);
+          }}
+          renderHeader={(currentIndex) => (
+            <View style={{ position: 'absolute', bottom: 40, width: '100%', alignItems: 'center', zIndex: 1 }}>
+              <TouchableOpacity 
+                onPress={() => {
+                  setImageViewerVisible(false);
+                }}
+                style={{ backgroundColor: 'rgba(0,0,0,0.6)', borderRadius: 20, paddingVertical: 10, paddingHorizontal: 20 }}
+              >
+                <Text style={{ color: '#FFF', fontSize: 22, margin: 20 }}>Cerrar</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         />
       </Modal>
 

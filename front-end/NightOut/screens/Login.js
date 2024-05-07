@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textDecorationLine: 'underline',
     fontStyle: 'italic',
-    fontSize: 16
+    fontSize: 12
   },
 });
 

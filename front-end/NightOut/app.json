@@ -2,7 +2,7 @@
   "expo": {
     "name": "NightOut",
     "slug": "NightOut",
-    "version": "1.0.16",
+    "version": "1.0.17",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -11,24 +11,37 @@
       "resizeMode": "contain",
       "backgroundColor": "#000000"
     },
+    "scheme": "nightout",
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.nightoutmx.nightoutmx",
-      "runtimeVersion": "1.0.16",
-      "buildNumber": "16",
-      "jsEngine": "jsc"
+      "runtimeVersion": "1.0.17",
+      "buildNumber": "17",
+      "jsEngine": "jsc",
+      "associatedDomains": ["applinks:nightout.com.mx"]
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "runtimeVersion": "1.0.16",
+      "runtimeVersion": "1.0.17",
       "package": "com.nightoutmx.nightoutmx",
-      "versionCode": 7
+      "versionCode": 8,
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": {
+            "scheme": "https",
+            "host": "nightout.com.mx",
+            "pathPrefix": "/path"
+          },
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"

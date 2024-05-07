@@ -27,6 +27,28 @@ LogBox.ignoreAllLogs();
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
+const linking = {
+  prefixes: ['https://nightout.com.mx', 'nightout://'],
+  config: {
+    screens: {
+      Login: 'login',
+      Register: 'register',
+      Home: {
+        path: 'home',
+        screens: {
+          Screen1: 'screen1',
+          MisReservas: 'reservas',
+          Búsqueda: 'busqueda',
+          PerfilDeUsuario: 'perfil',
+        },
+      },
+      DetalleEstablecimiento: 'detalle/:id', // Assuming you pass an id as a param
+      Resultados: 'resultados',
+      Reservar: 'reservar',
+    },
+  },
+};
+
 function Home() {
   return (
     <Tab.Navigator

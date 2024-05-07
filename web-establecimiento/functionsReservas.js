@@ -234,6 +234,8 @@ document.getElementById('reservaForm').addEventListener('submit', function(e) {
         asistencia: 0,
         tipo_mesa: document.getElementById('tipo_mesa_reserva').value,
         nombre: document.getElementById('nombre_reserva').value,
+        nombre_rp: document.getElementById('nombre_rp').value,
+        identificador_mesa: document.getElementById('identificador_mesa').value,
     };
 
     fetch('https://nightout.com.mx/api/add_reserva_generica', {
@@ -257,6 +259,8 @@ document.getElementById('reservaForm').addEventListener('submit', function(e) {
         document.getElementById('n_personas_reserva').value = '';
         document.getElementById('tipo_mesa_reserva').value = '';
         document.getElementById('nombre_reserva').value = '';
+        document.getElementById('identificador_mesa').value = '';
+        document.getElementById('nombre_rp').value = '';
 
     })
     .catch((error) => {
@@ -268,6 +272,7 @@ document.getElementById('reservaForm').addEventListener('submit', function(e) {
         document.getElementById('n_personas_reserva').value = '';
         document.getElementById('tipo_mesa_reserva').value = '';
         document.getElementById('nombre_reserva').value = '';
-
+        document.getElementById('identificador_mesa').value = '';
+        document.getElementById('nombre_rp').value = '';
     });
 });
