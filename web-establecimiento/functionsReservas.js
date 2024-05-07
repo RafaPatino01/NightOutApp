@@ -134,8 +134,10 @@ function createReservaHTML(reserva, usuario) {
                     ${name}
                 </div>
                 <div class="col-lg-2 col-5 ps-3">
+                    <p class="py-0 m-0 searchable_identificador_mesa">Número Mesa: ${reserva.identificador_mesa}</p>
+                    <p class="py-0 m-0 searchable_nombre_rp">RP: ${reserva.nombre_rp}</p>
                     <p class="py-0 m-0 searchable_status">Status: ${status}</p>
-                    <p class="py-0 m-0 searchable_tipo">${reserva.tipo_de_mesa}</p>
+                    <p class="py-0 m-0 searchable_tipo">Tipo: ${reserva.tipo_de_mesa}</p>
                     ${generateDateTimeHTML(reserva.fecha_hora)}
                 </div>
             </div>
@@ -181,6 +183,10 @@ function filterReservas() {
     const timeQuery = document.getElementById('searchTime').value.toLowerCase();
     const typeQuery = document.getElementById('searchType').value.toLowerCase();
     const statusQuery = document.getElementById('searchStatus').value.toLowerCase();
+    
+    const identificador_mesaQuery = document.getElementById('search_identificador_mesa').value.toLowerCase();
+    const nombre_rpQuery = document.getElementById('search_nombre_rp').value.toLowerCase();
+
 
     const reservas = document.querySelectorAll('#reservas_historial .container2');
 
@@ -190,8 +196,10 @@ function filterReservas() {
         const timeMatch = reserva.querySelector('.searchable_horario').textContent.toLowerCase().includes(timeQuery);
         const typeMatch = reserva.querySelector('.searchable_tipo').textContent.toLowerCase().includes(typeQuery);
         const statusMatch = reserva.querySelector('.searchable_status').textContent.toLowerCase().includes(statusQuery);
+        const identificador_mesaMatch = reserva.querySelector('.searchable_identificador_mesa').textContent.toLowerCase().includes(identificador_mesaQuery);
+        const nombre_rpMatch = reserva.querySelector('.searchable_nombre_rp').textContent.toLowerCase().includes(nombre_rpQuery);
 
-        if (nameMatch && dateMatch && timeMatch && typeMatch && statusMatch) {
+        if (nameMatch && dateMatch && timeMatch && typeMatch && statusMatch && identificador_mesaMatch && nombre_rpMatch) {
             reserva.style.display = '';
         } else {
             reserva.style.display = 'none';
