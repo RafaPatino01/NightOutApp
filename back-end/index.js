@@ -1365,7 +1365,8 @@ app.post('/add_reserva', async (req, res) => {
   try {
     const client = await pool.connect();
 
-    const queryString = `
+    // Insert the reservation
+    const insertQuery = `
       INSERT INTO public.reservas (
         fecha_hora,
         usuario_id,
@@ -1378,7 +1379,7 @@ app.post('/add_reserva', async (req, res) => {
       VALUES ($1, $2, $3, $4, $5, $6, $7)
     `;
 
-    const values = [
+    const insertValues = [
       fecha_hora,
       usuario_id,
       establecimiento_id,
@@ -1388,16 +1389,59 @@ app.post('/add_reserva', async (req, res) => {
       tipo_mesa
     ];
 
-    await client.query(queryString, values);
-    client.release();
+    await client.query(insertQuery, insertValues);
     console.log('Reserva inserted successfully');
 
-    res.status(201).json({ message: 'Reserva inserted successfully' });
+    // Fetch the telefono from establecimientos and nombre from usuarios
+    const fetchDetailsQuery = `
+      SELECT e.telefono, u.nombre 
+      FROM establecimientos e
+      JOIN usuarios u ON u.id = $1
+      WHERE e.id = $2
+    `;
+
+    const fetchValues = [usuario_id, establecimiento_id];
+    const result = await client.query(fetchDetailsQuery, fetchValues);
+    const { telefono, nombre } = result.rows[0];
+
+    client.release();
+
+    // Send WhatsApp message
+    const url = 'https://graph.facebook.com/v18.0/290794877447729/messages';
+    const data = {
+      messaging_product: "whatsapp",
+      to: "52" + telefono, // establecimiento phone 
+      type: "template",
+      template: {
+        name: "notificacion_reserva",
+        language: {
+          code: "es_MX"
+        },
+        components: [{
+          type: "body",
+          parameters: [
+            { type: "text", text: nombre }, // Nombre usuario
+            { type: "text", text: tipo_mesa }, // Tipo de mesa
+            { type: "text", text: fecha_hora } // Fecha
+          ]
+        }]
+      }
+    };
+
+    await axios.post(url, data, {
+      headers: {
+        'Authorization': 'Bearer EAAUkJ9HTVVsBO73zGkDV8wG0p7ZBocaBBv2itwoyjpusg68wDQn5NjJOabBZAx8PLGMpnnumYxWOr3OWJzHFTyeYdSdIkRkU3sW2q1ylhvkYBPczO0dmDdSfPPm4Vx6rJioZAw3yKwp3jJmJmLqWJ2KMZB0f3HHlkeEqHNc7Fqf6lLGcm2sgTz5eeZCZB4Ngnk',
+        'Content-Type': 'application/json'
+      }
+    });
+
+    res.status(201).json({ message: 'Reserva inserted and notification sent successfully' });
   } catch (error) {
     console.error('Error inserting Reserva into PostgreSQL:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 app.post('/add_reserva_generica', async (req, res) => {
   const {
