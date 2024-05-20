@@ -238,25 +238,48 @@ function leerQr(reserva_id) {
     myModal.show();
 }
 
-async function confirmarReserva(reserva_id) {
-    try {
-        const url = `https://nightout.com.mx/api/confirmar_reserva/${reserva_id}`;
-
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (response.ok) {
-        console.log('Reserva updated successfully:', data);
-        } else {
-        throw new Error(data.error || 'Failed to update reserva');
-        }
-    } catch (error) {
-        console.error('Error updating reserva:', error);
-    }
-
-    window.location.reload();
-    
+// Existing confirmarReserva function
+function confirmarReserva(reserva_id) {
+    currentReservaId = reserva_id.toString();
+    const identificadorMesaModal = new bootstrap.Modal(document.getElementById('identificadorMesaModal'));
+    identificadorMesaModal.show();
 }
+
+document.getElementById('identificadorMesaForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    const identificadorMesa = document.getElementById('identificadorMesaInput').value;
+    if (identificadorMesa) {
+        try {
+            const url = `https://nightout.com.mx/api/confirmar_reserva/${currentReservaId}`;
+            const data = { identificador_mesa: identificadorMesa };
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                console.log('Reserva updated successfully:', result);
+                // Close the modal
+                const identificadorMesaModal = bootstrap.Modal.getInstance(document.getElementById('identificadorMesaModal'));
+                identificadorMesaModal.hide();
+                // Reload the page or update the UI
+                window.location.reload();
+            } else {
+                throw new Error(result.error || 'Failed to update reserva');
+            }
+        } catch (error) {
+            console.error('Error updating reserva:', error);
+        }
+    }
+});
+
 
 async function cancelarReserva(reserva_id) {
     try {

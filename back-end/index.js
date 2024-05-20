@@ -702,18 +702,18 @@ app.get('/asistencia_reserva/:id', async (req, res) => {
 });
 
 
-app.get('/confirmar_reserva/:id', async (req, res) => {
+app.post('/confirmar_reserva/:id', async (req, res) => {
+  const client = await pool.connect();
   try {
     const reservaId = req.params.id;
-
-    const client = await pool.connect();
+    const { identificador_mesa } = req.body;
 
     // Begin transaction
     await client.query('BEGIN');
 
-    // Update the reservation to confirmed
-    const updateQuery = 'UPDATE public.reservas SET confirmado = 1 WHERE id = $1';
-    await client.query(updateQuery, [reservaId]);
+    // Update the reservation to confirmed and set identificador_mesa
+    const updateQuery = 'UPDATE public.reservas SET confirmado = 1, identificador_mesa = $2 WHERE id = $1';
+    await client.query(updateQuery, [reservaId, identificador_mesa]);
 
     // Retrieve user ID and establishment ID from the reservation
     const reservaQuery = 'SELECT usuario_id, establecimiento_id FROM public.reservas WHERE id = $1';
