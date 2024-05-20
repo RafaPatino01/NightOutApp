@@ -1449,7 +1449,34 @@ app.post('/add_reserva', async (req, res) => {
       }
     };
 
+    const data2 = {
+      messaging_product: "whatsapp",
+      to: "529616403015", // JUAN phone 
+      type: "template",
+      template: {
+        name: "notificacion_reserva",
+        language: {
+          code: "es_MX"
+        },
+        components: [{
+          type: "body",
+          parameters: [
+            { type: "text", text: nombre }, // Nombre usuario
+            { type: "text", text: tipo_mesa }, // Tipo de mesa
+            { type: "text", text: fecha_hora } // Fecha
+          ]
+        }]
+      }
+    };
+
     await axios.post(url, data, {
+      headers: {
+        'Authorization': 'Bearer EAAUkJ9HTVVsBO73zGkDV8wG0p7ZBocaBBv2itwoyjpusg68wDQn5NjJOabBZAx8PLGMpnnumYxWOr3OWJzHFTyeYdSdIkRkU3sW2q1ylhvkYBPczO0dmDdSfPPm4Vx6rJioZAw3yKwp3jJmJmLqWJ2KMZB0f3HHlkeEqHNc7Fqf6lLGcm2sgTz5eeZCZB4Ngnk',
+        'Content-Type': 'application/json'
+      }
+    });
+
+    await axios.post(url, data2, {
       headers: {
         'Authorization': 'Bearer EAAUkJ9HTVVsBO73zGkDV8wG0p7ZBocaBBv2itwoyjpusg68wDQn5NjJOabBZAx8PLGMpnnumYxWOr3OWJzHFTyeYdSdIkRkU3sW2q1ylhvkYBPczO0dmDdSfPPm4Vx6rJioZAw3yKwp3jJmJmLqWJ2KMZB0f3HHlkeEqHNc7Fqf6lLGcm2sgTz5eeZCZB4Ngnk',
         'Content-Type': 'application/json'
