@@ -173,7 +173,7 @@ function getReservas(pId){
                                 
                                 </div>
 
-                                <div class="col-4 p-2 text-center" onclick="updateReserva(${reserva.id})">
+                                <div class="col-4 p-2 text-center" onclick="updateReservaManual(${reserva.id})">
                                     <div class="bg-primary rounded d-flex align-items-center p-4">
                                     <p class="w-100 text-center text-white">    
                                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
@@ -290,6 +290,26 @@ async function cancelarReserva(reserva_id) {
 const updateReserva = async (reservaId) => {
     try {
         const url = `https://nightout.com.mx/api/asistencia_reserva/${reservaId}`;
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (response.ok) {
+            console.log('Reserva actualizada con éxito:', data);
+            window.location.reload();
+            
+        } else {
+            throw new Error(data.error || 'Error al actualizar la reserva');
+        }
+    } catch (error) {
+        console.error('Error al actualizar la reserva:', error);
+        throw error; // Propaga el error para manejo externo
+    }
+};
+
+const updateReservaManual = async (reservaId) => {
+    try {
+        const url = `https://nightout.com.mx/api/asistencia_reserva_manual/${reservaId}`;
 
         const response = await fetch(url);
         const data = await response.json();

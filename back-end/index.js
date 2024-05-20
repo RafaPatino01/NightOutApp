@@ -616,6 +616,27 @@ app.get('/get_reservas_by_id2/:id', async (req, res) => {
   }
 });
 
+app.get('/asistencia_reserva_manual/:id', async (req, res) => {
+  try {
+    const reservaId = req.params.id;
+
+    const client = await pool.connect();
+
+    // Construct the SQL UPDATE statement
+    const queryString = 'UPDATE public.reservas SET asistencia = 1 WHERE id = $1';
+
+    // Execute the SQL statement with the provided reserva ID
+    const result = await client.query(queryString, [reservaId]);
+
+    client.release();
+
+    res.json({ message: 'Reserva updated successfully' });
+  } catch (error) {
+    console.error('Error updating reserva:', error);
+    res.status(500).json({ error: 'Error updating reserva' });
+  }
+});
+
 app.get('/asistencia_reserva/:id', async (req, res) => {
   const reservaId = req.params.id;
   try {
