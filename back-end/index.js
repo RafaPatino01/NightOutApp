@@ -634,7 +634,7 @@ app.get('/asistencia_reserva/:id', async (req, res) => {
     // Retrieve user_id from the updated reserva
     const userId = updateReservaResult.rows[0].usuario_id;
 
-    // Define points to add (example: 10 points for attending)
+    // Define points to add (example: 50 points for attending)
     const pointsToAdd = 50;
 
     // Update user points
@@ -645,17 +645,59 @@ app.get('/asistencia_reserva/:id', async (req, res) => {
     `;
     await client.query(updatePointsQuery, [pointsToAdd, userId]);
 
+    // Retrieve user phone number from correo_electronico column
+    const userQuery = 'SELECT nombre, correo_electronico FROM public.usuarios WHERE id = $1';
+    const userResult = await client.query(userQuery, [userId]);
+
+    if (userResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      client.release();
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const { nombre: userName, correo_electronico: userPhone } = userResult.rows[0];
+
     // Commit transaction
     await client.query('COMMIT');
     client.release();
 
-    res.json({ message: 'Reserva updated and points added successfully' });
+    // Construct WhatsApp message data for notificacion_asistencia template
+    const url = 'https://graph.facebook.com/v18.0/290794877447729/messages';
+    const data = {
+      messaging_product: "whatsapp",
+      to: "52" + userPhone,
+      type: "template",
+      template: {
+        name: "notificacion_asistencia",
+        language: {
+          code: "es_MX"
+        },
+        components: [{
+          type: "body",
+          parameters: [
+            { type: "text", text: String(pointsToAdd) }
+          ]
+        }]
+      }
+    };
+
+    // Send WhatsApp message
+    const response = await axios.post(url, data, {
+      headers: {
+        'Authorization': 'Bearer EAAUkJ9HTVVsBO73zGkDV8wG0p7ZBocaBBv2itwoyjpusg68wDQn5NjJOabBZAx8PLGMpnnumYxWOr3OWJzHFTyeYdSdIkRkU3sW2q1ylhvkYBPczO0dmDdSfPPm4Vx6rJioZAw3yKwp3jJmJmLqWJ2KMZB0f3HHlkeEqHNc7Fqf6lLGcm2sgTz5eeZCZB4Ngnk',
+        'Content-Type': 'application/json'
+      }
+    });
+
+    res.status(200).json({ message: 'Reserva updated, points added, and WhatsApp notification sent successfully', whatsapp_response: response.data });
+
   } catch (error) {
-    // Roll back transaction in case of error
-    await client.query('ROLLBACK');
-    client.release();
     console.error('Transaction error:', error);
-    res.status(500).json({ error: 'Error updating reserva and adding points' });
+    if (client) {
+      await client.query('ROLLBACK');
+      client.release();
+    }
+    res.status(500).json({ error: 'Error updating reserva, adding points, and sending notification' });
   }
 });
 
@@ -666,18 +708,91 @@ app.get('/confirmar_reserva/:id', async (req, res) => {
 
     const client = await pool.connect();
 
-    // Construct the SQL UPDATE statement
-    const queryString = 'UPDATE public.reservas SET confirmado = 1 WHERE id = $1';
+    // Begin transaction
+    await client.query('BEGIN');
 
-    // Execute the SQL statement with the provided reserva ID
-    const result = await client.query(queryString, [reservaId]);
+    // Update the reservation to confirmed
+    const updateQuery = 'UPDATE public.reservas SET confirmado = 1 WHERE id = $1';
+    await client.query(updateQuery, [reservaId]);
 
+    // Retrieve user ID and establishment ID from the reservation
+    const reservaQuery = 'SELECT usuario_id, establecimiento_id FROM public.reservas WHERE id = $1';
+    const reservaResult = await client.query(reservaQuery, [reservaId]);
+
+    if (reservaResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      client.release();
+      return res.status(404).json({ error: 'Reservation not found' });
+    }
+
+    const { usuario_id, establecimiento_id } = reservaResult.rows[0];
+
+    // Retrieve user name and phone number from correo_electronico column
+    const userQuery = 'SELECT nombre, correo_electronico FROM public.usuarios WHERE id = $1';
+    const userResult = await client.query(userQuery, [usuario_id]);
+
+    if (userResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      client.release();
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const { nombre: userName, correo_electronico: userPhone } = userResult.rows[0];
+
+    // Retrieve establishment name
+    const establecimientoQuery = 'SELECT nombre FROM public.establecimientos WHERE id = $1';
+    const establecimientoResult = await client.query(establecimientoQuery, [establecimiento_id]);
+
+    if (establecimientoResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      client.release();
+      return res.status(404).json({ error: 'Establishment not found' });
+    }
+
+    const { nombre: establecimientoName } = establecimientoResult.rows[0];
+
+    // Commit transaction
+    await client.query('COMMIT');
     client.release();
 
-    res.json({ message: 'Reserva updated successfully' });
+    // Construct WhatsApp message data
+    const url = 'https://graph.facebook.com/v18.0/290794877447729/messages';
+    const data = {
+      messaging_product: "whatsapp",
+      to: "52" + userPhone,
+      type: "template",
+      template: {
+        name: "notificacion_confirmada",
+        language: {
+          code: "es_MX"
+        },
+        components: [{
+          type: "body",
+          parameters: [
+            { type: "text", text: userName },
+            { type: "text", text: establecimientoName }
+          ]
+        }]
+      }
+    };
+
+    // Send WhatsApp message
+    const response = await axios.post(url, data, {
+      headers: {
+        'Authorization': 'Bearer EAAUkJ9HTVVsBO73zGkDV8wG0p7ZBocaBBv2itwoyjpusg68wDQn5NjJOabBZAx8PLGMpnnumYxWOr3OWJzHFTyeYdSdIkRkU3sW2q1ylhvkYBPczO0dmDdSfPPm4Vx6rJioZAw3yKwp3jJmJmLqWJ2KMZB0f3HHlkeEqHNc7Fqf6lLGcm2sgTz5eeZCZB4Ngnk',
+        'Content-Type': 'application/json'
+      }
+    });
+
+    res.status(200).json({ message: 'Reserva updated successfully', whatsapp_response: response.data });
+
   } catch (error) {
-    console.error('Error updating reserva:', error);
-    res.status(500).json({ error: 'Error updating reserva' });
+    console.error('Error confirming reservation:', error);
+    if (client) {
+      await client.query('ROLLBACK');
+      client.release();
+    }
+    res.status(500).json({ error: 'Error confirming reservation' });
   }
 });
 

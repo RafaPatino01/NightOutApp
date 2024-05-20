@@ -80,7 +80,7 @@ const Screen4 = () => {
       </View>
       <View style={styles.text_container2}>
         <Text style={styles.text2}>
-          Muestra tu QR en el establecimiento para utilizar tus puntos!
+          ¡Muestra tu QR en el establecimiento para utilizar tus puntos!
         </Text>
       </View>
       
@@ -113,7 +113,10 @@ const styles = StyleSheet.create({
   text2: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: "black"
+    color: "black",
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center'
   },
   container: {
     flex: 1,

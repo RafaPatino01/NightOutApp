@@ -189,7 +189,7 @@ const Reservar = ({ route }) => {
   const handleReservar = async () => {
 
     if(receivedData.allow_reservas == 0){
-      Alert.alert("❌ El establecimiento no permite reservar en estos momentos");
+      Alert.alert("❌ El establecimiento no cuenta con mesas disponibles");
       navigation.goBack();
     }
     else {

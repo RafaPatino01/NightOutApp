@@ -59,7 +59,11 @@ const DetalleEstablecimiento = ({ route }) => {
             Linking.openURL(instagramUrl);
           }}
         >
-          <Image source={instagramIcon} style={styles.instagramIcon} />
+          { /** <Image source={instagramIcon} style={styles.instagramIcon} />*/}
+          <Image
+            source={{ uri: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/instagram-white-icon.png' }}
+            style={styles.instagramIcon}
+          />
         </TouchableOpacity>
       ),
     });
@@ -196,7 +200,7 @@ const DetalleEstablecimiento = ({ route }) => {
         style={styles.floatingButton}
         onPress={() => {
           if (allowReservas === 0) {
-            Alert.alert("❌ El establecimiento no permite reservar en estos momentos");
+            Alert.alert("❌ El establecimiento no cuenta con mesas disponibles");
           } else {
             navigation.navigate("Reservar", { data: receivedData })
           }

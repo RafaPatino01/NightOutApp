@@ -90,7 +90,7 @@ const Login = () => {
       <View style={styles.container}>
         <Image source={require('../img/logo-dark.png')} style={styles.logo} />
         
-        <Text style={styles.texto1}>Regístrate y lleva tu experiencia de fiesta a otro nivel.</Text>
+        <Text style={styles.texto1}>Regístrate y lleva tu experiencia de diversión a otro nivel.</Text>
 
         <TextInput
           style={styles.input}

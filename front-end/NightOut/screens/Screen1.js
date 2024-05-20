@@ -186,9 +186,9 @@ const Screen1 = () => {
           barStyle="dark-content"
       />
       <View style={styles.quickFilters}> 
-        
+      
       <Image
-        source={require('../img/logo-dark.png')}  // Assuming the image is in the 'img' folder at your project root
+        source={{ uri: 'https://nightout.com.mx/images/logo_dark.png' }} // Replace with the actual URL
         style={styles.imageLogo}
       />
       

@@ -193,7 +193,10 @@ const Screen3 = () => {
     <View style={styles.container}>
       <View style={styles.infoContainer}>
         <View style={styles.imageContainer}>
-          <Image source={require('../assets/user_icon.png')} style={styles.icon} />
+            <Image
+            source={{ uri: 'https://static-00.iconduck.com/assets.00/profile-circle-icon-512x512-zxne30hp.png' }} // Replace with the actual URL
+            style={styles.icon}
+          />
         </View>
         <View style={styles.userDataContainer}>
           <View style={styles.item}>
@@ -288,8 +291,9 @@ const styles = StyleSheet.create({
     color: '#555',
   },
   icon: {
-    width: 100, // Adjust as needed
-    height: 100, // Adjust as needed
+    width: 80, // Adjust as needed
+    height: 80, // Adjust as needed
+    marginRight: 20
   },
 });
 

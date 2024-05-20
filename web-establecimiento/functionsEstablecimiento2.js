@@ -88,6 +88,8 @@ function getReservas(pId){
                             <div class="col-12 col-md-6">
                                 <p class="m-0 text-bold searchable_item">${name}</p>
                                 <hr>
+                                <p class="py-0 m-0 mb-3"> <span class="bg-secondary p-1 rounded">Identificador Mesa:</span> ${reserva.identificador_mesa}</p>
+
                                 <p class="py-0 m-0 searchable_tipo"> <span class="bg-secondary p-1 rounded">Tipo de mesa:</span> ${reserva.tipo_de_mesa}</p>
                                 ${generateDateTimeHTML(reserva.fecha_hora)}
                                 <hr>
@@ -147,6 +149,9 @@ function getReservas(pId){
                         <div class="col-12 col-md-6">
                             <p class="m-0 text-bold searchable_item">${name}</p>
                             <hr>
+                            <p class="py-0 m-0 mb-3"> <span class="bg-secondary p-1 rounded">RP:</span> ${reserva.nombre_rp}</p>
+                            <p class="py-0 m-0 mb-3"> <span class="bg-secondary p-1 rounded">Identificador Mesa:</span> ${reserva.identificador_mesa}</p>
+
                             <p class="py-0 m-0 searchable_tipo"> <span class="bg-secondary p-1 rounded">Tipo de mesa:</span> ${reserva.tipo_de_mesa}</p>
                             ${generateDateTimeHTML(reserva.fecha_hora)}
                             <hr>
