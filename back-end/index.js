@@ -656,7 +656,7 @@ app.get('/asistencia_reserva/:id', async (req, res) => {
     const userId = updateReservaResult.rows[0].usuario_id;
 
     // Define points to add (example: 50 points for attending)
-    const pointsToAdd = 50;
+    const pointsToAdd = 35;
 
     // Update user points
     const updatePointsQuery = `

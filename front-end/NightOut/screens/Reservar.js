@@ -67,6 +67,10 @@ const Reservar = ({ route }) => {
   const [mesas, setMesas] = useState([]);
   const [horarios, setHorarios] = useState([]);
 
+  const [today, setToday] = useState(new Date());
+  const [a_month_from_today, setAMonthFromToday] = useState(new Date());
+
+
   const navigation = useNavigation();
 
   const [isImageViewerVisible, setImageViewerVisible] = useState(false);
@@ -123,7 +127,18 @@ const Reservar = ({ route }) => {
         }];
       });
 
-      
+      // Create a new date object based on today's date
+      const nextMonth = new Date(today);
+
+      // Set the month to the next month
+      nextMonth.setMonth(nextMonth.getMonth() + 2);
+
+      // Check for edge cases where adding a month might skip to the next month due to month length
+      if (nextMonth.getDate() < today.getDate()) {
+        nextMonth.setDate(0); // This sets the date to the last day of the previous month
+      }
+
+      setAMonthFromToday(nextMonth);
   
       setHorarios(horariosActualizados);
     }
@@ -160,31 +175,6 @@ const Reservar = ({ route }) => {
   const toggleDatePicker = () => {
     setDatePickerVisible(!isDatePickerVisible);
   };
-
-  function getCurrentDateInCDMX() {
-    const now = new Date();
-    
-    // Adjust to Mexico City timezone using 'toLocaleString' with timezone option
-    const mexicoCityTime = now.toLocaleString('en-US', { timeZone: 'America/Mexico_City' });
-  
-    // Convert the adjusted time back to a Date object
-    const dateInCDMX = new Date(mexicoCityTime);
-  
-    // Subtract 6 hours
-    dateInCDMX.setHours(dateInCDMX.getHours() - 6);
-
-    return dateInCDMX;
-  }
-
-
-  
-  const today = getCurrentDateInCDMX(); // Ensure 'today' is always a Date object
-  
-  // Later in your DatePicker or elsewhere
-  const currentDateString = today.toISOString().split('T')[0]; // Use ISO string safely here
-  const oneMonthFromNow = new Date(today);
-  oneMonthFromNow.setMonth(today.getMonth() + 1); // Set to one month ahead
-  
 
   const handleReservar = async () => {
 
@@ -253,7 +243,18 @@ const Reservar = ({ route }) => {
       }
     }
 
-    
+  };
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    toggleDatePicker();
+  };
+
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
 
   return (
@@ -315,25 +316,23 @@ const Reservar = ({ route }) => {
 
       <Modal visible={isDatePickerVisible} animationType="slide">
         <View style={styles.modal}>
-          <DatePicker
+        <DatePicker
             options={{
-              backgroundColor: '#070808',
-              textHeaderColor: '#5271FF',
-              textDefaultColor: '#F6E7C1',
-              selectedTextColor: '#fff',
-              mainColor: '#5271FF',
-              textSecondaryColor: '#D6C7A1',
-              borderColor: 'rgba(122, 146, 165, 0.1)',
+                backgroundColor: '#070808',
+                textHeaderColor: '#5271FF',
+                textDefaultColor: '#F6E7C1',
+                selectedTextColor: '#fff',
+                mainColor: '#5271FF',
+                textSecondaryColor: '#D6C7A1',
+                borderColor: 'rgba(122, 146, 165, 0.1)',
             }}
-            current={today.toISOString().split('T')[0]}
-            minimumDate={today.toISOString().split('T')[0]}
-            maximumDate={oneMonthFromNow.toISOString().split('T')[0]}
             mode="calendar"
-            onSelectedChange={(date) => {
-              setSelectedDate(date);
-              toggleDatePicker();
-            }}
-          />
+            current={formatDate(today)} // Ensure today is a valid Date object
+            selected={formatDate(today)} // Ensure today is a valid Date object
+            minimumDate={formatDate(today)}
+            maximumDate={formatDate(a_month_from_today)}
+            onDateChange={handleDateChange}
+        />
         </View>
       </Modal>
 
